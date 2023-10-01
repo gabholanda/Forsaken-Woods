@@ -1,4 +1,5 @@
-﻿  Body.cpp
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ComponentFramework.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  Body.cpp
 C:\College Projects\ComponentFramework\ComponentFramework\Body.h(3,10): fatal  error C1083: Cannot open include file: 'Vector.h': No such file or directory
   Camera.cpp
 C:\College Projects\ComponentFramework\ComponentFramework\Camera.cpp(1,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
@@ -7,18 +8,6 @@ C:\College Projects\ComponentFramework\ComponentFramework\Body.h(3,10): fatal  e
   Debug.cpp
   Mesh.cpp
 C:\College Projects\ComponentFramework\ComponentFramework\Mesh.h(3,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
-  Scene1.cpp
-C:\College Projects\ComponentFramework\ComponentFramework\Scene1.cpp(1,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
-  Scene2.cpp
-C:\College Projects\ComponentFramework\ComponentFramework\Scene2.cpp(1,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
-  Scene3.cpp
-C:\College Projects\ComponentFramework\ComponentFramework\Scene3.cpp(1,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
-  Scene4.cpp
-C:\College Projects\ComponentFramework\ComponentFramework\Scene4.cpp(1,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
-  Scene5.cpp
-C:\College Projects\ComponentFramework\ComponentFramework\Scene5.cpp(1,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
-  Scene6.cpp
-C:\College Projects\ComponentFramework\ComponentFramework\Scene6.cpp(1,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
   SceneManager.cpp
 C:\College Projects\ComponentFramework\ComponentFramework\SceneManager.cpp(1,10): fatal  error C1083: Cannot open include file: 'SDL.h': No such file or directory
   Main.cpp
@@ -36,8 +25,6 @@ C:\College Projects\ComponentFramework\ComponentFramework\Timer.h(3,10): fatal  
   Trackball.cpp
 C:\College Projects\ComponentFramework\ComponentFramework\Trackball.cpp(1,10): fatal  error C1083: Cannot open include file: 'glew.h': No such file or directory
   Vector.cpp
-  Generating Code...
-  Compiling...
   Window.cpp
 C:\College Projects\ComponentFramework\ComponentFramework\Window.h(4,10): fatal  error C1083: Cannot open include file: 'SDL.h': No such file or directory
   Generating Code...
