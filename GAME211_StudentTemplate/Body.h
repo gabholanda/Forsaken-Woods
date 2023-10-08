@@ -19,6 +19,7 @@ protected:
     float rotation;			// rotating at this speed (radians per second?)
     float angular;          // angular acceleration
     float radius;           // for getting near walls
+    float movementSpeed;
 
 	Vec3 imageSizeWorldCoords;
     SDL_Surface* image;
@@ -32,7 +33,8 @@ public:
         float radius_,
         float orientation_,
         float rotation_,
-        float angular_
+        float angular_,
+        float movementSpeed
     );
 	virtual ~Body();
     virtual void Update(float deltaTime);

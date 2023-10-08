@@ -33,6 +33,7 @@ public:
         float orientation_,
         float rotation_,
         float angular_,
+        float movementSpeed_,
         GameManager *game_
     ) : Body{
           pos_
@@ -43,6 +44,7 @@ public:
         , orientation_
         , rotation_
         , angular_
+        , movementSpeed_
     }
         , game{ game_ }
     {}

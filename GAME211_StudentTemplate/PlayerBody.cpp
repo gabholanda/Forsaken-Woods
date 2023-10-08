@@ -55,6 +55,44 @@ void PlayerBody::Render( float scale )
 
 void PlayerBody::HandleEvents( const SDL_Event& event )
 {
+
+    if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+        switch (event.key.keysym.scancode) {
+        case SDL_SCANCODE_W:
+            vel.y = movementSpeed * 1.0f;
+            break;
+        case SDL_SCANCODE_A:
+            vel.x = -(movementSpeed * 1.0f);
+            break;
+        case SDL_SCANCODE_S:
+            vel.y = -(movementSpeed * 1.0f);
+            break;
+        case SDL_SCANCODE_D:
+            vel.x = movementSpeed * 1.0f;
+            break;
+        }
+    }
+    if (event.type == SDL_KEYUP && event.key.repeat == 0) {
+        switch (event.key.keysym.scancode) {
+        case SDL_SCANCODE_W:
+            vel.y = 0;
+            break;
+        case SDL_SCANCODE_A:
+            vel.x = 0;
+            break;
+        case SDL_SCANCODE_S:
+            vel.y = 0;
+            break;
+        case SDL_SCANCODE_D:
+            vel.x = 0;
+            break;
+        }
+    }
+
+    if (VMath::mag(vel) > VERY_SMALL) {
+        vel = VMath::normalize(vel) * movementSpeed;
+    }
+    // etc
 }
 
 void PlayerBody::Update( float deltaTime )

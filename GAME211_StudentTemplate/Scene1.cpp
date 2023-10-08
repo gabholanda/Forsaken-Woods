@@ -29,7 +29,7 @@ bool Scene1::OnCreate() {
 	SDL_Surface* image;
 	SDL_Texture* texture;
 
-	image = IMG_Load("pacman.png");
+	image = IMG_Load("rogue.png");
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	game->getPlayer()->setImage(image);
 	game->getPlayer()->setTexture(texture);
@@ -50,7 +50,7 @@ void Scene1::Render() {
 	SDL_RenderClear(renderer);
 
 	// render the player
-	game->RenderPlayer(0.10f);
+	game->RenderPlayer(0.20f);
 
 	SDL_RenderPresent(renderer);
 }

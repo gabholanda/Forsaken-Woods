@@ -11,8 +11,8 @@ GameManager::GameManager() {
 
 bool GameManager::OnCreate() {
     // My display is 1920 x 1080 but the following seems to work best to fill the screen.
-    //const int SCREEN_WIDTH = 1540;
-    //const int SCREEN_HEIGHT = 860;
+   /* const int SCREEN_WIDTH = 1540;
+    const int SCREEN_HEIGHT = 860;*/
 
     // Use 1000x600 for less than full screen
     const int SCREEN_WIDTH = 1000;
@@ -44,6 +44,7 @@ bool GameManager::OnCreate() {
     float orientation = 0.0f;
     float rotation = 0.0f;
     float angular = 0.0f;
+    float movementSpeed = 1.0f;
     Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
     Vec3 velocity(0.0f, 0.0f, 0.0f);
     Vec3 acceleration(0.0f, 0.0f, 0.0f);
@@ -58,6 +59,7 @@ bool GameManager::OnCreate() {
         orientation,
         rotation,
         angular,
+        movementSpeed,
         this
     );
     if ( player->OnCreate() == false ) {
