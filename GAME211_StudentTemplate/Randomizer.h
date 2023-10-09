@@ -1,15 +1,14 @@
 #pragma once
 #ifndef RANDOMIZER_H
 #define RANDOMIZER_H
+#include "Gun.h"
 
 class Randomizer
 {	
-private:
-	int maxEnemyNumber;
-	int maxWeaponNumber;
+public:
 	
-	int RandomNumberForWeapon(){}
-	int RandomNumberForEnemy() {}
+	int RandomNumberForWeapon();
+	int RandomNumberForEnemy();
 };
 
 #endif

@@ -3,6 +3,10 @@
 
 #include <MMath.h>
 #include "Scene.h"
+#include "Randomizer.h"
+#include "Gun.h"
+#include "Pistol.h"
+
 
 using namespace MATH;
 class Scene1 : public Scene {
@@ -13,6 +17,8 @@ private:
 	SDL_Renderer* renderer;	// the renderer associated with SDL window
 	Matrix4 projectionMatrix;	// set in OnCreate()
     Matrix4     inverseProjection;	// set in OnCreate()
+	Randomizer* randomizer;
+
 
 public:
 	// This constructor may be different from what you've seen before

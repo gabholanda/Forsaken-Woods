@@ -40,9 +40,27 @@ bool Scene1::OnCreate() {
 void Scene1::OnDestroy() {}
 
 void Scene1::Update(const float deltaTime) {
-
 	// Update player
 	game->getPlayer()->Update(deltaTime);
+	int selectedWeapon = randomizer->RandomNumberForWeapon();
+	Gun* selectedGun = nullptr;
+	switch (selectedWeapon)
+	{
+	case 1:
+		selectedGun = new Pistol();
+		std::cout << "Pistol" << std::endl;
+		break;
+	case 2:
+		std::cout << "smth else" << std::endl;
+		break;
+	case 3:
+		std::cout << "smth else2" << std::endl;
+		break;
+	default:
+		std::cout << "smth else 3" << std::endl;
+		break;
+	}
+	
 }
 
 void Scene1::Render() {
