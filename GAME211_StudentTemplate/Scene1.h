@@ -1,7 +1,6 @@
 #ifndef SCENE1_H
 #define SCENE1_H
 
-#include <MMath.h>
 #include "Scene.h"
 
 using namespace MATH;
@@ -28,7 +27,7 @@ public:
 	float getxAxis() { return xAxis; }
 	float getyAxis() { return yAxis; }
 	SDL_Window* getWindow() { return window; }
-    Matrix4 getProjectionMatrix() { return projectionMatrix; }
+    Matrix4 getProjectionMatrix() { return camera->getProjectionMatrix(); }
 	Matrix4 getInverseMatrix() { return inverseProjection; }
 };
 

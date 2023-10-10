@@ -5,12 +5,14 @@
 #include <SDL_image.h>
 #include <MMath.h>
 #include "GameManager.h"
+#include "PlayerCamera.h"
 
 using namespace MATH;
 
 class Scene {
 public:
     class GameManager* game = NULL;
+	class PlayerCamera* camera;
 	virtual bool OnCreate() = 0;
 	virtual void OnDestroy() = 0;
 	virtual void Update(const float time) = 0;
