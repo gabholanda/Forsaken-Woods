@@ -59,16 +59,16 @@ void PlayerBody::HandleEvents(const SDL_Event& event)
     if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
         switch (event.key.keysym.scancode) {
         case SDL_SCANCODE_W:
-            vel.y = movementSpeed * 1.0f;
+            vel.y = movementSpeed;
             break;
         case SDL_SCANCODE_A:
-            vel.x = -(movementSpeed * 1.0f);
+            vel.x = -(movementSpeed);
             break;
         case SDL_SCANCODE_S:
-            vel.y = -(movementSpeed * 1.0f);
+            vel.y = -(movementSpeed);
             break;
         case SDL_SCANCODE_D:
-            vel.x = movementSpeed * 1.0f;
+            vel.x = movementSpeed;
             break;
         }
     }
