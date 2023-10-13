@@ -55,27 +55,44 @@ void PlayerBody::Render(float scale)
 
 void PlayerBody::HandleEvents(const SDL_Event& event)
 {
-	switch (event.type) {
-	case SDL_KEYDOWN:
-		switch (event.key.keysym.scancode) {
-		case SDL_SCANCODE_W:
-			// Move positive y
-			pos.y += 1;
-			break;
-		case SDL_SCANCODE_S:
-			// Move negative y
-			pos.y -= 1;
-			break;
-		case SDL_SCANCODE_A:
-			// Move negative x
-			pos.x -= 1;
-			break;
-		case SDL_SCANCODE_D:
-			// Move positive x
-			pos.x += 1;
-			break;
-		}
-	}
+
+    if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+        switch (event.key.keysym.scancode) {
+        case SDL_SCANCODE_W:
+            vel.y = movementSpeed;
+            break;
+        case SDL_SCANCODE_A:
+            vel.x = -(movementSpeed);
+            break;
+        case SDL_SCANCODE_S:
+            vel.y = -(movementSpeed);
+            break;
+        case SDL_SCANCODE_D:
+            vel.x = movementSpeed;
+            break;
+        }
+    }
+    if (event.type == SDL_KEYUP && event.key.repeat == 0) {
+        switch (event.key.keysym.scancode) {
+        case SDL_SCANCODE_W:
+            vel.y = 0;
+            break;
+        case SDL_SCANCODE_A:
+            vel.x = 0;
+            break;
+        case SDL_SCANCODE_S:
+            vel.y = 0;
+            break;
+        case SDL_SCANCODE_D:
+            vel.x = 0;
+            break;
+        }
+    }
+
+    if (VMath::mag(vel) > VERY_SMALL) {
+        vel = VMath::normalize(vel) * movementSpeed;
+    }
+    // etc
 }
 
 void PlayerBody::Update(float deltaTime)
