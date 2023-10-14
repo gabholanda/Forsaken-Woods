@@ -1,6 +1,7 @@
 #include "Scene1.h"
 #include <VMath.h>
 #include "PlayerCamera.h"
+#include "EnemyBody.h"
 // See notes about this constructor in Scene1.h.
 Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
 	window = sdlWindow_;
@@ -24,13 +25,25 @@ bool Scene1::OnCreate() {
 
 	// Set player image to PacMan
 
-	SDL_Surface* image;
-	SDL_Texture* texture;
+	SDL_Surface* playerImage;
+	SDL_Texture* playerTexture;
 
-	image = IMG_Load("rogue.png");
-	texture = SDL_CreateTextureFromSurface(renderer, image);
-	game->getPlayer()->setImage(image);
-	game->getPlayer()->setTexture(texture);
+	playerImage = IMG_Load("rogue.png");
+	playerTexture = SDL_CreateTextureFromSurface(renderer, playerImage);
+	game->getPlayer()->setImage(playerImage);
+	game->getPlayer()->setTexture(playerTexture);
+	
+
+	SDL_Surface* enemyImage;
+	SDL_Texture* enemyTexture;
+
+	enemyImage = IMG_Load("rogue.png");
+	enemyTexture = SDL_CreateTextureFromSurface(renderer, enemyImage);
+	for (EnemyBody* enemy : game->getEnemies()) {
+		enemy->setImage(enemyImage);
+		enemy->setTexture(enemyTexture);
+	}
+
 
 	return true;
 }
@@ -42,6 +55,9 @@ void Scene1::Update(const float deltaTime) {
 	camera->updateCameraPosition();
 	// Update player
 	game->getPlayer()->Update(deltaTime);
+	for (auto& enemy :	game->getEnemies()) {
+		enemy->Update(deltaTime);
+	}
 }
 
 void Scene1::Render() {
@@ -66,6 +82,7 @@ void Scene1::Render() {
 	//	0, nullptr, SDL_FLIP_NONE);
 	// render the player
 	game->RenderPlayer(0.50f);
+	game->RenderEnemy(0.50f);
 
 	SDL_RenderPresent(renderer);
 }

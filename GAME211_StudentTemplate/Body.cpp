@@ -20,7 +20,8 @@ Body::Body(
     float radius_ = 0.0f,
     float orientation_ = 0.0f,
     float rotation_ = 0.0f,
-    float angular_ = 0.0f
+    float angular_ = 0.0f,
+    float movementSpeed_ = 0.0f
 )
 {
     pos = pos_;
@@ -31,6 +32,7 @@ Body::Body(
     orientation = orientation_;
     rotation = rotation_;
     angular = angular_;
+    movementSpeed = movementSpeed_;
 
     image = nullptr;
 }

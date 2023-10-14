@@ -1,24 +1,17 @@
-//
-//  PlayerBody.h
-//  DemoAI
-//
-//  Created by Gail Harris on 2021-Dec-23.
-//
+#ifndef ENEMYBODY_H
+#define ENEMYBODY_H
 
-#ifndef PLAYERBODY_H
-#define PLAYERBODY_H
-
+#pragma once
 #include <stdio.h>
 #include "Body.h"
 #include "GameManager.h"
-
-class PlayerBody : public Body
+class EnemyBody : public Body
 {
 protected:
     class GameManager* game;
 
 public:
-    PlayerBody() : Body{}
+    EnemyBody() : Body{}
     {
         game = nullptr;
     }
@@ -26,7 +19,7 @@ public:
     // Note the last parameter in this constructor!
     // Look in GameManager.cpp to see how this is called.
     // Look in .cpp file, at Render(), to see why game_ is a parameter.
-    PlayerBody(
+    EnemyBody(
         Vec3 pos_, Vec3 vel_, Vec3 accel_,
         float mass_,
         float radius_,
@@ -50,13 +43,16 @@ public:
     {}
 
     // use the base class versions of getters
+    void setPosition(Vec3 newPos) {
+        pos = newPos;
+    }
 
     bool OnCreate();
     void Render(float scale = 1.0f);
-    void HandleEvents(const SDL_Event& event);
     void Update(float deltaTime);
     void setTexture(SDL_Texture* texture_) { texture = texture_; }
+    void moveTowardsPlayer();
 
 };
 
-#endif /* PLAYERBODY_H */
+#endif

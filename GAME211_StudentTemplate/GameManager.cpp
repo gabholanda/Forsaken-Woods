@@ -1,12 +1,15 @@
 #include "GameManager.h"
 #include "Scene1.h"
-
+#include "EnemyBody.h"
 GameManager::GameManager() {
 	windowPtr = nullptr;
 	timer = nullptr;
 	isRunning = true;
 	currentScene = nullptr;
     player = nullptr;
+    for (auto enemy : enemies) {
+        enemy = nullptr;
+    }
 }
 
 bool GameManager::OnCreate() {
@@ -44,6 +47,7 @@ bool GameManager::OnCreate() {
     float orientation = 0.0f;
     float rotation = 0.0f;
     float angular = 0.0f;
+    float movementSpeed = 1.0f;
     Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
     Vec3 velocity(0.0f, 0.0f, 0.0f);
     Vec3 acceleration(0.0f, 0.0f, 0.0f);
@@ -58,11 +62,46 @@ bool GameManager::OnCreate() {
         orientation,
         rotation,
         angular,
+        movementSpeed,
         this
     );
+
+    for (int i = 0; i < 1; i++) {
+        float massEnemy = 1.0f;
+        float radiusEnemy = 0.5f;
+        float orientationEnemy = 0.0f;
+        float rotationEnemy = 0.0f;
+        float angularEnemy = 0.0f;
+        float movementSpeedEnemy = 1.0f;
+        Vec3 positionEnemy(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
+        Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
+        Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
+
+        EnemyBody* newEnemy = new EnemyBody(
+            positionEnemy,
+            velocityEnemy,
+            accelerationEnemy,
+            massEnemy,
+            radiusEnemy,
+            orientationEnemy,
+            rotationEnemy,
+            angularEnemy,
+            movementSpeedEnemy,
+            this
+        );
+
+        enemies.push_back(newEnemy);
+    }
     if ( player->OnCreate() == false ) {
         OnDestroy();
         return false;
+    }
+
+    for (auto& currentEnemy : enemies) {
+        if (currentEnemy->OnCreate() == false) {
+            OnDestroy();
+            return false;
+        }
     }
 
     // need to create Player before validating scene
@@ -139,6 +178,10 @@ void GameManager::OnDestroy(){
 	if (windowPtr) delete windowPtr;
 	if (timer) delete timer;
 	if (currentScene) delete currentScene;
+    if (player) delete player;
+    for (auto& enemy : enemies) {
+        delete enemy;
+    }
 }
 
 // This might be unfamiliar
@@ -155,7 +198,7 @@ Matrix4 GameManager::getProjectionMatrix()
 SDL_Renderer* GameManager::getRenderer()
 {
     // [TODO] might be missing some SDL error checking
-    SDL_Window* window = currentScene->getWindow();
+    SDL_Window* window = currentScene->getWindow(); 
     SDL_Renderer* renderer = SDL_GetRenderer(window);
     return renderer;
 }
@@ -164,6 +207,13 @@ SDL_Renderer* GameManager::getRenderer()
 void GameManager::RenderPlayer(float scale)
 {
     player->Render(scale);
+}
+
+void GameManager::RenderEnemy(float scale)
+{
+    for (auto& enemy : enemies) {
+        enemy->Render(scale);
+    }
 }
 
 void GameManager::LoadScene( int i )
