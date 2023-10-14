@@ -14,8 +14,8 @@ GameManager::GameManager() {
 
 bool GameManager::OnCreate() {
     // My display is 1920 x 1080 but the following seems to work best to fill the screen.
-    //const int SCREEN_WIDTH = 1540;
-    //const int SCREEN_HEIGHT = 860;
+   /* const int SCREEN_WIDTH = 1540;
+    const int SCREEN_HEIGHT = 860;*/
 
     // Use 1000x600 for less than full screen
     const int SCREEN_WIDTH = 1000;
