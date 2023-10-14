@@ -34,7 +34,7 @@ public:
         float orientation_,
         float rotation_,
         float angular_,
-        float movementSpeed
+        float movementSpeed_
     );
 	virtual ~Body();
     virtual void Update(float deltaTime);
