@@ -182,6 +182,7 @@ void GameManager::OnDestroy(){
     for (auto& enemy : enemies) {
         delete enemy;
     }
+    enemies.clear();
 }
 
 // This might be unfamiliar
