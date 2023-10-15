@@ -47,7 +47,7 @@ void Scene1::Update(const float deltaTime) {
 	switch (selectedWeapon)
 	{
 	case 1:
-		selectedGun = new Pistol();
+		//selectedGun = new Pistol();
 		std::cout << "Pistol" << std::endl;
 		break;
 	case 2:
