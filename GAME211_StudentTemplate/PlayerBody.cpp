@@ -19,7 +19,7 @@ bool PlayerBody::OnCreate()
     return true;
 }
 
-void PlayerBody::Render(float scale)
+void PlayerBody::Render()
 {
     // This is why we need game in the constructor, to get the renderer, etc.
     SDL_Renderer* renderer = game->getRenderer();
