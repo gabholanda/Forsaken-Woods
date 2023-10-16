@@ -9,9 +9,12 @@ GameManager::GameManager() {
 	isRunning = true;
 	currentScene = nullptr;
 	player = nullptr;
+
+
 	for (auto enemy : enemies) {
 		enemy = nullptr;
 	}
+
 }
 
 bool GameManager::OnCreate() {
@@ -49,6 +52,9 @@ bool GameManager::OnCreate() {
 	float rotation = 0.0f;
 	float angular = 0.0f;
 	float movementSpeed = 1.0f;
+
+	Gun* gun = Randomizer::getRandomWeapon();
+
 	float scale = 0.5;
 	Vec3 size(1.f, 1.f, 0.0f);
 	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
@@ -57,6 +63,7 @@ bool GameManager::OnCreate() {
 
 	player = new PlayerBody
 	(
+    gun,
 		position,
 		velocity,
 		acceleration,
@@ -98,6 +105,7 @@ bool GameManager::OnCreate() {
 
 		enemies.push_back(newEnemy);
 	}
+
 	if (player->OnCreate() == false) {
 		OnDestroy();
 		return false;
@@ -120,6 +128,7 @@ bool GameManager::OnCreate() {
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 
 	return true;
+	
 }
 
 
@@ -221,6 +230,13 @@ SDL_Renderer* GameManager::getRenderer()
 // This might be unfamiliar
 void GameManager::RenderPlayer()
 {
+
+	player->Render();
+}
+
+void GameManager::LoadScene(int i)
+{
+
 	player->Render();
 }
 
@@ -245,28 +261,6 @@ void GameManager::RenderDebug()
 	}
 }
 
-void GameManager::LoadScene(int i)
-{
-	// cleanup of current scene before loading another one
-	currentScene->OnDestroy();
-	delete currentScene;
-
-	switch (i)
-	{
-	case 1:
-		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
-		break;
-	default:
-		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
-		break;
-	}
-
-	// using ValidateCurrentScene() to safely run OnCreate
-	if (!ValidateCurrentScene())
-	{
-		isRunning = false;
-	}
-}
 
 bool GameManager::ValidateCurrentScene()
 {
@@ -278,3 +272,4 @@ bool GameManager::ValidateCurrentScene()
 	}
 	return true;
 }
+

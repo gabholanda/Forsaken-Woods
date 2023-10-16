@@ -1,10 +1,10 @@
-#include "Scene1.h"
+#include "Scene3.h"
 #include <VMath.h>
 #include "PlayerCamera.h"
 #include "EnemyBody.h"
 #include "Collision.h"
 // See notes about this constructor in Scene1.h.
-Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
+Scene3::Scene3(SDL_Window* sdlWindow_, GameManager* game_) {
 	window = sdlWindow_;
 	game = game_;
 	renderer = SDL_GetRenderer(window);
@@ -13,10 +13,10 @@ Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
 	camera = nullptr;
 }
 
-Scene1::~Scene1() {
+Scene3::~Scene3() {
 }
 
-bool Scene1::OnCreate() {
+bool Scene3::OnCreate() {
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
 
@@ -48,9 +48,9 @@ bool Scene1::OnCreate() {
 	return true;
 }
 
-void Scene1::OnDestroy() {}
+void Scene3::OnDestroy() {}
 
-void Scene1::Update(const float deltaTime) {
+void Scene3::Update(const float deltaTime) {
 
 	camera->updateCameraPosition();
 	// Update player
@@ -65,7 +65,7 @@ void Scene1::Update(const float deltaTime) {
 
 }
 
-void Scene1::Render() {
+void Scene3::Render() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
 	// Testing camera
@@ -92,7 +92,7 @@ void Scene1::Render() {
 	SDL_RenderPresent(renderer);
 }
 
-void Scene1::HandleEvents(const SDL_Event& event)
+void Scene3::HandleEvents(const SDL_Event& event)
 {
 	// send events to player as needed
 	game->getPlayer()->HandleEvents(event);

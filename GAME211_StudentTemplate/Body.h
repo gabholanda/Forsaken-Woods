@@ -8,6 +8,8 @@
 
 using namespace MATH;
 
+class Randomizer;
+
 class Body {
 protected:
 	// inherited classes can access this
@@ -25,6 +27,8 @@ protected:
 	Vec3 imageSizeWorldCoords;
     SDL_Surface* image;
     SDL_Texture* texture;
+
+
 
 public:
     Body();
@@ -67,6 +71,7 @@ public:
 	// Added this as public to deal with my demo
 	// so that mouse position can be copied into a Body.
     virtual void setPos( Vec3 pos );
+
 };
 
 #endif /* BODY_H */

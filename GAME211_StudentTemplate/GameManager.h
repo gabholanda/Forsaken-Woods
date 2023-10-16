@@ -28,6 +28,7 @@ private:
 
 	// This might be unfamiliar
     class PlayerBody *player;
+	Uint32 changeSceneEventType;
 
 	std::vector<EnemyBody*> enemies;
 
@@ -53,6 +54,8 @@ public:
 	void handleEvents();
 	void LoadScene( int i );
     bool ValidateCurrentScene();
+
+	Uint32 getChangeScene();
     
 };
 #endif
