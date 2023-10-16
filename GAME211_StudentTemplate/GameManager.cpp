@@ -1,4 +1,3 @@
-#pragma optimze("",off)
 #include "GameManager.h"
 #include "Scene1.h"
 #include "EnemyBody.h"
