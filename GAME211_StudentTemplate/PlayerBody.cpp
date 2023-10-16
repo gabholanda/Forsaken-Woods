@@ -9,9 +9,9 @@
 
 bool PlayerBody::OnCreate()
 {
-    image = IMG_Load( "Pacman.png" );
-    SDL_Renderer *renderer = game->getRenderer();
-    texture = SDL_CreateTextureFromSurface( renderer, image );
+    image = IMG_Load("Pacman.png");
+    SDL_Renderer* renderer = game->getRenderer();
+    texture = SDL_CreateTextureFromSurface(renderer, image);
     if (image == nullptr) {
         std::cerr << "Can't open the image" << std::endl;
         return false;
@@ -19,10 +19,10 @@ bool PlayerBody::OnCreate()
     return true;
 }
 
-void PlayerBody::Render( float scale )
+void PlayerBody::Render()
 {
     // This is why we need game in the constructor, to get the renderer, etc.
-    SDL_Renderer *renderer = game->getRenderer();
+    SDL_Renderer* renderer = game->getRenderer();
     Matrix4 projectionMatrix = game->getProjectionMatrix();
 
     // square represents the position and dimensions for where to draw the image
@@ -47,28 +47,28 @@ void PlayerBody::Render( float scale )
     square.h = static_cast<int>(h);
 
     // Convert character orientation from radians to degrees.
-    float orientationDegrees = orientation * 180.0f / M_PI ;
+    float orientationDegrees = orientation * 180.0f / M_PI;
 
-    SDL_RenderCopyEx( renderer, texture, nullptr, &square,
-        orientationDegrees, nullptr, SDL_FLIP_NONE );
+    SDL_RenderCopyEx(renderer, texture, nullptr, &square,
+        orientationDegrees, nullptr, SDL_FLIP_NONE);
 }
 
-void PlayerBody::HandleEvents( const SDL_Event& event )
+void PlayerBody::HandleEvents(const SDL_Event& event)
 {
 
     if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
         switch (event.key.keysym.scancode) {
         case SDL_SCANCODE_W:
-            vel.y = movementSpeed * 1.0f;
+            vel.y = movementSpeed;
             break;
         case SDL_SCANCODE_A:
-            vel.x = -(movementSpeed * 1.0f);
+            vel.x = -(movementSpeed);
             break;
         case SDL_SCANCODE_S:
-            vel.y = -(movementSpeed * 1.0f);
+            vel.y = -(movementSpeed);
             break;
         case SDL_SCANCODE_D:
-            vel.x = movementSpeed * 1.0f;
+            vel.x = movementSpeed;
             break;
         }
     }
@@ -95,12 +95,11 @@ void PlayerBody::HandleEvents( const SDL_Event& event )
     // etc
 }
 
-void PlayerBody::Update( float deltaTime )
+void PlayerBody::Update(float deltaTime)
 {
     // Update position, call Update from base class
     // Note that would update velocity too, and rotation motion
 
-    Body::Update( deltaTime );
+    Body::Update(deltaTime);
 
 }
-

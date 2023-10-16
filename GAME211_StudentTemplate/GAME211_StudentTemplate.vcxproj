@@ -20,11 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Body.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="EnemyBody.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PlayerBody.cpp" />
     <ClCompile Include="Randomizer.cpp" />
+    <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="Scene1.cpp" />
     <ClCompile Include="Scene2.cpp" />
     <ClCompile Include="Scene3.cpp" />
@@ -34,11 +38,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="EnemyBody.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="Pistol.h" />
     <ClInclude Include="PlayerBody.h" />
     <ClInclude Include="Randomizer.h" />
+
+    <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scene1.h" />
     <ClInclude Include="Scene2.h" />

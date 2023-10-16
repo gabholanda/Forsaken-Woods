@@ -2,12 +2,13 @@
 #define GAMEMANAGER_H
 #include <SDL.h>
 #include <iostream>
+#include <vector>
 #include "Window.h"
 #include "Timer.h"
 #include "Scene.h"
 #include "PlayerBody.h"
 
-
+class EnemyBody;
 class GameManager {
 private:
 	/// These are called "forward declarations" The idea is that a pointer is 
@@ -22,11 +23,14 @@ private:
 	class Window *windowPtr;
 	class Timer *timer;
 	bool isRunning;
+	bool isDebugging;
 	class Scene *currentScene;
 
 	// This might be unfamiliar
     class PlayerBody *player;
 	Uint32 changeSceneEventType;
+
+	std::vector<EnemyBody*> enemies;
 
 public:
 	GameManager();
@@ -40,7 +44,10 @@ public:
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
     PlayerBody* getPlayer(){ return player; }
-	void RenderPlayer(float scale = 1.0f);
+	std::vector<EnemyBody*> getEnemies() { return enemies; }
+	void RenderPlayer();
+	void RenderEnemy();
+	void RenderDebug();
 	SDL_Renderer* getRenderer();
 
 	void Run();
