@@ -3,13 +3,18 @@
 #define RANDOMIZER_H
 #include "Gun.h"
 #include "Pistol.h"
+#include "Submachine.h"
+#include "Scene1.h"
+#include "Scene2.h"
+#include "Scene3.h"
 
-class Randomizer
+static class Randomizer
 {	
 public:
 	
-	int RandomNumberForWeapon();
+	static Gun* getRandomWeapon();
 	int RandomNumberForEnemy();
+	static Scene* RandomRoom(SDL_Window* sdlWindow, GameManager* game_);
 };
 
 #endif

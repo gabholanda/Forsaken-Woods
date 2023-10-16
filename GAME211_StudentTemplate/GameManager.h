@@ -26,6 +26,7 @@ private:
 
 	// This might be unfamiliar
     class PlayerBody *player;
+	Uint32 changeSceneEventType;
 
 public:
 	GameManager();
@@ -46,6 +47,8 @@ public:
 	void handleEvents();
 	void LoadScene( int i );
     bool ValidateCurrentScene();
+
+	Uint32 getChangeScene();
     
 };
 #endif

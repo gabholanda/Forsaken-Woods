@@ -16,6 +16,7 @@ class PlayerBody : public Body
 {
 protected:
     class GameManager* game;
+    class Gun* gun;
 
 public:
     PlayerBody() : Body{}
@@ -27,6 +28,7 @@ public:
     // Look in GameManager.cpp to see how this is called.
     // Look in .cpp file, at Render(), to see why game_ is a parameter.
     PlayerBody(
+        Gun* gun_,
         Vec3 pos_, Vec3 vel_, Vec3 accel_,
         float mass_,
         float radius_,
@@ -47,7 +49,9 @@ public:
         , movementSpeed_
     }
         , game{ game_ }
-    {}
+    {
+        gun = gun_;
+    }
     
     // use the base class versions of getters
 
