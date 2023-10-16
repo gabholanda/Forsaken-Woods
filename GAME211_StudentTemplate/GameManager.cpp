@@ -232,7 +232,7 @@ SDL_Renderer* GameManager::getRenderer()
 void GameManager::RenderPlayer()
 {
 
-	player->Render(scale);
+	player->Render();
 }
 
 void GameManager::LoadScene(int i)
@@ -262,29 +262,6 @@ void GameManager::RenderDebug()
 	}
 }
 
-void GameManager::LoadScene(int i)
-{
-
-	// cleanup of current scene before loading another one
-	currentScene->OnDestroy();
-	delete currentScene;
-
-	switch (i)
-	{
-	case 1:
-		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
-		break;
-	default:
-		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
-		break;
-	}
-
-	// using ValidateCurrentScene() to safely run OnCreate
-	if (!ValidateCurrentScene())
-	{
-		isRunning = false;
-	}
-}
 
 bool GameManager::ValidateCurrentScene()
 {
