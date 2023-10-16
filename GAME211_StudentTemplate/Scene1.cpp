@@ -49,6 +49,7 @@ void Scene1::Update(const float deltaTime) {
 	// Update player
 	game->getPlayer()->Update(deltaTime);
 	for (auto& enemy : game->getEnemies()) {
+		enemy->moveTowardsPlayer(deltaTime, game->getPlayer());
 		enemy->Update(deltaTime);
 		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
 		{
