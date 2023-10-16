@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "Body.h"
 #include "GameManager.h"
+#include "PlayerBody.h"
 class EnemyBody : public Body
 {
 protected:
@@ -44,6 +45,8 @@ public:
         , game{ game_ }
     {}
 
+   
+
     // use the base class versions of getters
     void setPosition(Vec3 newPos) {
         pos = newPos;
@@ -53,7 +56,7 @@ public:
     void Render();
     void Update(float deltaTime);
     void setTexture(SDL_Texture* texture_) { texture = texture_; }
-    void moveTowardsPlayer();
+    void moveTowardsPlayer(float deltaTime, PlayerBody* target);
 
 };
 
