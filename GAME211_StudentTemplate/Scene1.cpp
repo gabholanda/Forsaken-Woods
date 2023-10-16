@@ -2,6 +2,7 @@
 #include <VMath.h>
 #include "PlayerCamera.h"
 #include "EnemyBody.h"
+#include "Collision.h"
 // See notes about this constructor in Scene1.h.
 Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
 	window = sdlWindow_;
@@ -27,12 +28,11 @@ bool Scene1::OnCreate() {
 
 	SDL_Surface* playerImage;
 	SDL_Texture* playerTexture;
-
 	playerImage = IMG_Load("rogue.png");
 	playerTexture = SDL_CreateTextureFromSurface(renderer, playerImage);
 	game->getPlayer()->setImage(playerImage);
 	game->getPlayer()->setTexture(playerTexture);
-	
+
 
 	SDL_Surface* enemyImage;
 	SDL_Texture* enemyTexture;
@@ -55,8 +55,12 @@ void Scene1::Update(const float deltaTime) {
 	camera->updateCameraPosition();
 	// Update player
 	game->getPlayer()->Update(deltaTime);
-	for (auto& enemy :	game->getEnemies()) {
+	for (auto& enemy : game->getEnemies()) {
 		enemy->Update(deltaTime);
+		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
+		{
+			std::cout << "Collided" << std::endl;
+		}
 	}
 }
 
@@ -81,9 +85,9 @@ void Scene1::Render() {
 	//SDL_RenderCopyEx(renderer, texture, nullptr, &square,
 	//	0, nullptr, SDL_FLIP_NONE);
 	// render the player
-	game->RenderPlayer(0.50f);
-	game->RenderEnemy(0.50f);
-
+	game->RenderPlayer();
+	game->RenderEnemy();
+	game->RenderDebug();
 	SDL_RenderPresent(renderer);
 }
 

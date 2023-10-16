@@ -23,6 +23,7 @@ private:
 	class Window *windowPtr;
 	class Timer *timer;
 	bool isRunning;
+	bool isDebugging;
 	class Scene *currentScene;
 
 	// This might be unfamiliar
@@ -43,8 +44,9 @@ public:
 	Matrix4 getProjectionMatrix();
     PlayerBody* getPlayer(){ return player; }
 	std::vector<EnemyBody*> getEnemies() { return enemies; }
-	void RenderPlayer(float scale = 1.0f);
-	void RenderEnemy(float scale = 1.0f);
+	void RenderPlayer();
+	void RenderEnemy();
+	void RenderDebug();
 	SDL_Renderer* getRenderer();
 
 	void Run();

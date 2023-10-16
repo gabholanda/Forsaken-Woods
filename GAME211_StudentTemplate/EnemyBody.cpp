@@ -13,7 +13,7 @@ bool EnemyBody::OnCreate()
 }
 
 
-void EnemyBody::Render(float scale)
+void EnemyBody::Render()
 {
 	// This is why we need game in the constructor, to get the renderer, etc.
 	SDL_Renderer* renderer = game->getRenderer();
