@@ -92,6 +92,10 @@ void Scene3::Render() {
 	SDL_RenderPresent(renderer);
 }
 
+void Scene3::PostRenderUpdate(const float time)
+{
+}
+
 void Scene3::HandleEvents(const SDL_Event& event)
 {
 	// send events to player as needed

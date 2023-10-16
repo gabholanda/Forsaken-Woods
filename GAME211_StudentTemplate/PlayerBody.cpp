@@ -9,7 +9,7 @@
 
 bool PlayerBody::OnCreate()
 {
-    image = IMG_Load("Pacman.png");
+    image = IMG_Load("Rogue.png");
     SDL_Renderer* renderer = game->getRenderer();
     texture = SDL_CreateTextureFromSurface(renderer, image);
     if (image == nullptr) {
@@ -72,6 +72,7 @@ void PlayerBody::HandleEvents(const SDL_Event& event)
             break;
         }
     }
+
     if (event.type == SDL_KEYUP && event.key.repeat == 0) {
         switch (event.key.keysym.scancode) {
         case SDL_SCANCODE_W:

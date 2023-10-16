@@ -15,9 +15,9 @@ private:
 	SDL_Window* window;		// an SDL window with a SDL renderer
 	SDL_Renderer* renderer;	// the renderer associated with SDL window
 	Matrix4 projectionMatrix;	// set in OnCreate()
-    Matrix4     inverseProjection;	// set in OnCreate()
+	Matrix4     inverseProjection;	// set in OnCreate()
 	Randomizer* randomizer;
-
+	std::vector<int> bulletsToDestroy;
 
 public:
 	// This constructor may be different from what you've seen before
@@ -29,11 +29,12 @@ public:
 	void OnDestroy();
 	void Update(const float time);
 	void Render();
-    void HandleEvents(const SDL_Event &event);
+	void PostRenderUpdate(const float time);
+	void HandleEvents(const SDL_Event& event);
 	float getxAxis() { return xAxis; }
 	float getyAxis() { return yAxis; }
 	SDL_Window* getWindow() { return window; }
-    Matrix4 getProjectionMatrix() { return camera->getProjectionMatrix(); }
+	Matrix4 getProjectionMatrix() { return camera->getProjectionMatrix(); }
 	Matrix4 getInverseMatrix() { return inverseProjection; }
 };
 

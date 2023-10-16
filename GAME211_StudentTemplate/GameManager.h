@@ -9,6 +9,8 @@
 #include "PlayerBody.h"
 
 class EnemyBody;
+class Bullet;
+
 class GameManager {
 private:
 	/// These are called "forward declarations" The idea is that a pointer is 
@@ -20,16 +22,16 @@ private:
 	/// If that was too much for your brain, just #include "Window.h" and declare
 	/// Window *ptr and don't use the word "class"  This is a second semester C++
 	/// topic anyway
-	class Window *windowPtr;
-	class Timer *timer;
+	class Window* windowPtr;
+	class Timer* timer;
 	bool isRunning;
 	bool isDebugging;
-	class Scene *currentScene;
+	class Scene* currentScene;
 
 	// This might be unfamiliar
-    class PlayerBody *player;
-	Uint32 changeSceneEventType;
+	class PlayerBody* player;
 
+	std::vector<Bullet*> bullets;
 	std::vector<EnemyBody*> enemies;
 
 public:
@@ -43,20 +45,20 @@ public:
 	float getSceneHeight();
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
-    PlayerBody* getPlayer(){ return player; }
+	PlayerBody* getPlayer() { return player; }
 	std::vector<EnemyBody*> getEnemies() { return enemies; }
+	std::vector<Bullet*>* getBullets() { return &bullets; }
 	void RenderPlayer();
 	void RenderEnemy();
+	void RenderBullets();
 	void RenderDebug();
 	SDL_Renderer* getRenderer();
 
 	void Run();
 	void handleEvents();
-	void LoadScene( int i );
-    bool ValidateCurrentScene();
+	void LoadScene(int i);
+	bool ValidateCurrentScene();
 
-	Uint32 getChangeScene();
-    
 };
 #endif
 

@@ -1,6 +1,7 @@
 #include "GameManager.h"
 #include "Scene1.h"
 #include "EnemyBody.h"
+#include "Bullet.h"
 #include "Collision.h"
 
 GameManager::GameManager() {
@@ -15,6 +16,9 @@ GameManager::GameManager() {
 		enemy = nullptr;
 	}
 
+	for (Bullet* bullet : bullets) {
+		bullet = nullptr;
+	}
 }
 
 bool GameManager::OnCreate() {
@@ -63,7 +67,7 @@ bool GameManager::OnCreate() {
 
 	player = new PlayerBody
 	(
-    gun,
+		gun,
 		position,
 		velocity,
 		acceleration,
@@ -128,7 +132,7 @@ bool GameManager::OnCreate() {
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 
 	return true;
-	
+
 }
 
 
@@ -143,7 +147,7 @@ void GameManager::Run() {
 		timer->UpdateFrameTicks();
 		currentScene->Update(timer->GetDeltaTime());
 		currentScene->Render();
-
+		currentScene->PostRenderUpdate(timer->GetDeltaTime());
 		/// Keep the event loop running at a proper rate
 		SDL_Delay(timer->GetSleepTime(60)); ///60 frames per sec
 	}
@@ -200,8 +204,13 @@ void GameManager::OnDestroy() {
 	if (timer) delete timer;
 	if (currentScene) delete currentScene;
 	if (player) delete player;
-	for (auto& enemy : enemies) {
+	for (EnemyBody* enemy : enemies) {
 		delete enemy;
+	}
+	enemies.clear();
+
+	for (Bullet* bullet : bullets) {
+		delete bullet;
 	}
 	enemies.clear();
 }
@@ -247,6 +256,13 @@ void GameManager::RenderEnemy()
 	}
 }
 
+void GameManager::RenderBullets()
+{
+	for (Bullet* bullet : bullets) {
+		bullet->Render();
+	}
+}
+
 void GameManager::RenderDebug()
 {
 	if (isDebugging)
@@ -256,6 +272,13 @@ void GameManager::RenderDebug()
 			if (isDebugging)
 			{
 				Collision::DisplayDebugCollision(*enemy, *this);
+			}
+		}
+
+		for (Bullet* bullet : bullets) {
+			if (isDebugging)
+			{
+				Collision::DisplayDebugCollision(*bullet, *this);
 			}
 		}
 	}

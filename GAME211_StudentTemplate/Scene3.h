@@ -30,6 +30,7 @@ public:
 	void OnDestroy();
 	void Update(const float time);
 	void Render();
+	void PostRenderUpdate(const float time);
 	void HandleEvents(const SDL_Event& event);
 	float getxAxis() { return xAxis; }
 	float getyAxis() { return yAxis; }
