@@ -39,7 +39,7 @@ void Collision::DisplayDebugCollision(Body& A, GameManager& manager)
 	square.h = static_cast<int>(h);
 
 	// Convert character orientation from radians to degrees.
-	float orientationDegrees = 0;
+	float orientationDegrees = A.getOrientation() * 180.0f / M_PI;;
 
 	SDL_RenderCopyEx(manager.getRenderer(), debugTexture, nullptr, &square,
 		orientationDegrees, nullptr, SDL_FLIP_NONE);
