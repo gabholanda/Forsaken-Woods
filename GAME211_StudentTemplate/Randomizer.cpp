@@ -1,8 +1,11 @@
 #include "Randomizer.h"
 #include <random>
+
+std::vector<Gun*> Randomizer::weapons = {};
+
 Gun* Randomizer::getRandomWeapon()
 {
-	std::vector<Gun*> weapons{
+	weapons = {
 	new Pistol(),
 	new Submachine()
 	};
@@ -14,16 +17,16 @@ Gun* Randomizer::getRandomWeapon()
 
 }
 
-int Randomizer::RandomNumberForEnemy()
-{
-	std::vector<int> enemies{ 1, 2, 3 };
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<int> distribution(0, enemies.size() - 1);
-	int index = distribution(gen);
-
-	return enemies[index];
-}
+//int Randomizer::RandomNumberForEnemy()
+//{
+//	std::vector<int> enemies{ 1, 2, 3 };
+//	std::random_device rd;
+//	std::mt19937 gen(rd());
+//	std::uniform_int_distribution<int> distribution(0, enemies.size() - 1);
+//	int index = distribution(gen);
+//
+//	return enemies[index];
+//}
 
  Scene* Randomizer::RandomRoom(SDL_Window* sdlWindow, GameManager* game_)
 {

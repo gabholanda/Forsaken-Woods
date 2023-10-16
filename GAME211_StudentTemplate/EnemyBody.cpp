@@ -63,7 +63,7 @@ void EnemyBody::moveTowardsPlayer(float deltaTime, PlayerBody* target)
 	float angle = std::atan2(dy, dx);
 
 	rotation = angle;
-	float chasingSpeed = 0.3f;
+	float chasingSpeed = 0.2f;
 	vel.x = chasingSpeed * std::cos(rotation);
 	vel.y = chasingSpeed * std::sin(rotation);
 
