@@ -53,4 +53,20 @@ void EnemyBody::Update(float deltaTime)
 	// Note that would update velocity too, and rotation motion
 
 	Body::Update(deltaTime);
+
+}
+
+void EnemyBody::moveTowardsPlayer(float deltaTime, PlayerBody* target)
+{
+	float dx = target->getPos().x - pos.x;
+	float dy = target->getPos().y - pos.y;
+	float angle = std::atan2(dy, dx);
+
+	rotation = angle;
+	float chasingSpeed = 0.3f;
+	vel.x = chasingSpeed * std::cos(rotation);
+	vel.y = chasingSpeed * std::sin(rotation);
+
+	pos.x += vel.x * deltaTime;
+	pos.y += vel.y * deltaTime;
 }
