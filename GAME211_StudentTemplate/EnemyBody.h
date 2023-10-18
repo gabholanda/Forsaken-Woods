@@ -56,7 +56,7 @@ public:
     void Render();
     void Update(float deltaTime);
     void setTexture(SDL_Texture* texture_) { texture = texture_; }
-    void moveTowardsPlayer(float deltaTime, PlayerBody* target);
+    void MoveTowardsPlayer(float deltaTime, PlayerBody* target);
 
 };
 

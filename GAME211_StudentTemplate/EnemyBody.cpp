@@ -1,4 +1,5 @@
 #include "EnemyBody.h"
+#include "RotationUtils.h"
 
 bool EnemyBody::OnCreate()
 {
@@ -56,17 +57,10 @@ void EnemyBody::Update(float deltaTime)
 
 }
 
-void EnemyBody::moveTowardsPlayer(float deltaTime, PlayerBody* target)
+void EnemyBody::MoveTowardsPlayer(float deltaTime, PlayerBody* target)
 {
-	float dx = target->getPos().x - pos.x;
-	float dy = target->getPos().y - pos.y;
-	float angle = std::atan2(dy, dx);
-
-	rotation = angle;
-	float chasingSpeed = 0.2f;
-	vel.x = chasingSpeed * std::cos(rotation);
-	vel.y = chasingSpeed * std::sin(rotation);
-
-	pos.x += vel.x * deltaTime;
-	pos.y += vel.y * deltaTime;
+	RotationUtils::RotateTowardsTarget(orientation, target->getPos(), pos);
+	Vec3 direction = VMath::normalize(target->getPos() - pos);
+	pos.x += direction.x * movementSpeed * deltaTime;
+	pos.y += direction.y * movementSpeed * deltaTime;
 }
