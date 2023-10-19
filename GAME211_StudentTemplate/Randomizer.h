@@ -11,10 +11,11 @@
 static class Randomizer
 {	
 public:
-	
 	static Gun* getRandomWeapon();
 	int RandomNumberForEnemy();
 	static Scene* RandomRoom(SDL_Window* sdlWindow, GameManager* game_);
+private:
+	static std::vector<Gun*> weapons;
 };
 
 #endif
