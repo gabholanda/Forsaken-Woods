@@ -49,7 +49,7 @@ void Scene1::Update(const float deltaTime) {
 	// Update player
 	game->getPlayer()->Update(deltaTime);
 	for (auto& enemy : game->getEnemies()) {
-		enemy->moveTowardsPlayer(deltaTime, game->getPlayer());
+		enemy->MoveTowardsPlayer(deltaTime, game->getPlayer());
 		enemy->Update(deltaTime);
 		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
 		{
@@ -104,44 +104,4 @@ void Scene1::HandleEvents(const SDL_Event& event)
 {
 	// send events to player as needed
 	game->getPlayer()->HandleEvents(event);
-
-	if (event.type == SDL_MOUSEBUTTONDOWN)
-	{
-		if (Gun* gun = game->getPlayer()->GetGun())
-		{
-			int x, y;
-			SDL_GetMouseState(&x, &y);
-			Vec3 mousePos = MMath::inverse(game->getProjectionMatrix()) * Vec3(float(x), float(y), 0.0f);
-			Vec3 direction = mousePos - game->getPlayer()->getPos();
-			float mass = 1.0f;
-			float desiredAngle = std::atan2(direction.y, direction.x);
-			float orientation = -desiredAngle;
-			float rotation = 0.0f;
-			float angular = 0.0f;
-			float movementSpeed = 1.0f;
-			float scale = 0.5f;
-			float lifeTime = 2.f;
-			Vec3 size(0.5f, 0.5f, 0.0f);
-			Vec3 position = game->getPlayer()->getPos();
-			Vec3 velocity(0.0f, 0.0f, 0.0f);
-			Vec3 acceleration(0.0f, 0.0f, 0.0f);
-			Bullet* bullet = new Bullet(
-				gun,
-				position,
-				velocity,
-				acceleration,
-				size,
-				mass,
-				orientation,
-				rotation,
-				angular,
-				movementSpeed,
-				scale,
-				lifeTime,
-				game);
-			bullet->OnCreate();
-			bullet->SetDirection(direction);
-			game->getBullets()->push_back(bullet);
-		}
-	}
 }
