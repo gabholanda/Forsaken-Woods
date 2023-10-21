@@ -29,19 +29,19 @@ void Gun::Shoot()
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		Vec3 mousePos = MMath::inverse(manager->getProjectionMatrix()) * Vec3(float(x), float(y), 0.0f);
-		Vec3 direction = mousePos - gunOwner->getPos();
+		Vec3 direction = VMath::normalize(mousePos - gunOwner->getPos());
 		float desiredAngle = std::atan2(direction.y, direction.x);
 		float orientation = -desiredAngle;
 
 		float mass = 1.0f;
 		float rotation = 0.0f;
 		float angular = 0.0f;
-		float movementSpeed = 1.0f;
+		float movementSpeed = 20.0f;
 		float scale = 0.5f;
 		float lifeTime = 2.f;
 
 		Vec3 size(0.5f, 0.5f, 0.0f);
-		Vec3 position = gunOwner->getPos();
+		Vec3 position = gunOwner->getPos() + direction * 1.2f;
 		Vec3 velocity(0.0f, 0.0f, 0.0f);
 		Vec3 acceleration(0.0f, 0.0f, 0.0f);
 
