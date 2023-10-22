@@ -44,7 +44,6 @@ void Scene1::OnDestroy()
 }
 
 void Scene1::Update(const float deltaTime) {
-
 	camera->updateCameraPosition();
 	// Update player
 	game->getPlayer()->Update(deltaTime);
@@ -56,6 +55,7 @@ void Scene1::Update(const float deltaTime) {
 			std::cout << "Collided" << std::endl;
 		}
 	}
+
 
 	for (int i = 0; i < game->getBullets()->size(); i++)
 	{
