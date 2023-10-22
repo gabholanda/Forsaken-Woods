@@ -1,6 +1,7 @@
 #ifndef BODY_H
 #define BODY_H
-
+#include "GameObject.h"
+#include "IRender.h"
 #include <MMath.h>
 #include <VMath.h>
 #include <SDL.h>
@@ -10,67 +11,48 @@ using namespace MATH;
 
 class Randomizer;
 
-class Body {
+class Body : public GameObject, public IRender {
 protected:
 	// inherited classes can access this
-	Vec3 pos;
 	Vec3 vel;
 	Vec3 accel;
-    Vec3 size;           // box size
+	Vec3 size;           // box size
 	float mass;
-    float orientation;		// facing this direction
-    float rotation;			// rotating at this speed (radians per second?)
-    float angular;          // angular acceleration
-    float movementSpeed;
-    float scale;
+	float rotation;			// rotating at this speed (radians per second?)
+	float angular;          // angular acceleration
+	float movementSpeed;
+	float scale;
 
 	Vec3 imageSizeWorldCoords;
-    SDL_Surface* image;
-    SDL_Texture* texture;
+	SDL_Surface* image;
+	SDL_Texture* texture;
 
 
 
 public:
-    Body();
+	Body();
 	Body(
-        Vec3 pos_, Vec3 vel_, Vec3 accel_,
-        Vec3 size_,
-        float mass_,
-        float orientation_,
-        float rotation_,
-        float angular_,
-        float movementSpeed_,
-        float scale_
-    );
+		Vec3 pos_, Vec3 vel_, Vec3 accel_,
+		Vec3 size_,
+		float mass_,
+		float orientation_,
+		float rotation_,
+		float angular_,
+		float movementSpeed_,
+		float scale_
+	);
 	virtual ~Body();
-    virtual void Update(float deltaTime);
-    virtual void ApplyForce(Vec3 force_);
-    virtual Vec3 getPos() { return pos; }
-    virtual Vec3 getVel() { return vel; }
-    virtual Vec3 getAccel() { return accel; }
-    virtual Vec3 getSize() { return size; }
-    virtual float getMass() { return mass; }
-    virtual float getOrientation() { return orientation; }
-    virtual float getRotation() { return rotation; }
-    virtual float getAngular() { return angular; }
-    virtual float getScale() { return scale; }
+	virtual void Update(float deltaTime);
+	virtual void ApplyForce(Vec3 force_);
+	virtual Vec3 getVel() { return vel; }
+	virtual Vec3 getAccel() { return accel; }
+	virtual Vec3 getSize() { return size; }
+	virtual float getMass() { return mass; }
+	virtual float getRotation() { return rotation; }
+	virtual float getAngular() { return angular; }
+	virtual float getScale() { return scale; }
 
-    virtual void setImage(SDL_Surface* image_) { image = image_; }
-    virtual SDL_Surface* getImage() { return image; }
-
-    virtual void setImageSizeWorldCoords(Vec3 imageSizeWorldCoords_)
-    {
-        imageSizeWorldCoords = imageSizeWorldCoords_;
-	}
-
-    virtual void setTexture( SDL_Texture* texture_ ) { texture = texture_; }
-    virtual SDL_Texture* getTexture() { return texture; }
-
-    virtual void HandleEvents( const SDL_Event& event );
-
-	// Added this as public to deal with my demo
-	// so that mouse position can be copied into a Body.
-    virtual void setPos( Vec3 pos );
+	virtual void HandleEvents(const SDL_Event& event);
 
 };
 

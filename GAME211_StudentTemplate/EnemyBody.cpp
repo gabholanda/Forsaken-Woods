@@ -3,7 +3,7 @@
 
 bool EnemyBody::OnCreate()
 {
-	image = IMG_Load("Pacman.png");
+	image = IMG_Load("Rogue.png");
 	SDL_Renderer* renderer = game->getRenderer();
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	if (image == nullptr) {

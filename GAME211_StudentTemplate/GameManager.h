@@ -7,6 +7,8 @@
 #include "Timer.h"
 #include "Scene.h"
 #include "PlayerBody.h"
+#include "SpritesheetReader.h"
+#include "Tile.h"
 
 class EnemyBody;
 class Bullet;
@@ -33,7 +35,9 @@ private:
 
 	std::vector<Bullet*> bullets;
 	std::vector<EnemyBody*> enemies;
+	std::vector<Tile*> tiles;
 
+	SpritesheetReader* backgroundReader;
 public:
 	GameManager();
 	~GameManager();
@@ -48,9 +52,12 @@ public:
 	PlayerBody* getPlayer() { return player; }
 	std::vector<EnemyBody*> getEnemies() { return enemies; }
 	std::vector<Bullet*>* getBullets() { return &bullets; }
+	std::vector<Tile*>* getTiles() { return &tiles; }
+	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
 	void RenderPlayer();
 	void RenderEnemy();
 	void RenderBullets();
+	void RenderTiles();
 	void RenderDebug();
 	SDL_Renderer* getRenderer();
 

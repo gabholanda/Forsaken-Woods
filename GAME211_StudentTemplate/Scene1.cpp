@@ -12,6 +12,7 @@ Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
 	xAxis = 25.0f;
 	yAxis = 15.0f;
 	camera = nullptr;
+	randomizer = nullptr;
 }
 
 Scene1::~Scene1() {
@@ -22,8 +23,6 @@ bool Scene1::OnCreate() {
 	SDL_GetWindowSize(window, &w, &h);
 
 	camera = new PlayerCamera(w, h, xAxis, yAxis, game);
-	/// Turn on the SDL imaging subsystem
-	IMG_Init(IMG_INIT_PNG);
 
 	SDL_Surface* enemyImage;
 	SDL_Texture* enemyTexture;
@@ -34,6 +33,14 @@ bool Scene1::OnCreate() {
 		enemy->setImage(enemyImage);
 		enemy->setTexture(enemyTexture);
 	}
+	////Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.f,
+	////	game->getBackgroundSpritesheetReader()->getRows(),
+	////	game->getBackgroundSpritesheetReader()->getColumns(),
+	////	game->getBackgroundSpritesheetReader()->getRects()[1][0],
+	////	game);
+	////exampleTile->setImage(game->getBackgroundSpritesheetReader()->getImage());
+	////exampleTile->setTexture(game->getBackgroundSpritesheetReader()->getTexture());
+	////game->getTiles()->push_back(exampleTile);
 
 	return true;
 }
@@ -82,11 +89,11 @@ void Scene1::Render() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
 
+	game->RenderTiles();
 	game->RenderPlayer();
 	game->RenderEnemy();
 	game->RenderBullets();
 	game->RenderDebug();
-
 	SDL_RenderPresent(renderer);
 }
 
