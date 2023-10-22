@@ -19,7 +19,6 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="RotationUtils.cpp" />
-    <ClCompile Include="Buff.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h" />
@@ -41,6 +40,5 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="RotationUtils.h" />
-    <ClInclude Include="Buff.h" />
   </ItemGroup>
 </Project>

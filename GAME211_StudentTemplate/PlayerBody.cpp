@@ -7,12 +7,7 @@
 
 #include "PlayerBody.h"
 #include "RotationUtils.h"
-#include "Gun.h"
-
-PlayerBody::~PlayerBody()
-{
-	delete gun;
-}
+#include "Bullet.h"
 
 bool PlayerBody::OnCreate()
 {
@@ -104,18 +99,56 @@ void PlayerBody::HandleEvents(const SDL_Event& event)
 
 	if (event.type == SDL_MOUSEBUTTONDOWN)
 	{
-		if (gun)
+		if (Gun* gun = game->getPlayer()->GetGun())
 		{
-			gun->Shoot();
-		}
-
-		if (VMath::mag(vel) > VERY_SMALL) {
-			vel = VMath::normalize(vel) * movementSpeed;
+			// TODO: throw all of this into the Gun class and allow it to control fire rate
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+			Vec3 mousePos = MMath::inverse(game->getProjectionMatrix()) * Vec3(float(x), float(y), 0.0f);
+			Vec3 direction = mousePos - game->getPlayer()->getPos();
+			float mass = 1.0f;
+			float desiredAngle = std::atan2(direction.y, direction.x);
+			float orientation = -desiredAngle;
+			float rotation = 0.0f;
+			float angular = 0.0f;
+			float movementSpeed = 1.0f;
+			float scale = 0.5f;
+			float lifeTime = 2.f;
+			Vec3 size(0.5f, 0.5f, 0.0f);
+			Vec3 position = game->getPlayer()->getPos();
+			Vec3 velocity(0.0f, 0.0f, 0.0f);
+			Vec3 acceleration(0.0f, 0.0f, 0.0f);
+			Bullet* bullet = new Bullet(
+				gun,
+				position,
+				velocity,
+				acceleration,
+				size,
+				mass,
+				orientation,
+				rotation,
+				angular,
+				movementSpeed,
+				scale,
+				lifeTime,
+				game);
+			bullet->OnCreate();
+			bullet->SetDirection(direction);
+			game->getBullets()->push_back(bullet);
 		}
 	}
+
+	if (VMath::mag(vel) > VERY_SMALL) {
+		vel = VMath::normalize(vel) * movementSpeed;
+	}
+	// etc
 }
 
 void PlayerBody::Update(float deltaTime)
 {
+	// Update position, call Update from base class
+	// Note that would update velocity too, and rotation motion
+
 	Body::Update(deltaTime);
+
 }
