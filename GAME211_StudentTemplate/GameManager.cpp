@@ -81,8 +81,6 @@ bool GameManager::OnCreate() {
 		this
 	);
 
-	gun->SetGunOwner(player);
-
 	for (int i = 0; i < 1; i++) {
 		float massEnemy = 1.0f;
 		float orientationEnemy = 0.0f;

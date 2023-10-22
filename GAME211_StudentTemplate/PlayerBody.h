@@ -21,11 +21,8 @@ protected:
 public:
 	PlayerBody() : Body{}
 	{
-		gun = nullptr;
 		game = nullptr;
 	}
-
-	~PlayerBody();
 
 	// Note the last parameter in this constructor!
 	// Look in GameManager.cpp to see how this is called.
@@ -68,7 +65,6 @@ public:
 	void Update(float deltaTime);
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }
 	Gun* GetGun() const { return gun; }
-	GameManager* GetGame() const { return game; }
 };
 
 #endif /* PLAYERBODY_H */
