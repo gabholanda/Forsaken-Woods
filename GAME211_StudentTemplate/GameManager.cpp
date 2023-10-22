@@ -10,7 +10,8 @@ GameManager::GameManager() {
 	isRunning = true;
 	currentScene = nullptr;
 	player = nullptr;
-
+	isDebugging = false;
+	backgroundReader = nullptr;
 
 	for (auto enemy : enemies) {
 		enemy = nullptr;
@@ -29,6 +30,8 @@ bool GameManager::OnCreate() {
 	// Use 1000x600 for less than full screen
 	const int SCREEN_WIDTH = 1000;
 	const int SCREEN_HEIGHT = 600;
+	/// Turn on the SDL imaging subsystem
+	IMG_Init(IMG_INIT_PNG);
 
 	windowPtr = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
 	if (windowPtr == nullptr) {
@@ -55,7 +58,7 @@ bool GameManager::OnCreate() {
 	float orientation = 0.0f;
 	float rotation = 0.0f;
 	float angular = 0.0f;
-	float movementSpeed = 1.0f;
+	float movementSpeed = 10.0f;
 
 	Gun* gun = Randomizer::getRandomWeapon();
 
@@ -89,7 +92,7 @@ bool GameManager::OnCreate() {
 		float rotationEnemy = 0.0f;
 		float angularEnemy = 0.0f;
 		float movementSpeedEnemy = 1.0f;
-		float scale = 0.5;
+		float scaleEnemy = 0.5;
 		Vec3 sizeEnemy(1.f, 1.f, 0.f);
 		Vec3 positionEnemy(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
 		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
@@ -105,7 +108,7 @@ bool GameManager::OnCreate() {
 			rotationEnemy,
 			angularEnemy,
 			movementSpeedEnemy,
-			scale,
+			scaleEnemy,
 			this
 		);
 
@@ -124,6 +127,11 @@ bool GameManager::OnCreate() {
 		}
 	}
 
+	// the image is actually 1120x640, 7 rows of 160 and 7 columns of 4
+	backgroundReader = new SpritesheetReader(160, 160, 7, 4);
+	backgroundReader->LoadFromFile("Ground Tiles_16x16.png", getRenderer());
+	backgroundReader->SetRects();
+
 	// need to create Player before validating scene
 	if (!ValidateCurrentScene()) {
 		OnDestroy();
@@ -132,7 +140,6 @@ bool GameManager::OnCreate() {
 
 	Collision::debugImage = IMG_Load("DebugCollisionBox.png");
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
-
 	return true;
 
 }
@@ -253,7 +260,7 @@ void GameManager::LoadScene(int i)
 
 void GameManager::RenderEnemy()
 {
-	for (auto& enemy : enemies) {
+	for (EnemyBody* enemy : enemies) {
 		enemy->Render();
 	}
 }
@@ -262,6 +269,13 @@ void GameManager::RenderBullets()
 {
 	for (Bullet* bullet : bullets) {
 		bullet->Render();
+	}
+}
+
+void GameManager::RenderTiles()
+{
+	for (Tile* tile : tiles) {
+		tile->Render();
 	}
 }
 
