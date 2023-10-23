@@ -9,6 +9,7 @@
 #include "PlayerBody.h"
 #include "SpritesheetReader.h"
 #include "Tile.h"
+#include "BuffManager.h"
 
 class EnemyBody;
 class Bullet;
@@ -32,6 +33,7 @@ private:
 
 	// This might be unfamiliar
 	class PlayerBody* player;
+	class BuffManager* buffManager;
 
 	std::vector<Bullet*> bullets;
 	std::vector<EnemyBody*> enemies;
@@ -54,6 +56,7 @@ public:
 	std::vector<Bullet*>* getBullets() { return &bullets; }
 	std::vector<Tile*>* getTiles() { return &tiles; }
 	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
+	BuffManager* getBuffManager() { return buffManager; }
 	void RenderPlayer();
 	void RenderEnemy();
 	void RenderBullets();

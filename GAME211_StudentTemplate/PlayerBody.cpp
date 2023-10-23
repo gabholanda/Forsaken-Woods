@@ -9,6 +9,7 @@
 #include "RotationUtils.h"
 #include "Gun.h"
 
+
 PlayerBody::~PlayerBody()
 {
 	delete gun;
@@ -66,16 +67,16 @@ void PlayerBody::HandleEvents(const SDL_Event& event)
 	if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
 		switch (event.key.keysym.scancode) {
 		case SDL_SCANCODE_W:
-			vel.y = movementSpeed;
+			vel.y = movementSpeed; // Move down
 			break;
 		case SDL_SCANCODE_A:
-			vel.x = -(movementSpeed);
+			vel.x = -(movementSpeed); // Move left
 			break;
 		case SDL_SCANCODE_S:
-			vel.y = -(movementSpeed);
+			vel.y = -(movementSpeed); // Move up
 			break;
 		case SDL_SCANCODE_D:
-			vel.x = movementSpeed;
+			vel.x = movementSpeed; // Move right
 			break;
 		}
 	}
@@ -83,16 +84,24 @@ void PlayerBody::HandleEvents(const SDL_Event& event)
 	if (event.type == SDL_KEYUP && event.key.repeat == 0) {
 		switch (event.key.keysym.scancode) {
 		case SDL_SCANCODE_W:
-			vel.y = 0;
+			if (vel.y > 0) {
+				vel.y = 0; // Stop moving up only if the key was released and the entity is moving up
+			}
 			break;
 		case SDL_SCANCODE_A:
-			vel.x = 0;
+			if (vel.x < 0) {
+				vel.x = 0; // Stop moving left only if the key was released and the entity is moving left
+			}
 			break;
 		case SDL_SCANCODE_S:
-			vel.y = 0;
+			if (vel.y < 0) {
+				vel.y = 0; // Stop moving down only if the key was released and the entity is moving down
+			}
 			break;
 		case SDL_SCANCODE_D:
-			vel.x = 0;
+			if (vel.x > 0) {
+				vel.x = 0; // Stop moving right only if the key was released and the entity is moving right
+			}
 			break;
 		}
 	}

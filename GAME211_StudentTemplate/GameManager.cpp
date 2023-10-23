@@ -86,6 +86,22 @@ bool GameManager::OnCreate() {
 
 	gun->SetGunOwner(player);
 
+	buffManager = new BuffManager();
+	for (int i = 0; i < buffManager->GetBuffs().size(); i++) {
+		buffManager->GetBuffs()[i] = new Buff(
+			position,
+			velocity,
+			acceleration,
+			size,
+			mass,
+			orientation,
+			rotation,
+			angular,
+			movementSpeed,
+			scale, 
+			this);
+	}
+
 	for (int i = 0; i < 1; i++) {
 		float massEnemy = 1.0f;
 		float orientationEnemy = 0.0f;
@@ -114,6 +130,7 @@ bool GameManager::OnCreate() {
 
 		enemies.push_back(newEnemy);
 	}
+
 
 	if (player->OnCreate() == false) {
 		OnDestroy();

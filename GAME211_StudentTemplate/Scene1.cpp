@@ -23,7 +23,6 @@ bool Scene1::OnCreate() {
 	SDL_GetWindowSize(window, &w, &h);
 
 	camera = new PlayerCamera(w, h, xAxis, yAxis, game);
-
 	SDL_Surface* enemyImage;
 	SDL_Texture* enemyTexture;
 
@@ -41,7 +40,7 @@ bool Scene1::OnCreate() {
 	////exampleTile->setImage(game->getBackgroundSpritesheetReader()->getImage());
 	////exampleTile->setTexture(game->getBackgroundSpritesheetReader()->getTexture());
 	////game->getTiles()->push_back(exampleTile);
-
+	
 	return true;
 }
 
@@ -60,9 +59,12 @@ void Scene1::Update(const float deltaTime) {
 		enemy->Update(deltaTime);
 		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
 		{
+			game->getBuffManager()->GetBuffs()[1]->ApplyBuff(game->getPlayer());
 			std::cout << "Collided" << std::endl;
+
 		}
 	}
+
 
 	for (int i = 0; i < game->getBullets()->size(); i++)
 	{

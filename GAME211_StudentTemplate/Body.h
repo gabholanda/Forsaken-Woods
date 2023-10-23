@@ -51,6 +51,8 @@ public:
 	virtual float getRotation() { return rotation; }
 	virtual float getAngular() { return angular; }
 	virtual float getScale() { return scale; }
+	virtual float getMovementSpeed() { return movementSpeed; }
+	virtual void setMovementSpeed(float movementSpeed_) { movementSpeed = movementSpeed_; }
 
 	virtual void HandleEvents(const SDL_Event& event);
 
