@@ -120,12 +120,23 @@ bool GameManager::OnCreate() {
 		return false;
 	}
 
+	changeSceneEventType = SDL_RegisterEvents(3);
+	if (changeSceneEventType == ((Uint32)-1))
+	{
+		{
+			OnDestroy();
+			return false;
+		}
+	}
+
 	for (auto& currentEnemy : enemies) {
 		if (currentEnemy->OnCreate() == false) {
 			OnDestroy();
 			return false;
 		}
 	}
+
+
 
 	// the image is actually 1120x640, 7 rows of 160 and 7 columns of 4
 	backgroundReader = new SpritesheetReader(160, 160, 7, 4);
@@ -142,7 +153,9 @@ bool GameManager::OnCreate() {
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 	return true;
 
+
 }
+
 
 
 /// Here's the whole game loop
@@ -159,6 +172,9 @@ void GameManager::Run() {
 		currentScene->PostRenderUpdate(timer->GetDeltaTime());
 		/// Keep the event loop running at a proper rate
 		SDL_Delay(timer->GetSleepTime(60)); ///60 frames per sec
+		SDL_PumpEvents();
+
+
 	}
 }
 
@@ -178,6 +194,17 @@ void GameManager::handleEvents()
 		if (event.type == SDL_QUIT)
 		{
 			isRunning = false;
+		}
+		else if (event.type == changeSceneEventType)
+		{
+			currentScene->OnDestroy();
+			delete currentScene;
+			Scene* randomScene = Randomizer::RandomRoom(windowPtr->GetSDL_Window(), this);
+			currentScene = randomScene;
+			if (! currentScene->OnCreate())
+			{
+				isRunning = false;
+			}
 		}
 		else if (event.type == SDL_KEYDOWN)
 		{
@@ -245,6 +272,12 @@ SDL_Renderer* GameManager::getRenderer()
 	return renderer;
 }
 
+Uint32 GameManager::getChangeScene()
+{
+	return changeSceneEventType;
+}
+
+
 // This might be unfamiliar
 void GameManager::RenderPlayer()
 {
@@ -311,4 +344,5 @@ bool GameManager::ValidateCurrentScene()
 	}
 	return true;
 }
+
 

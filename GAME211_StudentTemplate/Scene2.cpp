@@ -63,6 +63,18 @@ void Scene2::Update(const float deltaTime) {
 		}
 	}
 
+	Vec3 origin(0.0f, 0.0f, 0.0f);
+	if (VMath::distance(game->getPlayer()->getPos(), origin) < 1.5f)
+	{
+		SDL_Event event;
+		SDL_memset(&event, 0, sizeof(event));
+		event.type = game->getChangeScene();
+		event.user.code = 1;
+		event.user.data1 = nullptr;
+		event.user.data2 = nullptr;
+		SDL_PushEvent(&event);
+	}
+
 }
 
 void Scene2::Render() {
