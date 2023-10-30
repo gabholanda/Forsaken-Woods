@@ -33,7 +33,7 @@ Gun* Randomizer::getRandomWeapon()
 	 std::vector<Scene*> rooms{
  new Scene1(sdlWindow, game_),
  new Scene2(sdlWindow, game_),
- //new Scene3(sdlWindow, game_)
+ new Scene3(sdlWindow, game_)
 	 };
 	 std::random_device rd;
 	 std::mt19937 gen(rd());
