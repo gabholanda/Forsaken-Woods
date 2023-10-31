@@ -10,17 +10,20 @@ class EnemyBody : public Body
 {
 protected:
     class GameManager* game;
+    class Gun* gun;
 
 public:
     EnemyBody() : Body{}
     {
         game = nullptr;
+        gun = nullptr;
     }
 
     // Note the last parameter in this constructor!
     // Look in GameManager.cpp to see how this is called.
     // Look in .cpp file, at Render(), to see why game_ is a parameter.
     EnemyBody(
+        Gun* gun_,
         Vec3 pos_, Vec3 vel_, Vec3 accel_,
         Vec3 size_,
         float mass_,
@@ -43,7 +46,9 @@ public:
         , scale_
     }
         , game{ game_ }
-    {}
+    {
+        gun = gun_;
+    }
 
    
 
@@ -52,11 +57,14 @@ public:
         pos = newPos;
     }
 
+    ~EnemyBody();
+
     bool OnCreate();
     void Render();
     void Update(float deltaTime);
     void setTexture(SDL_Texture* texture_) { texture = texture_; }
     void MoveTowardsPlayer(float deltaTime, PlayerBody* target);
+    GameManager* GetGame() const { return game; }
 
 };
 
