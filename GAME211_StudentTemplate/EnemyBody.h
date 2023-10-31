@@ -65,6 +65,7 @@ public:
     void setTexture(SDL_Texture* texture_) { texture = texture_; }
     void MoveTowardsPlayer(float deltaTime, PlayerBody* target);
     GameManager* GetGame() const { return game; }
+    void RangeAttack(PlayerBody* target);
 
 };
 

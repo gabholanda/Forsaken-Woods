@@ -70,6 +70,11 @@ void EnemyBody::MoveTowardsPlayer(float deltaTime, PlayerBody* target)
 	pos.x += direction.x * movementSpeed * deltaTime;
 	pos.y += direction.y * movementSpeed * deltaTime;
 
+	
+}
+
+void EnemyBody::RangeAttack(PlayerBody* target)
+{
 	if (gun)
 	{
 		if (VMath::distance(pos, target->getPos()) <= 10)
