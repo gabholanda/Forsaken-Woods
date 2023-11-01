@@ -8,6 +8,68 @@
 Gun::~Gun()
 {
 	delete gunOwner;
+	delete gunOwnerEnemy;
+}
+
+void Gun::ShootForEnemy(PlayerBody* target)
+{
+	if (gunOwnerEnemy == nullptr)
+	{
+		std::cerr << "GunOwner is nullptr, set it properly before calling Shoot function" << std::endl;
+		return;
+	}
+
+	if (!canShoot)
+	{
+		return;
+	}
+
+	if (GameManager* manager = gunOwnerEnemy->GetGame())
+	{
+	
+		Vec3 direction = VMath::normalize(target->getPos() - gunOwnerEnemy->getPos());
+		float desiredAngle = std::atan2(direction.y, direction.x);
+		float orientation = -desiredAngle;
+
+		float mass = 1.0f;
+		float rotation = 0.0f;
+		float angular = 0.0f;
+		float movementSpeed = 20.0f;
+		float scale = 0.5f;
+		float lifeTime = 2.f;
+
+		Vec3 size(0.5f, 0.5f, 0.0f);
+		Vec3 position = gunOwnerEnemy->getPos() + direction * 1.2f;
+		Vec3 velocity(0.0f, 0.0f, 0.0f);
+		Vec3 acceleration(0.0f, 0.0f, 0.0f);
+
+		Bullet* bullet = new Bullet(
+			this,
+			position,
+			velocity,
+			acceleration,
+			size,
+			mass,
+			orientation,
+			rotation,
+			angular,
+			movementSpeed,
+			scale,
+			lifeTime,
+			manager);
+		bullet->OnCreate();
+		bullet->SetDirection(direction);
+		manager->getBullets()->push_back(bullet);
+		canShoot = false;
+		// Timer is in ms, while our value is in seconds
+		timerId = SDL_AddTimer(fireRate * 1000.f, FireRateTimerCallback, reinterpret_cast<Gun*>(this));
+		if (timerId = 0)
+		{
+			std::cerr << "Error on setting fireRate timer" << std::endl;
+			canShoot = true;
+			return;
+		}
+	}
 }
 
 void Gun::Shoot()
@@ -85,6 +147,8 @@ void Gun::Shoot()
 		}
 	}
 }
+
+
 
 Uint32 Gun::FireRateTimerCallback(Uint32 interval, void* param)
 {

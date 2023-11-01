@@ -57,6 +57,7 @@ void Scene1::Update(const float deltaTime) {
 	game->getPlayer()->Update(deltaTime);
 	for (auto& enemy : game->getEnemies()) {
 		enemy->MoveTowardsPlayer(deltaTime, game->getPlayer());
+		enemy->RangeAttack(game->getPlayer());
 		enemy->Update(deltaTime);
 		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
 		{

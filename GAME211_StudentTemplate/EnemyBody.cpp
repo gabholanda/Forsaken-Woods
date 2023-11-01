@@ -1,5 +1,11 @@
 #include "EnemyBody.h"
 #include "RotationUtils.h"
+#include "Gun.h"
+
+EnemyBody::~EnemyBody()
+{
+	delete gun;
+}
 
 bool EnemyBody::OnCreate()
 {
@@ -63,4 +69,17 @@ void EnemyBody::MoveTowardsPlayer(float deltaTime, PlayerBody* target)
 	Vec3 direction = VMath::normalize(target->getPos() - pos);
 	pos.x += direction.x * movementSpeed * deltaTime;
 	pos.y += direction.y * movementSpeed * deltaTime;
+
+	
+}
+
+void EnemyBody::RangeAttack(PlayerBody* target)
+{
+	if (gun)
+	{
+		if (VMath::distance(pos, target->getPos()) <= 10)
+		{
+			gun->ShootForEnemy(target);
+		}
+	}
 }

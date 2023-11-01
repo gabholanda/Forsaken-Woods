@@ -3,8 +3,10 @@
 #define GUN_H
 
 #include "SDL.h"
+#include "EnemyBody.h"
 
 class PlayerBody;
+class EnemyBody;
 
 class Gun {
 protected:
@@ -15,6 +17,8 @@ protected:
 	int currentAmmo;
 	int maxAmmo;
 	PlayerBody* gunOwner;
+	PlayerBody* target;
+	EnemyBody* gunOwnerEnemy;
 	SDL_TimerID timerId;
 
 public:
@@ -33,6 +37,13 @@ public:
 	{
 		gunOwner = gunOwner_;
 	}
+
+	void SetEnemyGunOwner(EnemyBody* gunOwnerEnemy_)
+	{
+		gunOwnerEnemy = gunOwnerEnemy_;
+	}
+
+	virtual void ShootForEnemy(PlayerBody* target);
 
 	//Uint32 StartFireRateTimer(Uint32 interval, void* param);
 
