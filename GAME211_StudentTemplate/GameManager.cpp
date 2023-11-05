@@ -61,6 +61,7 @@ bool GameManager::OnCreate() {
 	float movementSpeed = 10.0f;
 
 	Gun* gun = Randomizer::getRandomWeapon();
+	Gun* randomEnemyGun = Randomizer::getRandomWeapon();
 
 	float scale = 0.5;
 	Vec3 size(1.f, 1.f, 0.0f);
@@ -115,6 +116,7 @@ bool GameManager::OnCreate() {
 		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
 
 		EnemyBody* newEnemy = new EnemyBody(
+			randomEnemyGun,
 			positionEnemy,
 			velocityEnemy,
 			accelerationEnemy,
@@ -127,7 +129,7 @@ bool GameManager::OnCreate() {
 			scaleEnemy,
 			this
 		);
-
+		randomEnemyGun->SetEnemyGunOwner(newEnemy);
 		enemies.push_back(newEnemy);
 	}
 
