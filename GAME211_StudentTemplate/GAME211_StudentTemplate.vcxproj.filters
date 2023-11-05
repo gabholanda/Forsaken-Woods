@@ -79,6 +79,12 @@
     <ClCompile Include="HealthBuff.cpp">
       <Filter>Scripts\Buffs</Filter>
     </ClCompile>
+    <ClCompile Include="AssaultRifle.cpp">
+      <Filter>Scripts\Guns</Filter>
+    </ClCompile>
+    <ClCompile Include="DashCooldownBuff.cpp">
+      <Filter>Scripts\Buffs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -161,6 +167,15 @@
       <Filter>Scripts\Buffs</Filter>
     </ClInclude>
     <ClInclude Include="HealthBuff.h">
+      <Filter>Scripts\Buffs</Filter>
+    </ClInclude>
+    <ClInclude Include="AssaultRifle.h">
+      <Filter>Scripts\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="SniperRifle.h">
+      <Filter>Scripts\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="DashCooldownBuff.h">
       <Filter>Scripts\Buffs</Filter>
     </ClInclude>
   </ItemGroup>

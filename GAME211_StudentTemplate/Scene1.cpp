@@ -26,7 +26,7 @@ bool Scene1::OnCreate() {
 	SDL_Surface* enemyImage;
 	SDL_Texture* enemyTexture;
 
-	enemyImage = IMG_Load("rogue.png");
+	enemyImage = IMG_Load("treantenemy.png");
 	enemyTexture = SDL_CreateTextureFromSurface(renderer, enemyImage);
 	for (EnemyBody* enemy : game->getEnemies()) {
 		enemy->setImage(enemyImage);
@@ -51,7 +51,7 @@ void Scene1::OnDestroy()
 
 void Scene1::Update(const float deltaTime) {
 
-	camera->updateCameraPosition();
+	//camera->updateCameraPosition();
 	// Update player
 	game->getPlayer()->Update(deltaTime);
 	for (auto& enemy : game->getEnemies()) {
@@ -59,12 +59,15 @@ void Scene1::Update(const float deltaTime) {
 		enemy->Update(deltaTime);
 		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
 		{
-			game->getBuffManager()->GetBuffs()[1]->ApplyBuff(game->getPlayer());
 			std::cout << "Collided" << std::endl;
+			game->getBuffManager()->PickRandomBuff();
 
 		}
 	}
 
+	if (Collision::CheckCollision(*game->getPlayer(), *game->getBuffManager()->GetBuffs()[0])) {
+		game->getBuffManager()->GetBuffs()[0]->ApplyBuff(game->getPlayer());
+	}
 
 	for (int i = 0; i < game->getBullets()->size(); i++)
 	{

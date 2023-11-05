@@ -18,7 +18,7 @@ public:
 		buffs.push_back(new ReloadSpeedBuff());
 		buffs.push_back(new HealthBuff());
 	}
-	std::vector<Buff*> PickRandomBuffs(int numOfBuffs);
+	std::vector<Buff*> PickRandomBuff();
 	 std::vector<Buff*> GetBuffs() const {
 		return buffs;
 	}
