@@ -1,6 +1,5 @@
 #pragma once
 #include "Buff.h"
-class Gun;
 
 class DamageBuff : public Buff
 {
