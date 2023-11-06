@@ -83,7 +83,18 @@ void Scene1::Update(const float deltaTime) {
 				// Do damage here
 			}
 		}
+		//if (game->getBullets()->at(i)->GetLifeTime() <= 0) {
+		//	// Bullet's lifetime expired, remove it
+		//	bulletsToDestroy.push_back(i);
+		//}
+		if (Collision::CheckCollision(*game->getBullets()->at(i), *game->getPlayer())) {
+			// Handle bullet-player collision
+			bulletsToDestroy.push_back(i);
+		}
 	}
+
+
+
 }
 
 void Scene1::Render() {
