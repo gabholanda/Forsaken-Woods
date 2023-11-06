@@ -50,6 +50,40 @@ public:
 	virtual void Shoot();
 	static Uint32 FireRateTimerCallback(Uint32 interval, void* param);
 	static Uint32 ReloadTimerCallback(Uint32 interval, void* param);
+	// Getters
+	float GetFireRate() const {
+		return fireRate;
+	}
+
+	int GetMaxAmmo() const {
+		return maxAmmo;
+	}
+
+	float GetReloadSpeed() const {
+		return reloadSpeed;
+	}
+
+	float GetDamage() const {
+		return damage;
+	}
+
+	// Setters
+	void SetFireRate(float fireRate_) {
+		fireRate = fireRate_;
+	}
+
+	void SetMaxAmmo(int maxAmmo_) {
+		maxAmmo = maxAmmo_;
+	}
+
+	void SetReloadSpeed(float reloadSpeed_) {
+		reloadSpeed = reloadSpeed_;
+	}
+
+	void SetDamage(float damage_) {
+		damage = damage_;
+	}
+
 };
 
 #endif

@@ -19,15 +19,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssaultRifle.cpp" />
     <ClCompile Include="Body.cpp" />
+    <ClCompile Include="Buff.cpp" />
+    <ClCompile Include="BuffManager.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="DamageBuff.cpp" />
+    <ClCompile Include="DashCooldownBuff.cpp" />
     <ClCompile Include="EnemyBody.cpp" />
+    <ClCompile Include="FireRateBuff.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Gun.cpp" />
+    <ClCompile Include="HealthBuff.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MovementSpeedBuff.cpp" />
+    <ClCompile Include="ReloadSpeedBuff.cpp" />
     <ClCompile Include="RotationUtils.cpp" />
     <ClCompile Include="PlayerBody.cpp" />
     <ClCompile Include="Randomizer.cpp" />
@@ -42,15 +51,24 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssaultRifle.h" />
     <ClInclude Include="Body.h" />
+    <ClInclude Include="Buff.h" />
+    <ClInclude Include="BuffManager.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="DamageBuff.h" />
+    <ClInclude Include="DashCooldownBuff.h" />
     <ClInclude Include="EnemyBody.h" />
+    <ClInclude Include="FireRateBuff.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Gun.h" />
+    <ClInclude Include="HealthBuff.h" />
     <ClInclude Include="IRender.h" />
+    <ClInclude Include="MovementSpeedBuff.h" />
+    <ClInclude Include="ReloadSpeedBuff.h" />
     <ClInclude Include="RotationUtils.h" />
     <ClInclude Include="Pistol.h" />
     <ClInclude Include="PlayerBody.h" />
@@ -60,6 +78,7 @@
     <ClInclude Include="Scene1.h" />
     <ClInclude Include="Scene2.h" />
     <ClInclude Include="Scene3.h" />
+    <ClInclude Include="SniperRifle.h" />
     <ClInclude Include="SpritesheetReader.h" />
     <ClInclude Include="Submachine.h" />
     <ClInclude Include="Tile.h" />

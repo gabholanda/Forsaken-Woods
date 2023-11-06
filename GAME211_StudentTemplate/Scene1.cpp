@@ -23,11 +23,10 @@ bool Scene1::OnCreate() {
 	SDL_GetWindowSize(window, &w, &h);
 
 	camera = new PlayerCamera(w, h, xAxis, yAxis, game);
-
 	SDL_Surface* enemyImage;
 	SDL_Texture* enemyTexture;
 
-	enemyImage = IMG_Load("rogue.png");
+	enemyImage = IMG_Load("treantenemy.png");
 	enemyTexture = SDL_CreateTextureFromSurface(renderer, enemyImage);
 	for (EnemyBody* enemy : game->getEnemies()) {
 		enemy->setImage(enemyImage);
@@ -41,7 +40,7 @@ bool Scene1::OnCreate() {
 	////exampleTile->setImage(game->getBackgroundSpritesheetReader()->getImage());
 	////exampleTile->setTexture(game->getBackgroundSpritesheetReader()->getTexture());
 	////game->getTiles()->push_back(exampleTile);
-
+	
 	return true;
 }
 
@@ -52,7 +51,7 @@ void Scene1::OnDestroy()
 
 void Scene1::Update(const float deltaTime) {
 
-	camera->updateCameraPosition();
+	//camera->updateCameraPosition();
 	// Update player
 	game->getPlayer()->Update(deltaTime);
 	for (auto& enemy : game->getEnemies()) {
@@ -62,7 +61,13 @@ void Scene1::Update(const float deltaTime) {
 		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
 		{
 			std::cout << "Collided" << std::endl;
+			game->getBuffManager()->PickRandomBuff();
+
 		}
+	}
+
+	if (Collision::CheckCollision(*game->getPlayer(), *game->getBuffManager()->GetBuffs()[0])) {
+		game->getBuffManager()->GetBuffs()[0]->ApplyBuff(game->getPlayer());
 	}
 
 	for (int i = 0; i < game->getBullets()->size(); i++)

@@ -6,7 +6,6 @@
 #include <MMath.h>
 #include "GameManager.h"
 #include "PlayerCamera.h"
-
 using namespace MATH;
 
 class Scene {

@@ -56,6 +56,35 @@
       <Filter>Scripts\Utils</Filter>
     </ClCompile>
     <ClCompile Include="SpritesheetReader.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="Buff.cpp">
+      <Filter>Scripts\Bodies</Filter>
+    </ClCompile>
+    <ClCompile Include="MovementSpeedBuff.cpp">
+      <Filter>Scripts\Buffs</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageBuff.cpp">
+      <Filter>Scripts\Buffs</Filter>
+    </ClCompile>
+    <ClCompile Include="BuffManager.cpp">
+      <Filter>Scripts\Buffs</Filter>
+    </ClCompile>
+    <ClCompile Include="FireRateBuff.cpp">
+      <Filter>Scripts\Buffs</Filter>
+    </ClCompile>
+    <ClCompile Include="ReloadSpeedBuff.cpp">
+      <Filter>Scripts\Buffs</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthBuff.cpp">
+      <Filter>Scripts\Buffs</Filter>
+    </ClCompile>
+    <ClCompile Include="AssaultRifle.cpp">
+      <Filter>Scripts\Guns</Filter>
+    </ClCompile>
+    <ClCompile Include="DashCooldownBuff.cpp">
+      <Filter>Scripts\Buffs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -116,6 +145,39 @@
       <Filter>Scripts\Utils</Filter>
     </ClInclude>
     <ClInclude Include="SpritesheetReader.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="IRender.h" />
+    <ClInclude Include="Tile.h" />
+    <ClInclude Include="Buff.h">
+      <Filter>Scripts\Bodies</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementSpeedBuff.h">
+      <Filter>Scripts\Buffs</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageBuff.h">
+      <Filter>Scripts\Buffs</Filter>
+    </ClInclude>
+    <ClInclude Include="BuffManager.h">
+      <Filter>Scripts\Buffs</Filter>
+    </ClInclude>
+    <ClInclude Include="FireRateBuff.h">
+      <Filter>Scripts\Buffs</Filter>
+    </ClInclude>
+    <ClInclude Include="ReloadSpeedBuff.h">
+      <Filter>Scripts\Buffs</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthBuff.h">
+      <Filter>Scripts\Buffs</Filter>
+    </ClInclude>
+    <ClInclude Include="AssaultRifle.h">
+      <Filter>Scripts\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="SniperRifle.h">
+      <Filter>Scripts\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="DashCooldownBuff.h">
+      <Filter>Scripts\Buffs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">
@@ -135,6 +197,9 @@
     </Filter>
     <Filter Include="Scripts\Utils">
       <UniqueIdentifier>{3f5268d2-2b59-4954-95ed-2a9370cee6be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Buffs">
+      <UniqueIdentifier>{34a04331-954c-4d2a-8edc-0b747f8c6379}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
