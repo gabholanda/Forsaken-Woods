@@ -3,6 +3,7 @@
 #include "Collision.h"
 #include "EnemyBody.h"
 #include "PlayerCamera.h"
+#include "Grid.h"
 #include "Scene1.h"
 // See notes about this constructor in Scene1.h.
 Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
@@ -32,15 +33,14 @@ bool Scene1::OnCreate() {
 		enemy->setImage(enemyImage);
 		enemy->setTexture(enemyTexture);
 	}
-	////Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.f,
-	////	game->getBackgroundSpritesheetReader()->getRows(),
-	////	game->getBackgroundSpritesheetReader()->getColumns(),
-	////	game->getBackgroundSpritesheetReader()->getRects()[1][0],
-	////	game);
-	////exampleTile->setImage(game->getBackgroundSpritesheetReader()->getImage());
-	////exampleTile->setTexture(game->getBackgroundSpritesheetReader()->getTexture());
-	////game->getTiles()->push_back(exampleTile);
-	
+	Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.f,
+		game->getBackgroundSpritesheetReader()->GetRows(),
+		game->getBackgroundSpritesheetReader()->GetColumns(),
+		game->getBackgroundSpritesheetReader()->GetRects()[0][0],
+		game);
+	exampleTile->setImage(game->getBackgroundSpritesheetReader()->GetImage());
+	exampleTile->setTexture(game->getBackgroundSpritesheetReader()->GetTexture());
+	game->getGrid()->PushTile(exampleTile, 0);
 	return true;
 }
 
@@ -51,7 +51,7 @@ void Scene1::OnDestroy()
 
 void Scene1::Update(const float deltaTime) {
 
-	//camera->updateCameraPosition();
+	camera->updateCameraPosition();
 	// Update player
 	game->getPlayer()->Update(deltaTime);
 	for (auto& enemy : game->getEnemies()) {
@@ -75,7 +75,7 @@ void Scene1::Update(const float deltaTime) {
 		game->getBullets()->at(i)->Update(deltaTime);
 		if (game->getBullets()->at(i)->GetLifeTime() <= 0)
 		{
-			// avoid destroying accidently erasing wrong bullet
+			// avoid destroying accidently wrong bullet
 			bulletsToDestroy.push_back(i);
 			return;
 		}
@@ -88,13 +88,11 @@ void Scene1::Update(const float deltaTime) {
 				// Do damage here
 			}
 		}
-		//if (game->getBullets()->at(i)->GetLifeTime() <= 0) {
-		//	// Bullet's lifetime expired, remove it
-		//	bulletsToDestroy.push_back(i);
-		//}
+
 		if (Collision::CheckCollision(*game->getBullets()->at(i), *game->getPlayer())) {
 			// Handle bullet-player collision
 			bulletsToDestroy.push_back(i);
+			// Do damage to player here
 		}
 	}
 

@@ -32,6 +32,7 @@
     <ClCompile Include="FireRateBuff.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="HealthBuff.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -64,6 +65,7 @@
     <ClInclude Include="FireRateBuff.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="HealthBuff.h" />
     <ClInclude Include="IRender.h" />

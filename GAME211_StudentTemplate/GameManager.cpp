@@ -3,6 +3,7 @@
 #include "EnemyBody.h"
 #include "Bullet.h"
 #include "Collision.h"
+#include "Grid.h"
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -32,8 +33,8 @@ bool GameManager::OnCreate() {
 	const int SCREEN_HEIGHT = 600;
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
-
 	windowPtr = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
+
 	if (windowPtr == nullptr) {
 		OnDestroy();
 		return false;
@@ -53,6 +54,9 @@ bool GameManager::OnCreate() {
 
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 
+	/* Grid needs to be same dimension as our sprites */
+	grid = new Grid(160, 160, 10, 10, this);
+
 	// create player
 	float mass = 1.0f;
 	float orientation = 0.0f;
@@ -65,7 +69,8 @@ bool GameManager::OnCreate() {
 
 	float scale = 0.5;
 	Vec3 size(1.f, 1.f, 0.0f);
-	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+	//Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+	Vec3 position(0.0f, 0.0f, 0.0f);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
 
@@ -99,7 +104,7 @@ bool GameManager::OnCreate() {
 			rotation,
 			angular,
 			movementSpeed,
-			scale, 
+			scale,
 			this);
 	}
 
@@ -293,9 +298,11 @@ void GameManager::RenderBullets()
 
 void GameManager::RenderTiles()
 {
-	for (Tile* tile : tiles) {
-		tile->Render();
-	}
+	//for (Tile* tile : tiles) {
+	//	tile->Render();
+	//}
+
+	grid->RenderGrid();
 }
 
 void GameManager::RenderDebug()
@@ -316,6 +323,8 @@ void GameManager::RenderDebug()
 				Collision::DisplayDebugCollision(*bullet, *this);
 			}
 		}
+
+		grid->RenderDebugGrid();
 	}
 }
 

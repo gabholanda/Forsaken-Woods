@@ -13,6 +13,7 @@
 
 class EnemyBody;
 class Bullet;
+class Grid;
 
 class GameManager {
 private:
@@ -30,7 +31,7 @@ private:
 	bool isRunning;
 	bool isDebugging;
 	class Scene* currentScene;
-
+	Grid* grid;
 	// This might be unfamiliar
 	class PlayerBody* player;
 	class BuffManager* buffManager;
@@ -52,6 +53,7 @@ public:
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
 	PlayerBody* getPlayer() { return player; }
+	Grid* getGrid() { return grid; }
 	std::vector<EnemyBody*> getEnemies() { return enemies; }
 	std::vector<Bullet*>* getBullets() { return &bullets; }
 	std::vector<Tile*>* getTiles() { return &tiles; }
