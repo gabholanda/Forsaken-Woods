@@ -64,6 +64,7 @@ public:
 	void RenderBullets();
 	void RenderTiles();
 	void RenderDebug();
+	void RenderDebugGrid();
 	SDL_Renderer* getRenderer();
 
 	void Run();

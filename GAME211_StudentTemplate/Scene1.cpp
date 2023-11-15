@@ -4,6 +4,7 @@
 #include "EnemyBody.h"
 #include "PlayerCamera.h"
 #include "Grid.h"
+#include "CollisionTile.h"
 #include "Scene1.h"
 // See notes about this constructor in Scene1.h.
 Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
@@ -36,11 +37,63 @@ bool Scene1::OnCreate() {
 	Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.f,
 		game->getBackgroundSpritesheetReader()->GetRows(),
 		game->getBackgroundSpritesheetReader()->GetColumns(),
+		// This defines which section of the spritesheet we gonna get
 		game->getBackgroundSpritesheetReader()->GetRects()[0][0],
 		game);
 	exampleTile->setImage(game->getBackgroundSpritesheetReader()->GetImage());
 	exampleTile->setTexture(game->getBackgroundSpritesheetReader()->GetTexture());
-	game->getGrid()->PushTile(exampleTile, 0);
+
+	//game->getGrid()->PushTile(exampleTile, 1);
+	//game->getGrid()->PushTile(exampleTile, 2);
+
+
+	CollisionTile* exampleCollisionTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 1.f,
+		game->getBackgroundSpritesheetReader()->GetRows(),
+		game->getBackgroundSpritesheetReader()->GetColumns(),
+		Vec3(4.0f, 4.0f, 0.0f),
+		// This defines which section of the spritesheet we gonna get
+		game->getBackgroundSpritesheetReader()->GetRects()[0][3],
+		game);
+	exampleCollisionTile->Tile::setImage(game->getBackgroundSpritesheetReader()->GetImage());
+	exampleCollisionTile->Tile::setTexture(game->getBackgroundSpritesheetReader()->GetTexture());
+	//game->getGrid()->PushTile(exampleCollisionTile, 0);
+
+	// Setting grid borders
+	/*TODO: Change this to dynamicly fill the tiles*/
+	// Down
+	for (size_t i = 0; i < 10; i++)
+	{
+		game->getGrid()->PushTile(exampleCollisionTile, i);
+	}
+
+	// Left
+	for (size_t i = 10; i < 91; i += 10)
+	{
+		game->getGrid()->PushTile(exampleCollisionTile, i);
+	}
+
+	// Up
+	for (size_t i = 91; i < 100; i++)
+	{
+		game->getGrid()->PushTile(exampleCollisionTile, i);
+	}
+
+	// Right
+	for (size_t i = 19; i < 99; i += 10)
+	{
+		game->getGrid()->PushTile(exampleCollisionTile, i);
+	}
+	// Set up arena
+	for (size_t i = 11; i < 90; i++)
+	{
+		game->getGrid()->PushTile(exampleTile, i);
+		if (i % 10 == 8)
+		{
+			i += 2;
+		}
+	}
+	// Test tile
+	game->getGrid()->PushTile(exampleCollisionTile, 34);
 	return true;
 }
 
@@ -58,11 +111,24 @@ void Scene1::Update(const float deltaTime) {
 		enemy->MoveTowardsPlayer(deltaTime, game->getPlayer());
 		enemy->RangeAttack(game->getPlayer());
 		enemy->Update(deltaTime);
-		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
+		//if (Collision::CheckCollision(*game->getPlayer(), *enemy))
+		//{
+		//	//game->getBuffManager()->PickRandomBuff();
+		//}
+		for (size_t i = 0; i < game->getGrid()->GetCollisionTiles()->size(); i++)
 		{
-			std::cout << "Collided" << std::endl;
-			game->getBuffManager()->PickRandomBuff();
+			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(i), *enemy))
+			{
+				Collision::ResolveCollision(enemy, &game->getGrid()->GetCollisionTiles()->at(i));
+			}
+		}
+	}
 
+	for (size_t i = 0; i < game->getGrid()->GetCollisionTiles()->size(); i++)
+	{
+		if (Collision::CheckCollision(*game->getPlayer(), game->getGrid()->GetCollisionTiles()->at(i)))
+		{
+			Collision::ResolveCollision(game->getPlayer(), &game->getGrid()->GetCollisionTiles()->at(i));
 		}
 	}
 
@@ -80,6 +146,15 @@ void Scene1::Update(const float deltaTime) {
 			return;
 		}
 
+		for (size_t j = 0; j < game->getGrid()->GetCollisionTiles()->size(); j++)
+		{
+			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(j), *game->getBullets()->at(i)))
+			{
+				bulletsToDestroy.push_back(i);
+				return;
+			}
+		}
+
 		for (auto& enemy : game->getEnemies()) {
 			if (Collision::CheckCollision(*game->getBullets()->at(i), *enemy))
 			{
@@ -89,11 +164,12 @@ void Scene1::Update(const float deltaTime) {
 			}
 		}
 
-		if (Collision::CheckCollision(*game->getBullets()->at(i), *game->getPlayer())) {
-			// Handle bullet-player collision
-			bulletsToDestroy.push_back(i);
-			// Do damage to player here
-		}
+		/* Transport this block to a getEnemyBullets */
+		//if (Collision::CheckCollision(*game->getBullets()->at(i), *game->getPlayer())) {
+		//	// Handle bullet-player collision
+		//	bulletsToDestroy.push_back(i);
+		//	// Do damage to player here
+		//}
 	}
 
 
@@ -103,7 +179,7 @@ void Scene1::Update(const float deltaTime) {
 void Scene1::Render() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
-
+	game->RenderDebugGrid();
 	game->RenderTiles();
 	game->RenderPlayer();
 	game->RenderEnemy();

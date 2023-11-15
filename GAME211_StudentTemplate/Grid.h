@@ -5,6 +5,7 @@
 #include <VMath.h>
 
 class Tile;
+class CollisionTile;
 class GameManager;
 
 using namespace MATH;
@@ -13,7 +14,8 @@ class Grid
 {
 private:
 	std::vector<Vec3> positions;
-	std::vector<Tile*> tiles;
+	std::vector<Tile> tiles;
+	std::vector<CollisionTile> collisionTiles;
 	GameManager* manager;
 	//Window* window;
 	int width;
@@ -23,7 +25,8 @@ private:
 public:
 
 	Grid(int width_, int height_, int rows_, int columns_, GameManager* manager_);
-	std::vector<Tile*>* GetTiles() { return &tiles; }
+	std::vector<Tile>* GetTiles() { return &tiles; }
+	std::vector<CollisionTile>* GetCollisionTiles() { return &collisionTiles; }
 	void PushTile(Tile* tile, int position);
 	int GetWidth() const { return width; }
 	int GetHeight() const { return height; }

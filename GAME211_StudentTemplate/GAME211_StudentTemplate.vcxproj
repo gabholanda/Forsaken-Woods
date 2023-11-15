@@ -26,6 +26,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="CollisionTile.cpp" />
     <ClCompile Include="DamageBuff.cpp" />
     <ClCompile Include="DashCooldownBuff.cpp" />
     <ClCompile Include="EnemyBody.cpp" />
@@ -59,6 +60,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionTile.h" />
     <ClInclude Include="DamageBuff.h" />
     <ClInclude Include="DashCooldownBuff.h" />
     <ClInclude Include="EnemyBody.h" />

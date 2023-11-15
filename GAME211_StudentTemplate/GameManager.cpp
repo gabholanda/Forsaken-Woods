@@ -62,15 +62,15 @@ bool GameManager::OnCreate() {
 	float orientation = 0.0f;
 	float rotation = 0.0f;
 	float angular = 0.0f;
-	float movementSpeed = 10.0f;
+	float movementSpeed = 5.0f;
 
 	Gun* gun = Randomizer::getRandomWeapon();
 	Gun* randomEnemyGun = Randomizer::getRandomWeapon();
 
 	float scale = 0.5;
-	Vec3 size(1.f, 1.f, 0.0f);
-	//Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
-	Vec3 position(0.0f, 0.0f, 0.0f);
+	Vec3 size(3.f, 3.f, 0.0f);
+	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+	//Vec3 position(0.0f, 0.0f, 0.0f);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
 
@@ -115,7 +115,7 @@ bool GameManager::OnCreate() {
 		float angularEnemy = 0.0f;
 		float movementSpeedEnemy = 1.0f;
 		float scaleEnemy = 0.5;
-		Vec3 sizeEnemy(1.f, 1.f, 0.f);
+		Vec3 sizeEnemy(3.f, 3.f, 0.0f);
 		Vec3 positionEnemy(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
 		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
 		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
@@ -310,20 +310,30 @@ void GameManager::RenderDebug()
 	if (isDebugging)
 	{
 		Collision::DisplayDebugCollision(*player, *this);
-		for (auto& enemy : enemies) {
-			if (isDebugging)
-			{
-				Collision::DisplayDebugCollision(*enemy, *this);
-			}
+		for (auto& enemy : enemies)
+		{
+			Collision::DisplayDebugCollision(*enemy, *this);
 		}
 
-		for (Bullet* bullet : bullets) {
+		for (Bullet* bullet : bullets)
+		{
 			if (isDebugging)
 			{
 				Collision::DisplayDebugCollision(*bullet, *this);
 			}
 		}
 
+		for (int i = 0; i < grid->GetCollisionTiles()->size(); i++)
+		{
+			Collision::DisplayDebugCollision(getGrid()->GetCollisionTiles()->at(i), *this);
+		}
+	}
+}
+
+void GameManager::RenderDebugGrid()
+{
+	if (isDebugging)
+	{
 		grid->RenderDebugGrid();
 	}
 }

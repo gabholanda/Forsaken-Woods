@@ -1,6 +1,7 @@
 #include "Grid.h"
 #include <SDL_image.h>
 #include "Tile.h"
+#include "CollisionTile.h"
 #include "GameManager.h"
 
 Grid::Grid(int width_, int height_, int rows_, int columns_, GameManager* manager_)
@@ -22,15 +23,33 @@ Grid::Grid(int width_, int height_, int rows_, int columns_, GameManager* manage
 
 void Grid::PushTile(Tile* tile, int position)
 {
-	tile->setPos(positions[position]);
-	tiles.push_back(tile);
+	if (position > positions.size())
+	{
+		return;
+	}
+
+	if (tile == nullptr)
+	{
+		return;
+	}
+
+	if (CollisionTile* collisionTile = dynamic_cast<CollisionTile*>(tile))
+	{
+		collisionTile->Body::setPos(positions[position]);
+		collisionTile->Tile::setPos(positions[position]);
+		collisionTile->GameObject::setPos(positions[position]);
+		collisionTiles.push_back(*collisionTile);
+	}
+	Tile newTile = *tile;
+	newTile.setPos(positions[position]);
+	tiles.push_back(newTile);
 }
 
 void Grid::RenderGrid()
 {
-	for (Tile* tile : tiles)
+	for (Tile tile : tiles)
 	{
-		tile->Render();
+		tile.Render();
 	}
 }
 
