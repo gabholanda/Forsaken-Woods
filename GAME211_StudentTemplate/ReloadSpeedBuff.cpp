@@ -1,5 +1,6 @@
 #include "ReloadSpeedBuff.h"
 #include "PlayerBody.h"
+#include "Gun.h"
 
 void ReloadSpeedBuff::ApplyBuff(PlayerBody* player)
 {

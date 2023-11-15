@@ -85,6 +85,8 @@
     <ClCompile Include="DashCooldownBuff.cpp">
       <Filter>Scripts\Buffs</Filter>
     </ClCompile>
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="CollisionTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -178,6 +180,8 @@
     <ClInclude Include="DashCooldownBuff.h">
       <Filter>Scripts\Buffs</Filter>
     </ClInclude>
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="CollisionTile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">

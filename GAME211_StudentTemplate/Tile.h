@@ -12,7 +12,7 @@ public:
 	Tile(Vec3 pos_, float orientation_, float scale_, int rows_, int columns_, SDL_Rect sourceRect_, GameManager* manager_);
 	void Render();
 
-private:
+protected:
 	int rows;
 	int columns;
 	GameManager* manager;

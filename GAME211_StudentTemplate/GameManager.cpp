@@ -3,6 +3,7 @@
 #include "EnemyBody.h"
 #include "Bullet.h"
 #include "Collision.h"
+#include "Grid.h"
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -32,8 +33,8 @@ bool GameManager::OnCreate() {
 	const int SCREEN_HEIGHT = 600;
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
-
 	windowPtr = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
+
 	if (windowPtr == nullptr) {
 		OnDestroy();
 		return false;
@@ -53,19 +54,23 @@ bool GameManager::OnCreate() {
 
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 
+	/* Grid needs to be same dimension as our sprites */
+	grid = new Grid(160, 160, 10, 10, this);
+
 	// create player
 	float mass = 1.0f;
 	float orientation = 0.0f;
 	float rotation = 0.0f;
 	float angular = 0.0f;
-	float movementSpeed = 10.0f;
+	float movementSpeed = 5.0f;
 
 	Gun* gun = Randomizer::getRandomWeapon();
 	Gun* randomEnemyGun = Randomizer::getRandomWeapon();
 
 	float scale = 0.5;
-	Vec3 size(1.f, 1.f, 0.0f);
+	Vec3 size(3.f, 3.f, 0.0f);
 	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+	//Vec3 position(0.0f, 0.0f, 0.0f);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
 
@@ -99,7 +104,7 @@ bool GameManager::OnCreate() {
 			rotation,
 			angular,
 			movementSpeed,
-			scale, 
+			scale,
 			this);
 	}
 
@@ -110,7 +115,7 @@ bool GameManager::OnCreate() {
 		float angularEnemy = 0.0f;
 		float movementSpeedEnemy = 1.0f;
 		float scaleEnemy = 0.5;
-		Vec3 sizeEnemy(1.f, 1.f, 0.f);
+		Vec3 sizeEnemy(3.f, 3.f, 0.0f);
 		Vec3 positionEnemy(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
 		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
 		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
@@ -293,9 +298,11 @@ void GameManager::RenderBullets()
 
 void GameManager::RenderTiles()
 {
-	for (Tile* tile : tiles) {
-		tile->Render();
-	}
+	//for (Tile* tile : tiles) {
+	//	tile->Render();
+	//}
+
+	grid->RenderGrid();
 }
 
 void GameManager::RenderDebug()
@@ -303,19 +310,31 @@ void GameManager::RenderDebug()
 	if (isDebugging)
 	{
 		Collision::DisplayDebugCollision(*player, *this);
-		for (auto& enemy : enemies) {
-			if (isDebugging)
-			{
-				Collision::DisplayDebugCollision(*enemy, *this);
-			}
+		for (auto& enemy : enemies)
+		{
+			Collision::DisplayDebugCollision(*enemy, *this);
 		}
 
-		for (Bullet* bullet : bullets) {
+		for (Bullet* bullet : bullets)
+		{
 			if (isDebugging)
 			{
 				Collision::DisplayDebugCollision(*bullet, *this);
 			}
 		}
+
+		for (int i = 0; i < grid->GetCollisionTiles()->size(); i++)
+		{
+			Collision::DisplayDebugCollision(getGrid()->GetCollisionTiles()->at(i), *this);
+		}
+	}
+}
+
+void GameManager::RenderDebugGrid()
+{
+	if (isDebugging)
+	{
+		grid->RenderDebugGrid();
 	}
 }
 
