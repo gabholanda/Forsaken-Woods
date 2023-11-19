@@ -27,7 +27,7 @@ protected:
 	SDL_Surface* image;
 	SDL_Texture* texture;
 
-
+	bool markedForDeletion = false;
 
 public:
 	Body();
@@ -52,7 +52,9 @@ public:
 	virtual float getAngular() { return angular; }
 	virtual float getScale() { return scale; }
 	virtual float getMovementSpeed() { return movementSpeed; }
+	virtual bool getMarkedForDeletion() { return markedForDeletion; }
 	virtual void setMovementSpeed(float movementSpeed_) { movementSpeed = movementSpeed_; }
+	virtual void setMarkedForDeletion(bool markedForDeletion_) { markedForDeletion = markedForDeletion_; }
 
 	virtual void HandleEvents(const SDL_Event& event);
 
