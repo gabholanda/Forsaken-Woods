@@ -39,6 +39,7 @@ void Grid::PushTile(Tile* tile, int position)
 		collisionTile->Tile::setPos(positions[position]);
 		collisionTile->GameObject::setPos(positions[position]);
 		collisionTiles.push_back(*collisionTile);
+		return;
 	}
 	Tile newTile = *tile;
 	newTile.setPos(positions[position]);
@@ -48,6 +49,11 @@ void Grid::PushTile(Tile* tile, int position)
 void Grid::RenderGrid()
 {
 	for (Tile tile : tiles)
+	{
+		tile.Render();
+	}
+
+	for (Tile tile : collisionTiles)
 	{
 		tile.Render();
 	}
