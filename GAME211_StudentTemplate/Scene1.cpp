@@ -141,8 +141,7 @@ void Scene1::Update(const float deltaTime) {
 		game->getBullets()->at(i)->Update(deltaTime);
 		if (game->getBullets()->at(i)->GetLifeTime() <= 0)
 		{
-			// avoid destroying accidently wrong bullet
-			bulletsToDestroy.push_back(i);
+			game->getBullets()->at(i)->setMarkedForDeletion(true);
 			return;
 		}
 
@@ -150,7 +149,7 @@ void Scene1::Update(const float deltaTime) {
 		{
 			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(j), *game->getBullets()->at(i)))
 			{
-				bulletsToDestroy.push_back(i);
+				game->getBullets()->at(i)->setMarkedForDeletion(true);
 				return;
 			}
 		}
@@ -158,8 +157,8 @@ void Scene1::Update(const float deltaTime) {
 		for (auto& enemy : game->getEnemies()) {
 			if (Collision::CheckCollision(*game->getBullets()->at(i), *enemy))
 			{
-				// Push bullets to deletion pool
-				bulletsToDestroy.push_back(i);
+				game->getBullets()->at(i)->setMarkedForDeletion(true);
+				return;
 				// Do damage here
 			}
 		}
@@ -190,12 +189,14 @@ void Scene1::Render() {
 
 void Scene1::PostRenderUpdate(const float time)
 {
-	for (int i = 0; i < bulletsToDestroy.size(); i++)
+	for (int i = 0; i < game->getBullets()->size(); i++)
 	{
-		game->getBullets()->erase(game->getBullets()->begin() + bulletsToDestroy[i]);
+		if (game->getBullets()->at(i)->getMarkedForDeletion())
+		{
+			game->getBullets()->erase(game->getBullets()->begin() + i);
+			i--;
+		}
 	}
-
-	bulletsToDestroy.clear();
 }
 
 void Scene1::HandleEvents(const SDL_Event& event)
