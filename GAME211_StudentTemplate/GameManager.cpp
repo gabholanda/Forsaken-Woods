@@ -2,7 +2,6 @@
 #include "Scene1.h"
 #include "EnemyBody.h"
 #include "Bullet.h"
-#include "EnemyBullet.h"
 #include "Collision.h"
 #include "Grid.h"
 
