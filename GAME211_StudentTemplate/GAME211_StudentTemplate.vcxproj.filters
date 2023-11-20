@@ -87,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="CollisionTile.cpp" />
+    <ClCompile Include="EnemyBullet.cpp">
+      <Filter>Scripts\Bodies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -182,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="Grid.h" />
     <ClInclude Include="CollisionTile.h" />
+    <ClInclude Include="EnemyBullet.h">
+      <Filter>Scripts\Bodies</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">

@@ -30,6 +30,7 @@
     <ClCompile Include="DamageBuff.cpp" />
     <ClCompile Include="DashCooldownBuff.cpp" />
     <ClCompile Include="EnemyBody.cpp" />
+    <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="FireRateBuff.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -64,6 +65,7 @@
     <ClInclude Include="DamageBuff.h" />
     <ClInclude Include="DashCooldownBuff.h" />
     <ClInclude Include="EnemyBody.h" />
+    <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="FireRateBuff.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />

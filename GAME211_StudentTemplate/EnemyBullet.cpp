@@ -1,15 +1,9 @@
-#include "EnemyBody.h"
-#include "RotationUtils.h"
-#include "Gun.h"
+#include "EnemyBullet.h"
+#include "GameManager.h"
 
-EnemyBody::~EnemyBody()
+bool EnemyBullet::OnCreate()
 {
-	delete gun;
-}
-
-bool EnemyBody::OnCreate()
-{
-	image = IMG_Load("Rogue.png");
+	image = IMG_Load("Bullet.png");
 	SDL_Renderer* renderer = game->getRenderer();
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	if (image == nullptr) {
@@ -19,8 +13,7 @@ bool EnemyBody::OnCreate()
 	return true;
 }
 
-
-void EnemyBody::Render()
+void EnemyBullet::Render()
 {
 	// This is why we need game in the constructor, to get the renderer, etc.
 	SDL_Renderer* renderer = game->getRenderer();
@@ -54,43 +47,8 @@ void EnemyBody::Render()
 		orientationDegrees, nullptr, SDL_FLIP_NONE);
 }
 
-void EnemyBody::Update(float deltaTime)
+void EnemyBullet::Update(float deltaTime)
 {
-	// Update position, call Update from base class
-	// Note that would update velocity too, and rotation motion
-
-	Body::Update(deltaTime);
-
-}
-
-void EnemyBody::MoveTowardsPlayer(float deltaTime, PlayerBody* target)
-{
-	// Check if the player is within the specified range
-	float distanceToPlayer = VMath::distance(pos, target->getPos());	
-	if (distanceToPlayer <= 15)
-	{
-		// If within range, rotate towards the player
-		RotationUtils::RotateTowardsTarget(orientation, target->getPos(), pos);
-
-		// Move towards the player
-		Vec3 direction = VMath::normalize(target->getPos() - pos);
-		pos.x += direction.x * movementSpeed * deltaTime;
-		pos.y += direction.y * movementSpeed * deltaTime;
-	}
-	// If not within range, do nothing (don't move towards the player)
-}
-
-
-
-
-
-void EnemyBody::RangeAttack(PlayerBody* target)
-{
-	if (gun)
-	{
-		if (VMath::distance(pos, target->getPos()) <= 10)
-		{
-			gun->ShootForEnemy(target);
-		}
-	}
+	pos += direction * movementSpeed * deltaTime;
+	lifeTime -= deltaTime;
 }

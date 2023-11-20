@@ -53,7 +53,7 @@ public:
 	virtual float getScale() { return scale; }
 	virtual float getMovementSpeed() { return movementSpeed; }
 	virtual bool getMarkedForDeletion() { return markedForDeletion; }
-	virtual void setMovementSpeed(float movementSpeed_) { movementSpeed = movementSpeed_; }
+		virtual void setMovementSpeed(float movementSpeed_) { movementSpeed = movementSpeed_; }
 	virtual void setMarkedForDeletion(bool markedForDeletion_) { markedForDeletion = markedForDeletion_; }
 
 	virtual void HandleEvents(const SDL_Event& event);

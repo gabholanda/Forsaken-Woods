@@ -1,4 +1,5 @@
 #include "Bullet.h"
+#include "EnemyBullet.h"
 #include "Gun.h"
 #include <MMath.h>
 #include "PlayerBody.h"
@@ -43,7 +44,7 @@ void Gun::ShootForEnemy(PlayerBody* target)
 		Vec3 velocity(0.0f, 0.0f, 0.0f);
 		Vec3 acceleration(0.0f, 0.0f, 0.0f);
 
-		Bullet* bullet = new Bullet(
+		EnemyBullet* enemyBullet = new EnemyBullet(
 			this,
 			position,
 			velocity,
@@ -57,9 +58,9 @@ void Gun::ShootForEnemy(PlayerBody* target)
 			scale,
 			lifeTime,
 			manager);
-		bullet->OnCreate();
-		bullet->SetDirection(direction);
-		manager->getBullets()->push_back(bullet);
+		enemyBullet->OnCreate();
+		enemyBullet->SetDirection(direction);
+		manager->getEnemyBullets()->push_back(enemyBullet);
 		canShoot = false;
 		// Timer is in ms, while our value is in seconds
 		timerId = SDL_AddTimer(fireRate * 1000.f, FireRateTimerCallback, reinterpret_cast<Gun*>(this));

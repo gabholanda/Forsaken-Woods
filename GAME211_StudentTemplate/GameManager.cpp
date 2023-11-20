@@ -2,6 +2,7 @@
 #include "Scene1.h"
 #include "EnemyBody.h"
 #include "Bullet.h"
+#include "EnemyBullet.h"
 #include "Collision.h"
 #include "Grid.h"
 
@@ -20,6 +21,9 @@ GameManager::GameManager() {
 
 	for (Bullet* bullet : bullets) {
 		bullet = nullptr;
+	}
+	for (EnemyBullet* enemyBullet : enemyBullets) {
+		enemyBullet = nullptr;
 	}
 }
 
@@ -55,7 +59,7 @@ bool GameManager::OnCreate() {
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 
 	/* Grid needs to be same dimension as our sprites */
-	grid = new Grid(160, 160, 10, 10, this);
+	grid = new Grid(160, 160, 15, 15, this);
 
 	// create player
 	float mass = 1.0f;
@@ -245,6 +249,9 @@ void GameManager::OnDestroy() {
 	for (Bullet* bullet : bullets) {
 		delete bullet;
 	}
+	for (EnemyBullet* enemyBullet : enemyBullets) {
+		delete enemyBullet;
+	}
 	enemies.clear();
 }
 
@@ -293,6 +300,9 @@ void GameManager::RenderBullets()
 {
 	for (Bullet* bullet : bullets) {
 		bullet->Render();
+	}
+	for (EnemyBullet* enemyBullet : enemyBullets) {
+		enemyBullet->Render();
 	}
 }
 
