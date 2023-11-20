@@ -160,7 +160,16 @@ void Scene1::Update(const float deltaTime) {
 			{
 				// Push bullets to deletion pool
 				bulletsToDestroy.push_back(i);
-				// Do damage here
+				float playerHp = game->getPlayer()->getHp();
+				float enemyDamage = enemy->GetGun()->GetDamage();
+				game->getPlayer()->setHp(playerHp - enemyDamage);
+				if (playerHp <= 0)
+				{
+					game->getPlayer()->Death();
+				}
+				std::cout << playerHp;
+				
+					// Do damage here
 			}
 		}
 

@@ -73,6 +73,8 @@ bool GameManager::OnCreate() {
 	//Vec3 position(0.0f, 0.0f, 0.0f);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
+	float playerHp = 100;
+	float enemyHp = 100;
 
 	player = new PlayerBody
 	(
@@ -87,7 +89,8 @@ bool GameManager::OnCreate() {
 		angular,
 		movementSpeed,
 		scale,
-		this
+		this,
+		playerHp
 	);
 
 	gun->SetGunOwner(player);
@@ -132,7 +135,8 @@ bool GameManager::OnCreate() {
 			angularEnemy,
 			movementSpeedEnemy,
 			scaleEnemy,
-			this
+			this,
+			enemyHp
 		);
 		randomEnemyGun->SetEnemyGunOwner(newEnemy);
 		enemies.push_back(newEnemy);
