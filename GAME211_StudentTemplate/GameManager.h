@@ -13,7 +13,6 @@
 
 class EnemyBody;
 class Bullet;
-class EnemyBullet;
 class Grid;
 
 class GameManager {
@@ -38,7 +37,7 @@ private:
 	class BuffManager* buffManager;
 
 	std::vector<Bullet*> bullets;
-	std::vector<EnemyBullet*> enemyBullets;
+	std::vector<Bullet*> enemyBullets;
 	std::vector<EnemyBody*> enemies;
 	std::vector<Tile*> tiles;
 
@@ -58,7 +57,7 @@ public:
 	Grid* getGrid() { return grid; }
 	std::vector<EnemyBody*> getEnemies() { return enemies; }
 	std::vector<Bullet*>* getBullets() { return &bullets; }
-	std::vector<EnemyBullet*>* getEnemyBullets() { return &enemyBullets; }
+	std::vector<Bullet*>* getEnemyBullets() { return &enemyBullets; }
 	std::vector<Tile*>* getTiles() { return &tiles; }
 	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
 	BuffManager* getBuffManager() { return buffManager; }

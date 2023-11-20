@@ -229,6 +229,7 @@ void Scene1::PostRenderUpdate(const float time)
 			i--;
 		}
 	}
+
 	for (int i = 0; i < game->getEnemyBullets()->size(); i++)
 	{
 		if (game->getEnemyBullets()->at(i)->getMarkedForDeletion())
@@ -237,6 +238,7 @@ void Scene1::PostRenderUpdate(const float time)
 			i--;
 		}
 	}
+
 }
 
 void Scene1::HandleEvents(const SDL_Event& event)

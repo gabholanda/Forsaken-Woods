@@ -44,7 +44,7 @@ void Gun::ShootForEnemy(PlayerBody* target)
 		Vec3 velocity(0.0f, 0.0f, 0.0f);
 		Vec3 acceleration(0.0f, 0.0f, 0.0f);
 
-		EnemyBullet* enemyBullet = new EnemyBullet(
+		Bullet* enemyBullet = new Bullet(
 			this,
 			position,
 			velocity,

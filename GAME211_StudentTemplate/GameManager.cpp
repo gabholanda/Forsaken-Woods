@@ -22,9 +22,7 @@ GameManager::GameManager() {
 	for (Bullet* bullet : bullets) {
 		bullet = nullptr;
 	}
-	for (EnemyBullet* enemyBullet : enemyBullets) {
-		enemyBullet = nullptr;
-	}
+
 }
 
 bool GameManager::OnCreate() {
@@ -249,9 +247,7 @@ void GameManager::OnDestroy() {
 	for (Bullet* bullet : bullets) {
 		delete bullet;
 	}
-	for (EnemyBullet* enemyBullet : enemyBullets) {
-		delete enemyBullet;
-	}
+
 	enemies.clear();
 }
 
@@ -301,9 +297,10 @@ void GameManager::RenderBullets()
 	for (Bullet* bullet : bullets) {
 		bullet->Render();
 	}
-	for (EnemyBullet* enemyBullet : enemyBullets) {
-		enemyBullet->Render();
+	for (Bullet* bullet : enemyBullets) {
+		bullet->Render();
 	}
+
 }
 
 void GameManager::RenderTiles()
