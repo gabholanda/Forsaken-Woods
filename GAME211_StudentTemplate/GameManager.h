@@ -55,7 +55,7 @@ public:
 	Matrix4 getProjectionMatrix();
 	PlayerBody* getPlayer() { return player; }
 	Grid* getGrid() { return grid; }
-	std::vector<EnemyBody*> getEnemies() { return enemies; }
+	std::vector<EnemyBody*>* getEnemies() { return &enemies; }
 	std::vector<Bullet*>* getBullets() { return &bullets; }
 	std::vector<Bullet*>* getEnemyBullets() { return &enemyBullets; }
 	std::vector<Tile*>* getTiles() { return &tiles; }

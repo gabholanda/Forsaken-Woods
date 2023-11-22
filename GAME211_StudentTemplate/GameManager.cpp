@@ -189,6 +189,7 @@ void GameManager::Run() {
 		/// Keep the event loop running at a proper rate
 		SDL_Delay(timer->GetSleepTime(60)); ///60 frames per sec
 	}
+	OnDestroy();
 }
 
 void GameManager::handleEvents()
@@ -238,20 +239,23 @@ void GameManager::handleEvents()
 GameManager::~GameManager() {}
 
 void GameManager::OnDestroy() {
-	if (windowPtr) delete windowPtr;
-	if (timer) delete timer;
-	if (currentScene) delete currentScene;
-	if (player) delete player;
-	for (EnemyBody* enemy : enemies) {
-		delete enemy;
-	}
-	enemies.clear();
+	if (!isRunning)
+	{
+		if (windowPtr) delete windowPtr;
+		if (timer) delete timer;
+		if (player) delete player;
+		for (EnemyBody* enemy : enemies) {
+			delete enemy;
+		}
+		enemies.clear();
 
-	for (Bullet* bullet : bullets) {
-		delete bullet;
-	}
+		for (Bullet* bullet : bullets) {
+			delete bullet;
+		}
 
-	enemies.clear();
+		enemies.clear();
+	}
+	isRunning = false;
 }
 
 // This might be unfamiliar
@@ -278,7 +282,6 @@ SDL_Renderer* GameManager::getRenderer()
 // This might be unfamiliar
 void GameManager::RenderPlayer()
 {
-
 	player->Render();
 }
 
