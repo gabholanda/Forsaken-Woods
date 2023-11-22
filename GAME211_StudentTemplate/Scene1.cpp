@@ -161,9 +161,16 @@ void Scene1::Update(const float deltaTime) {
 		for (auto& enemy : game->getEnemies()) {
 			if (Collision::CheckCollision(*game->getBullets()->at(i), *enemy))
 			{
-				game->getBullets()->at(i)->setMarkedForDeletion(true);
-				return;
-				// Do damage here
+				// Push bullets to deletion pool
+				bulletsToDestroy.push_back(i);
+				float playerHp = game->getPlayer()->getHp();
+				float enemyDamage = enemy->GetGun()->GetDamage();
+				game->getPlayer()->setHp(playerHp - enemyDamage);
+				if (playerHp <= 0)
+				{
+					game->getPlayer()->Death();
+				}
+				std::cout << playerHp;
 			}
 		}
 	}

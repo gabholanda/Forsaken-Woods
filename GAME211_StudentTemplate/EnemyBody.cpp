@@ -94,3 +94,8 @@ void EnemyBody::RangeAttack(PlayerBody* target)
 		}
 	}
 }
+
+void EnemyBody::dealDamageForEnemy(float damage, float playerHp)
+{
+	playerHp -= damage;
+}

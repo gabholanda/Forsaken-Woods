@@ -262,6 +262,11 @@ void PlayerBody::Render()
 		return 0; // Timer will not repeat
 	}
 
+	void PlayerBody::Death()
+	{
+		game->OnDestroy();
+	}
+
 
 void PlayerBody::Update(float deltaTime)
 {
