@@ -21,6 +21,7 @@ GameManager::GameManager() {
 	for (Bullet* bullet : bullets) {
 		bullet = nullptr;
 	}
+
 }
 
 bool GameManager::OnCreate() {
@@ -55,7 +56,7 @@ bool GameManager::OnCreate() {
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 
 	/* Grid needs to be same dimension as our sprites */
-	grid = new Grid(160, 160, 10, 10, this);
+	grid = new Grid(160, 160, 15, 15, this);
 
 	// create player
 	float mass = 1.0f;
@@ -245,6 +246,7 @@ void GameManager::OnDestroy() {
 	for (Bullet* bullet : bullets) {
 		delete bullet;
 	}
+
 	enemies.clear();
 }
 
@@ -294,6 +296,10 @@ void GameManager::RenderBullets()
 	for (Bullet* bullet : bullets) {
 		bullet->Render();
 	}
+	for (Bullet* bullet : enemyBullets) {
+		bullet->Render();
+	}
+
 }
 
 void GameManager::RenderTiles()

@@ -60,38 +60,42 @@ bool Scene1::OnCreate() {
 
 	// Setting grid borders
 	/*TODO: Change this to dynamicly fill the tiles*/
+
 	// Down
-	for (size_t i = 0; i < 10; i++)
+	for (size_t i = 0; i < 15; i++)
 	{
 		game->getGrid()->PushTile(exampleCollisionTile, i);
 	}
 
 	// Left
-	for (size_t i = 10; i < 91; i += 10)
+	for (size_t i = 15; i < 211; i += 15)
 	{
 		game->getGrid()->PushTile(exampleCollisionTile, i);
 	}
 
 	// Up
-	for (size_t i = 91; i < 100; i++)
+	for (size_t i = 211; i < 225; i++)
 	{
 		game->getGrid()->PushTile(exampleCollisionTile, i);
 	}
 
 	// Right
-	for (size_t i = 19; i < 99; i += 10)
+	for (size_t i = 14; i < 224; i += 15)
 	{
 		game->getGrid()->PushTile(exampleCollisionTile, i);
 	}
+
 	// Set up arena
-	for (size_t i = 11; i < 90; i++)
+	for (size_t i = 16; i < 210; i++)
 	{
 		game->getGrid()->PushTile(exampleTile, i);
-		if (i % 10 == 8)
+		if (i % 15 == 13)
 		{
 			i += 2;
 		}
 	}
+
+
 	// Test tile
 	game->getGrid()->PushTile(exampleCollisionTile, 34);
 	return true;
@@ -133,7 +137,7 @@ void Scene1::Update(const float deltaTime) {
 	}
 
 	if (Collision::CheckCollision(*game->getPlayer(), *game->getBuffManager()->GetBuffs()[0])) {
-		game->getBuffManager()->GetBuffs()[0]->ApplyBuff(game->getPlayer());
+		game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 	}
 
 	for (int i = 0; i < game->getBullets()->size(); i++)
@@ -162,14 +166,41 @@ void Scene1::Update(const float deltaTime) {
 				// Do damage here
 			}
 		}
+	}
 
+	for (int i = 0; i < game->getEnemyBullets()->size(); i++)
+	{
+		game->getEnemyBullets()->at(i)->Update(deltaTime);
+		if (game->getEnemyBullets()->at(i)->GetLifeTime() <= 0)
+		{
+			game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
+			return;
+		}
+
+
+		for (size_t j = 0; j < game->getGrid()->GetCollisionTiles()->size(); j++)
+		{
+			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(j), *game->getEnemyBullets()->at(i)))
+			{
+				game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
+				return;
+			}
+		}
+
+		if (Collision::CheckCollision(*game->getEnemyBullets()->at(i), *game->getPlayer()))
+		{
+			game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
+			return;
+			// Do damage here
+		}
+
+	}
 		/* Transport this block to a getEnemyBullets */
 		//if (Collision::CheckCollision(*game->getBullets()->at(i), *game->getPlayer())) {
 		//	// Handle bullet-player collision
 		//	bulletsToDestroy.push_back(i);
 		//	// Do damage to player here
 		//}
-	}
 
 
 
@@ -197,6 +228,16 @@ void Scene1::PostRenderUpdate(const float time)
 			i--;
 		}
 	}
+
+	for (int i = 0; i < game->getEnemyBullets()->size(); i++)
+	{
+		if (game->getEnemyBullets()->at(i)->getMarkedForDeletion())
+		{
+			game->getEnemyBullets()->erase(game->getEnemyBullets()->begin() + i);
+			i--;
+		}
+	}
+
 }
 
 void Scene1::HandleEvents(const SDL_Event& event)
