@@ -42,12 +42,23 @@ protected:
 	float initialDashVelY;
 	float playerHp = 100;
 
-public:
-	PlayerBody() : Body{}
-	{
-		gun = nullptr;
-		game = nullptr;
-	}
+	public:
+		PlayerBody() : Body{}
+		{
+			gun = nullptr;
+			game = nullptr;
+			isDashing = false;
+			canDash = true;
+			releasedDuringDash = false;
+			isMoving = false;
+			dashMultiplier = 3.0f;  
+			dashCooldown = 3.0f;    
+			dashLength = 0.3f;      
+			timerID = 0;            
+			dashDirection = Direction::NONE;
+			initialDashVelX = 0.0f; 
+			initialDashVelY = 0.0f;  
+		}
 
 	~PlayerBody();
 

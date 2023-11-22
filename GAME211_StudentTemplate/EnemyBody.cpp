@@ -65,13 +65,24 @@ void EnemyBody::Update(float deltaTime)
 
 void EnemyBody::MoveTowardsPlayer(float deltaTime, PlayerBody* target)
 {
-	RotationUtils::RotateTowardsTarget(orientation, target->getPos(), pos);
-	Vec3 direction = VMath::normalize(target->getPos() - pos);
-	pos.x += direction.x * movementSpeed * deltaTime;
-	pos.y += direction.y * movementSpeed * deltaTime;
+	// Check if the player is within the specified range
+	float distanceToPlayer = VMath::distance(pos, target->getPos());	
+	if (distanceToPlayer <= 15)
+	{
+		// If within range, rotate towards the player
+		RotationUtils::RotateTowardsTarget(orientation, target->getPos(), pos);
 
-	
+		// Move towards the player
+		Vec3 direction = VMath::normalize(target->getPos() - pos);
+		pos.x += direction.x * movementSpeed * deltaTime;
+		pos.y += direction.y * movementSpeed * deltaTime;
+	}
+	// If not within range, do nothing (don't move towards the player)
 }
+
+
+
+
 
 void EnemyBody::RangeAttack(PlayerBody* target)
 {

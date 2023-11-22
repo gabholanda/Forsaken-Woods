@@ -17,8 +17,6 @@ private:
 	Matrix4 projectionMatrix;	// set in OnCreate()
 	Matrix4     inverseProjection;	// set in OnCreate()
 	Randomizer* randomizer;
-	std::vector<int> bulletsToDestroy;
-	
 
 public:
 	// This constructor may be different from what you've seen before
