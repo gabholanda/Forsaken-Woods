@@ -10,6 +10,7 @@ class EnemyBody;
 
 class Gun {
 protected:
+	const char* name;
 	float fireRate;
 	float damage;
 	float reloadSpeed;
@@ -22,9 +23,10 @@ protected:
 	SDL_TimerID timerId;
 
 public:
-	Gun(float fireRate_, float damage_, float reloadSpeed_, int ammo_)
+	Gun(const char* name_, float fireRate_, float damage_, float reloadSpeed_, int ammo_)
 		: fireRate(fireRate_), damage(damage_), reloadSpeed(reloadSpeed_), maxAmmo(ammo_)
 	{
+		name = name_;
 		canShoot = true;
 		gunOwner = nullptr;
 		currentAmmo = maxAmmo;
@@ -84,6 +86,22 @@ public:
 		damage = damage_;
 	}
 
+	const char* GetName() const { return name; }
+	const char* Text() const {
+		if (currentAmmo == 0)
+		{
+			return "Reloading...";
+		}
+		string nameString = std::string(name);
+
+		nameString += " (" + to_string(currentAmmo) + " / " + to_string(maxAmmo) + ")";
+		char* result = new char[nameString.length() + 1];
+
+		// Copy the contents of nameString to the newly allocated memory using strcpy_s
+		strcpy_s(result, nameString.length() + 1, nameString.c_str());
+
+		return result;
+	}
 };
 
 #endif
