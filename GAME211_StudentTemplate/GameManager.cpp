@@ -4,6 +4,7 @@
 #include "Bullet.h"
 #include "Collision.h"
 #include "Grid.h"
+#include <random>
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -13,20 +14,15 @@ GameManager::GameManager() {
 	player = nullptr;
 	isDebugging = false;
 	backgroundReader = nullptr;
-
-	for (auto enemy : enemies) {
-		enemy = nullptr;
-	}
-
-	for (Bullet* bullet : bullets) {
-		bullet = nullptr;
-	}
-
 }
 
 bool GameManager::OnCreate()
 {
-
+	if (TTF_Init() < 0)
+	{
+		cout << "Error SDL_ttf:" << TTF_GetError() << endl;
+		return false;
+	}
 	// Use 1000x600 for less than full screen
 	const int SCREEN_WIDTH = 1000;
 	const int SCREEN_HEIGHT = 600;
@@ -49,13 +45,33 @@ bool GameManager::OnCreate()
 		return false;
 	}
 
+	font = TTF_OpenFont("MainFont.ttf", 24);
+	if (!font)
+	{
+		cout << "Failed to load Font" << endl;
+		return false;
+	}
+
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 
 	/* Grid needs to be same dimension as our sprites */
 	grid = new Grid(160, 160, 15, 15, this);
 	CreatePlayer();
+
+	// need to create Player before validating scene
+	if (!ValidateCurrentScene()) {
+		OnDestroy();
+		return false;
+	}
+
+	// the image is actually 1120x640, 7 rows of 160 and 7 columns of 4
+	backgroundReader = new SpritesheetReader(160, 160, 7, 4);
+	backgroundReader->LoadFromFile("Ground Tiles_16x16.png", getRenderer());
+	backgroundReader->SetRects();
+
 	CreateBuffs();
 	CreateBuffBody(1);
+	CreateTiles();
 	CreateEnemies(1);
 
 	if (player->OnCreate() == false) {
@@ -74,17 +90,6 @@ bool GameManager::OnCreate()
 			OnDestroy();
 			return false;
 		}
-	}
-
-	// the image is actually 1120x640, 7 rows of 160 and 7 columns of 4
-	backgroundReader = new SpritesheetReader(160, 160, 7, 4);
-	backgroundReader->LoadFromFile("Ground Tiles_16x16.png", getRenderer());
-	backgroundReader->SetRects();
-
-	// need to create Player before validating scene
-	if (!ValidateCurrentScene()) {
-		OnDestroy();
-		return false;
 	}
 
 	Collision::debugImage = IMG_Load("DebugCollisionBox.png");
@@ -169,6 +174,7 @@ void GameManager::OnDestroy()
 		if (windowPtr) delete windowPtr;
 		if (timer) delete timer;
 		if (player) delete player;
+		TTF_Quit();
 		for (EnemyBody* enemy : enemies)
 		{
 			delete enemy;
@@ -179,8 +185,8 @@ void GameManager::OnDestroy()
 		{
 			delete bullet;
 		}
+		bullets.clear();
 	}
-	bullets.clear();
 }
 
 void GameManager::OnRestart()
@@ -196,7 +202,11 @@ void GameManager::OnRestart()
 
 	CreatePlayer();
 	CreateBuffs();
-	CreateEnemies(1);
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distrib(0, 9);
+	CreateTiles();
+	CreateEnemies(distrib(gen));
 
 	if (player->OnCreate() == false) {
 		OnDestroy();
@@ -240,7 +250,7 @@ void GameManager::CreatePlayer()
 	//Vec3 position(0.0f, 0.0f, 0.0f);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
-	float playerHp = 100;
+	float playerHp = 150;
 
 	player = new PlayerBody
 	(
@@ -260,6 +270,70 @@ void GameManager::CreatePlayer()
 	);
 
 	gun->SetGunOwner(player);
+}
+
+void GameManager::CreateTiles()
+{
+	Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.f,
+		getBackgroundSpritesheetReader()->GetRows(),
+		getBackgroundSpritesheetReader()->GetColumns(),
+		// This defines which section of the spritesheet we gonna get
+		getBackgroundSpritesheetReader()->GetRects()[0][0],
+		this);
+	exampleTile->setImage(getBackgroundSpritesheetReader()->GetImage());
+	exampleTile->setTexture(getBackgroundSpritesheetReader()->GetTexture());
+
+
+	CollisionTile* exampleCollisionTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 1.f,
+		getBackgroundSpritesheetReader()->GetRows(),
+		getBackgroundSpritesheetReader()->GetColumns(),
+		Vec3(4.0f, 4.0f, 0.0f),
+		// This defines which section of the spritesheet we gonna get
+		getBackgroundSpritesheetReader()->GetRects()[0][3],
+		this);
+	exampleCollisionTile->Tile::setImage(getBackgroundSpritesheetReader()->GetImage());
+	exampleCollisionTile->Tile::setTexture(getBackgroundSpritesheetReader()->GetTexture());
+	//game->getGrid()->PushTile(exampleCollisionTile, 0);
+
+	// Setting grid borders
+	/*TODO: Change this to dynamicly fill the tiles*/
+
+	// Down
+	for (size_t i = 0; i < 15; i++)
+	{
+		getGrid()->PushTile(exampleCollisionTile, i);
+	}
+
+	// Left
+	for (size_t i = 15; i < 211; i += 15)
+	{
+		getGrid()->PushTile(exampleCollisionTile, i);
+	}
+
+	// Up
+	for (size_t i = 211; i < 225; i++)
+	{
+		getGrid()->PushTile(exampleCollisionTile, i);
+	}
+
+	// Right
+	for (size_t i = 14; i < 224; i += 15)
+	{
+		getGrid()->PushTile(exampleCollisionTile, i);
+	}
+
+	// Set up arena
+	for (size_t i = 16; i < 210; i++)
+	{
+		getGrid()->PushTile(exampleTile, i);
+		if (i % 15 == 13)
+		{
+			i += 2;
+		}
+	}
+
+	// Test tile
+	getGrid()->PushTile(exampleCollisionTile, 34);
 }
 
 void GameManager::CreateBuffs()
@@ -353,11 +427,17 @@ void GameManager::CreateEnemies(int quantity)
 		float movementSpeedEnemy = 1.0f;
 		float scaleEnemy = 0.5;
 		Vec3 sizeEnemy(3.f, 3.f, 0.0f);
-		Vec3 positionEnemy(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> distribution(0, getGrid()->GetTiles()->size() - 1);
+		int index = distribution(gen);
+		Vec3 positionEnemy = getGrid()->GetTiles()->at(index).getPos();
 		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
 		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
 		Gun* randomEnemyGun = Randomizer::getRandomWeapon();
-		float enemyHp = 100;
+		// Giving some random HP
+		distribution = std::uniform_int_distribution<>(10, 35);
+		float enemyHp = distribution(gen);
 
 		EnemyBody* newEnemy = new EnemyBody(
 			randomEnemyGun,
@@ -398,6 +478,46 @@ SDL_Renderer* GameManager::getRenderer()
 	SDL_Window* window = currentScene->getWindow();
 	SDL_Renderer* renderer = SDL_GetRenderer(window);
 	return renderer;
+}
+
+void GameManager::RenderUI()
+{
+	SDL_Surface* gunText;
+
+	SDL_Color color = { 255,255,255 };
+	gunText = TTF_RenderText_Solid(font, player->GetGun()->Text(), color);
+
+	if (!gunText)
+	{
+		cout << "GunText not rendered error: " << TTF_GetError() << endl;
+		return;
+	}
+
+	SDL_Texture* gunTextTexture;
+	gunTextTexture = SDL_CreateTextureFromSurface(getRenderer(), gunText);
+	SDL_Rect dest = { 25,25, gunText->w, gunText->h };
+
+	SDL_RenderCopy(getRenderer(), gunTextTexture, NULL, &dest);
+	SDL_DestroyTexture(gunTextTexture);
+	SDL_FreeSurface(gunText);
+
+	// Player
+	SDL_Surface* healthText;
+	healthText = TTF_RenderText_Solid(font, player->Text(), color);
+
+	if (!healthText)
+	{
+		cout << "healthText not rendered error: " << TTF_GetError() << endl;
+		return;
+	}
+
+	SDL_Texture* healthTextTexture;
+	healthTextTexture = SDL_CreateTextureFromSurface(getRenderer(), healthText);
+	SDL_Rect healthDest = { 25,550, healthText->w, healthText->h };
+
+	SDL_RenderCopy(getRenderer(), healthTextTexture, NULL, &healthDest);
+	SDL_DestroyTexture(healthTextTexture);
+	SDL_FreeSurface(healthText);
 }
 
 // This might be unfamiliar

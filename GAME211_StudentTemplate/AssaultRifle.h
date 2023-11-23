@@ -3,6 +3,6 @@
 class AssaultRifle : public Gun
 {
 public:
-	AssaultRifle() : Gun(1.5, 10, 2.5, 20) {}
+	AssaultRifle() : Gun("Assault Rifle", 0.75f, 10, 2.5, 20) {}
 };
 
