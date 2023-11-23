@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "Body.h"
 #include "GameManager.h"
+#include <string>
 
 enum Direction {
 	NONE,
@@ -23,6 +24,9 @@ enum Direction {
 	DOWN_LEFT,
 	DOWN_RIGHT
 };
+
+using namespace std;
+
 class PlayerBody : public Body
 {
 protected:
@@ -41,24 +45,24 @@ protected:
 	float initialDashVelX;
 	float initialDashVelY;
 	float playerHp = 100;
-
-	public:
-		PlayerBody() : Body{}
-		{
-			gun = nullptr;
-			game = nullptr;
-			isDashing = false;
-			canDash = true;
-			releasedDuringDash = false;
-			isMoving = false;
-			dashMultiplier = 3.0f;  
-			dashCooldown = 3.0f;    
-			dashLength = 0.3f;      
-			timerID = 0;            
-			dashDirection = Direction::NONE;
-			initialDashVelX = 0.0f; 
-			initialDashVelY = 0.0f;  
-		}
+	float maxPlayerHP;
+public:
+	PlayerBody() : Body{}
+	{
+		gun = nullptr;
+		game = nullptr;
+		isDashing = false;
+		canDash = true;
+		releasedDuringDash = false;
+		isMoving = false;
+		dashMultiplier = 3.0f;
+		dashCooldown = 3.0f;
+		dashLength = 0.3f;
+		timerID = 0;
+		dashDirection = Direction::NONE;
+		initialDashVelX = 0.0f;
+		initialDashVelY = 0.0f;
+	}
 
 	~PlayerBody();
 
@@ -76,7 +80,7 @@ protected:
 		float movementSpeed_,
 		float scale_,
 		GameManager* game_,
-		float playerHp
+		float playerHP_
 	) : Body{
 		  pos_
 		, vel_
@@ -92,6 +96,8 @@ protected:
 		, game{ game_ }
 
 	{
+		playerHp = playerHP_;
+		maxPlayerHP = playerHp;
 		gun = gun_;
 	}
 
@@ -114,6 +120,18 @@ protected:
 	virtual float getHp() { return playerHp; }
 	void setHp(float playerHp_) { playerHp = playerHp_; }
 	void Death();
+
+	const char* Text() const
+	{
+		std::string text = "HP: " + to_string((int)playerHp) + " / " + to_string((int)maxPlayerHP);
+
+		char* result = new char[text.length() + 1];
+
+		// Copy the contents of nameString to the newly allocated memory using strcpy_s
+		strcpy_s(result, text.length() + 1, text.c_str());
+
+		return result;
+	}
 };
 
 #endif /* PLAYERBODY_H */

@@ -3,10 +3,13 @@
 #define GUN_H
 
 #include "SDL.h"
-#include "EnemyBody.h"
+#include <string>
 
 class PlayerBody;
 class EnemyBody;
+
+
+using namespace std;
 
 class Gun {
 protected:
@@ -92,7 +95,7 @@ public:
 		{
 			return "Reloading...";
 		}
-		string nameString = std::string(name);
+		string nameString = string(name);
 
 		nameString += " (" + to_string(currentAmmo) + " / " + to_string(maxAmmo) + ")";
 		char* result = new char[nameString.length() + 1];

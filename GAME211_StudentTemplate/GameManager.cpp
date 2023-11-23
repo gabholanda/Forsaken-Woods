@@ -452,6 +452,24 @@ void GameManager::RenderUI()
 	SDL_RenderCopy(getRenderer(), gunTextTexture, NULL, &dest);
 	SDL_DestroyTexture(gunTextTexture);
 	SDL_FreeSurface(gunText);
+
+	// Player
+	SDL_Surface* healthText;
+	healthText = TTF_RenderText_Solid(font, player->Text(), color);
+
+	if (!healthText)
+	{
+		cout << "healthText not rendered error: " << TTF_GetError() << endl;
+		return;
+	}
+
+	SDL_Texture* healthTextTexture;
+	healthTextTexture = SDL_CreateTextureFromSurface(getRenderer(), healthText);
+	SDL_Rect healthDest = { 25,550, healthText->w, healthText->h };
+
+	SDL_RenderCopy(getRenderer(), healthTextTexture, NULL, &healthDest);
+	SDL_DestroyTexture(healthTextTexture);
+	SDL_FreeSurface(healthText);
 }
 
 // This might be unfamiliar
