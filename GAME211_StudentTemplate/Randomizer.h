@@ -4,12 +4,14 @@
 #include "Gun.h"
 #include "Pistol.h"
 #include "Submachine.h"
+#include "AssaultRifle.h"
+#include "SniperRifle.h"
 #include "Scene1.h"
 #include "Scene2.h"
 #include "Scene3.h"
 
 static class Randomizer
-{	
+{
 public:
 	static Gun* getRandomWeapon();
 	int RandomNumberForEnemy();

@@ -5,6 +5,6 @@
 
 class Pistol : public Gun {
 		public:
-			Pistol() : Gun(0.5, 15, 0.7, 10) {}
+			Pistol() : Gun("Pistol", 0.5, 15, 0.7, 10) {}
 };
 #endif

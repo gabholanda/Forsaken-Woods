@@ -10,6 +10,7 @@
 #include "SpritesheetReader.h"
 #include "Tile.h"
 #include "BuffManager.h"
+#include "SDL_ttf.h"
 
 class EnemyBody;
 class Bullet;
@@ -43,6 +44,8 @@ private:
 	std::vector<Tile*> tiles;
 
 	SpritesheetReader* backgroundReader;
+
+	TTF_Font* font;
 public:
 	GameManager();
 	~GameManager();
@@ -50,6 +53,7 @@ public:
 	void OnDestroy();
 	void OnRestart();
 	void CreatePlayer();
+	void CreateTiles();
 	void CreateBuffs();
 	void CreateEnemies(int quantity);
 	// These might be unfamiliar
@@ -67,6 +71,7 @@ public:
 	std::vector<Tile*>* getTiles() { return &tiles; }
 	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
 	BuffManager* getBuffManager() { return buffManager; }
+	void RenderUI();
 	void RenderPlayer();
 	void RenderEnemy();
 	void RenderBullets();

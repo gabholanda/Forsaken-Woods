@@ -25,76 +25,6 @@ bool Scene1::OnCreate() {
 	SDL_GetWindowSize(window, &w, &h);
 
 	camera = new PlayerCamera(w, h, xAxis, yAxis, game);
-	SDL_Surface* enemyImage;
-	SDL_Texture* enemyTexture;
-
-	enemyImage = IMG_Load("treantenemy.png");
-	enemyTexture = SDL_CreateTextureFromSurface(renderer, enemyImage);
-	for (EnemyBody* enemy : *game->getEnemies()) {
-		enemy->setImage(enemyImage);
-		enemy->setTexture(enemyTexture);
-	}
-	Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.f,
-		game->getBackgroundSpritesheetReader()->GetRows(),
-		game->getBackgroundSpritesheetReader()->GetColumns(),
-		// This defines which section of the spritesheet we gonna get
-		game->getBackgroundSpritesheetReader()->GetRects()[0][0],
-		game);
-	exampleTile->setImage(game->getBackgroundSpritesheetReader()->GetImage());
-	exampleTile->setTexture(game->getBackgroundSpritesheetReader()->GetTexture());
-
-
-	CollisionTile* exampleCollisionTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 1.f,
-		game->getBackgroundSpritesheetReader()->GetRows(),
-		game->getBackgroundSpritesheetReader()->GetColumns(),
-		Vec3(4.0f, 4.0f, 0.0f),
-		// This defines which section of the spritesheet we gonna get
-		game->getBackgroundSpritesheetReader()->GetRects()[0][3],
-		game);
-	exampleCollisionTile->Tile::setImage(game->getBackgroundSpritesheetReader()->GetImage());
-	exampleCollisionTile->Tile::setTexture(game->getBackgroundSpritesheetReader()->GetTexture());
-	//game->getGrid()->PushTile(exampleCollisionTile, 0);
-
-	// Setting grid borders
-	/*TODO: Change this to dynamicly fill the tiles*/
-
-	// Down
-	for (size_t i = 0; i < 15; i++)
-	{
-		game->getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Left
-	for (size_t i = 15; i < 211; i += 15)
-	{
-		game->getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Up
-	for (size_t i = 211; i < 225; i++)
-	{
-		game->getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Right
-	for (size_t i = 14; i < 224; i += 15)
-	{
-		game->getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Set up arena
-	for (size_t i = 16; i < 210; i++)
-	{
-		game->getGrid()->PushTile(exampleTile, i);
-		if (i % 15 == 13)
-		{
-			i += 2;
-		}
-	}
-
-
-	// Test tile
-	game->getGrid()->PushTile(exampleCollisionTile, 34);
 	return true;
 }
 
@@ -142,7 +72,6 @@ void Scene1::Update(const float deltaTime) {
 		if (game->getBullets()->at(i)->GetLifeTime() <= 0)
 		{
 			game->getBullets()->at(i)->setMarkedForDeletion(true);
-			return;
 		}
 
 		for (size_t j = 0; j < game->getGrid()->GetCollisionTiles()->size(); j++)
@@ -150,27 +79,24 @@ void Scene1::Update(const float deltaTime) {
 			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(j), *game->getBullets()->at(i)))
 			{
 				game->getBullets()->at(i)->setMarkedForDeletion(true);
-				return;
 			}
 		}
 
-		for (auto& enemy : *game->getEnemies()) {
+		for (auto& enemy : *game->getEnemies())
+		{
 			if (Collision::CheckCollision(*game->getBullets()->at(i), *enemy))
 			{
 				// Push bullets to deletion 
 				game->getBullets()->at(i)->setMarkedForDeletion(true);
 				float enemyHp = enemy->getHp();
-				float damage = game->getBullets()->at(i)->GetOwninGun()->GetDamage();
+				float damage = game->getBullets()->at(i)->GetOwningGun()->GetDamage();
 				enemy->setHp(enemyHp - damage);
-				if (enemyHp <= 0)
+				if (enemy->getHp() <= 0.0f)
 				{
 					enemy->setMarkedForDeletion(true);
-					return;
 				}
-				std::cout << "EnemyHP: " << enemyHp << std::endl;
-				return;
+				std::cout << "EnemyHP: " << enemyHp - damage << std::endl;
 			}
-			return;
 		}
 	}
 
@@ -180,7 +106,6 @@ void Scene1::Update(const float deltaTime) {
 		if (game->getEnemyBullets()->at(i)->GetLifeTime() <= 0)
 		{
 			game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
-			return;
 		}
 
 
@@ -189,7 +114,6 @@ void Scene1::Update(const float deltaTime) {
 			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(j), *game->getEnemyBullets()->at(i)))
 			{
 				game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
-				return;
 			}
 		}
 
@@ -197,15 +121,13 @@ void Scene1::Update(const float deltaTime) {
 		{
 			game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
 			float playerHp = game->getPlayer()->getHp();
-			float enemyDamage = game->getEnemyBullets()->at(i)->GetOwninGun()->GetDamage();
+			float enemyDamage = game->getEnemyBullets()->at(i)->GetOwningGun()->GetDamage();
 			game->getPlayer()->setHp(playerHp - enemyDamage);
-			if (playerHp <= 0)
+			if (game->getPlayer()->getHp() <= 0.0f)
 			{
 				game->getPlayer()->Death();
-				return;
 			}
 			std::cout << "PlayerHP:" << playerHp << std::endl;
-			return;
 		}
 
 	}
@@ -220,6 +142,7 @@ void Scene1::Render() {
 	game->RenderEnemy();
 	game->RenderBullets();
 	game->RenderDebug();
+	game->RenderUI();
 	SDL_RenderPresent(renderer);
 }
 
@@ -250,6 +173,11 @@ void Scene1::PostRenderUpdate(const float time)
 			game->getEnemies()->erase(game->getEnemies()->begin() + i);
 			i--;
 		}
+	}
+
+	if (game->getEnemies()->size() == 0)
+	{
+		game->OnRestart();
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "PlayerBody.h"
 #include "SDL.h"
 #include <VMath.h>
+#include "EnemyBody.h"
 
 Gun::~Gun()
 {
