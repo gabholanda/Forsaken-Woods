@@ -24,10 +24,8 @@ GameManager::GameManager() {
 
 }
 
-bool GameManager::OnCreate() {
-	// My display is 1920 x 1080 but the following seems to work best to fill the screen.
-   /* const int SCREEN_WIDTH = 1540;
-	const int SCREEN_HEIGHT = 860;*/
+bool GameManager::OnCreate()
+{
 
 	// Use 1000x600 for less than full screen
 	const int SCREEN_WIDTH = 1000;
@@ -51,98 +49,13 @@ bool GameManager::OnCreate() {
 		return false;
 	}
 
-	// select scene for specific assignment
-
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 
 	/* Grid needs to be same dimension as our sprites */
 	grid = new Grid(160, 160, 15, 15, this);
-
-	// create player
-	float mass = 1.0f;
-	float orientation = 0.0f;
-	float rotation = 0.0f;
-	float angular = 0.0f;
-	float movementSpeed = 5.0f;
-
-	Gun* gun = Randomizer::getRandomWeapon();
-	Gun* randomEnemyGun = Randomizer::getRandomWeapon();
-
-	float scale = 0.5;
-	Vec3 size(3.f, 3.f, 0.0f);
-	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
-	//Vec3 position(0.0f, 0.0f, 0.0f);
-	Vec3 velocity(0.0f, 0.0f, 0.0f);
-	Vec3 acceleration(0.0f, 0.0f, 0.0f);
-	float playerHp = 100;
-	float enemyHp = 100;
-
-	player = new PlayerBody
-	(
-		gun,
-		position,
-		velocity,
-		acceleration,
-		size,
-		mass,
-		orientation,
-		rotation,
-		angular,
-		movementSpeed,
-		scale,
-		this,
-		playerHp
-	);
-
-	gun->SetGunOwner(player);
-
-	buffManager = new BuffManager();
-	for (int i = 0; i < buffManager->GetBuffs().size(); i++) {
-		buffManager->GetBuffs()[i] = new Buff(
-			position,
-			velocity,
-			acceleration,
-			size,
-			mass,
-			orientation,
-			rotation,
-			angular,
-			movementSpeed,
-			scale,
-			this);
-	}
-
-	for (int i = 0; i < 1; i++) {
-		float massEnemy = 1.0f;
-		float orientationEnemy = 0.0f;
-		float rotationEnemy = 0.0f;
-		float angularEnemy = 0.0f;
-		float movementSpeedEnemy = 1.0f;
-		float scaleEnemy = 0.5;
-		Vec3 sizeEnemy(3.f, 3.f, 0.0f);
-		Vec3 positionEnemy(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
-		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
-		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
-
-		EnemyBody* newEnemy = new EnemyBody(
-			randomEnemyGun,
-			positionEnemy,
-			velocityEnemy,
-			accelerationEnemy,
-			sizeEnemy,
-			massEnemy,
-			orientationEnemy,
-			rotationEnemy,
-			angularEnemy,
-			movementSpeedEnemy,
-			scaleEnemy,
-			this,
-			enemyHp
-		);
-		randomEnemyGun->SetEnemyGunOwner(newEnemy);
-		enemies.push_back(newEnemy);
-	}
-
+	CreatePlayer();
+	CreateBuffs();
+	CreateEnemies(1);
 
 	if (player->OnCreate() == false) {
 		OnDestroy();
@@ -187,6 +100,10 @@ void GameManager::Run() {
 		currentScene->Render();
 		currentScene->PostRenderUpdate(timer->GetDeltaTime());
 		/// Keep the event loop running at a proper rate
+		if (isRestarting)
+		{
+			OnRestart();
+		}
 		SDL_Delay(timer->GetSleepTime(60)); ///60 frames per sec
 	}
 	OnDestroy();
@@ -238,24 +155,180 @@ void GameManager::handleEvents()
 
 GameManager::~GameManager() {}
 
-void GameManager::OnDestroy() {
+void GameManager::OnDestroy()
+{
 	if (!isRunning)
 	{
 		if (windowPtr) delete windowPtr;
 		if (timer) delete timer;
 		if (player) delete player;
-		for (EnemyBody* enemy : enemies) {
+		for (EnemyBody* enemy : enemies)
+		{
 			delete enemy;
 		}
 		enemies.clear();
 
-		for (Bullet* bullet : bullets) {
+		for (Bullet* bullet : bullets)
+		{
 			delete bullet;
 		}
+	}
+	bullets.clear();
+}
 
+void GameManager::OnRestart()
+{
+	if (currentScene) delete currentScene;
+	for (Bullet* bullet : bullets) {
+		delete bullet;
+	}
+
+	bullets.clear();
+
+	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+
+	CreatePlayer();
+	CreateBuffs();
+	CreateEnemies(1);
+
+	if (player->OnCreate() == false) {
+		OnDestroy();
+		isRunning = false;
+	}
+
+	for (auto& currentEnemy : enemies) {
+		if (currentEnemy->OnCreate() == false) {
+			OnDestroy();
+			isRunning = false;
+		}
+	}
+
+	if (!ValidateCurrentScene()) {
+		OnDestroy();
+		isRunning = false;
+	}
+	isRestarting = false;
+}
+
+void GameManager::SetRestart(bool isRestarting_)
+{
+	isRestarting = isRestarting_;
+}
+
+void GameManager::CreatePlayer()
+{
+	if (player) delete player;
+	// create player
+	float mass = 1.0f;
+	float orientation = 0.0f;
+	float rotation = 0.0f;
+	float angular = 0.0f;
+	float movementSpeed = 5.0f;
+
+	Gun* gun = Randomizer::getRandomWeapon();
+
+	float scale = 0.5;
+	Vec3 size(3.f, 3.f, 0.0f);
+	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+	//Vec3 position(0.0f, 0.0f, 0.0f);
+	Vec3 velocity(0.0f, 0.0f, 0.0f);
+	Vec3 acceleration(0.0f, 0.0f, 0.0f);
+	float playerHp = 100;
+
+	player = new PlayerBody
+	(
+		gun,
+		position,
+		velocity,
+		acceleration,
+		size,
+		mass,
+		orientation,
+		rotation,
+		angular,
+		movementSpeed,
+		scale,
+		this,
+		playerHp
+	);
+
+	gun->SetGunOwner(player);
+}
+
+void GameManager::CreateBuffs()
+{
+	if (buffManager) delete buffManager;
+
+	float mass = 0.0f;
+	float orientation = 0.0f;
+	float rotation = 0.0f;
+	float angular = 0.0f;
+	float movementSpeed = 0.0f;
+	float scale = 0.5;
+	Vec3 size(3.f, 3.f, 0.0f);
+	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+	//Vec3 position(0.0f, 0.0f, 0.0f);
+	Vec3 velocity(0.0f, 0.0f, 0.0f);
+	Vec3 acceleration(0.0f, 0.0f, 0.0f);
+	buffManager = new BuffManager();
+	for (int i = 0; i < buffManager->GetBuffs().size(); i++) {
+		buffManager->GetBuffs()[i] = new Buff(
+			position,
+			velocity,
+			acceleration,
+			size,
+			mass,
+			orientation,
+			rotation,
+			angular,
+			movementSpeed,
+			scale,
+			this);
+	}
+}
+
+void GameManager::CreateEnemies(int quantity)
+{
+	if (enemies.size() > 0)
+	{
+		for (EnemyBody* enemy : enemies) {
+			delete enemy;
+		}
 		enemies.clear();
 	}
-	isRunning = false;
+
+	for (int i = 0; i < quantity; i++) {
+		float massEnemy = 1.0f;
+		float orientationEnemy = 0.0f;
+		float rotationEnemy = 0.0f;
+		float angularEnemy = 0.0f;
+		float movementSpeedEnemy = 1.0f;
+		float scaleEnemy = 0.5;
+		Vec3 sizeEnemy(3.f, 3.f, 0.0f);
+		Vec3 positionEnemy(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
+		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
+		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
+		Gun* randomEnemyGun = Randomizer::getRandomWeapon();
+		float enemyHp = 100;
+
+		EnemyBody* newEnemy = new EnemyBody(
+			randomEnemyGun,
+			positionEnemy,
+			velocityEnemy,
+			accelerationEnemy,
+			sizeEnemy,
+			massEnemy,
+			orientationEnemy,
+			rotationEnemy,
+			angularEnemy,
+			movementSpeedEnemy,
+			scaleEnemy,
+			this,
+			enemyHp
+		);
+		randomEnemyGun->SetEnemyGunOwner(newEnemy);
+		enemies.push_back(newEnemy);
+	}
 }
 
 // This might be unfamiliar
@@ -330,10 +403,12 @@ void GameManager::RenderDebug()
 
 		for (Bullet* bullet : bullets)
 		{
-			if (isDebugging)
-			{
-				Collision::DisplayDebugCollision(*bullet, *this);
-			}
+			Collision::DisplayDebugCollision(*bullet, *this);
+		}
+
+		for (Bullet* bullet : enemyBullets)
+		{
+			Collision::DisplayDebugCollision(*bullet, *this);
 		}
 
 		for (int i = 0; i < grid->GetCollisionTiles()->size(); i++)

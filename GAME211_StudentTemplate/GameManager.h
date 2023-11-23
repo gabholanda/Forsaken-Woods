@@ -30,6 +30,7 @@ private:
 	class Timer* timer;
 	bool isRunning;
 	bool isDebugging;
+	bool isRestarting;
 	class Scene* currentScene;
 	Grid* grid;
 	// This might be unfamiliar
@@ -47,12 +48,17 @@ public:
 	~GameManager();
 	bool OnCreate();
 	void OnDestroy();
-
-
+	void OnRestart();
+	void CreatePlayer();
+	void CreateBuffs();
+	void CreateEnemies(int quantity);
 	// These might be unfamiliar
 	float getSceneHeight();
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
+
+	void SetRestart(bool isRestarting_);
+	bool GetRestart() const { return isRestarting; };
 	PlayerBody* getPlayer() { return player; }
 	Grid* getGrid() { return grid; }
 	std::vector<EnemyBody*>* getEnemies() { return &enemies; }

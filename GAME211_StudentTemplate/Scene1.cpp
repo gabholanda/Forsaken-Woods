@@ -43,9 +43,6 @@ bool Scene1::OnCreate() {
 	exampleTile->setImage(game->getBackgroundSpritesheetReader()->GetImage());
 	exampleTile->setTexture(game->getBackgroundSpritesheetReader()->GetTexture());
 
-	//game->getGrid()->PushTile(exampleTile, 1);
-	//game->getGrid()->PushTile(exampleTile, 2);
-
 
 	CollisionTile* exampleCollisionTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 1.f,
 		game->getBackgroundSpritesheetReader()->GetRows(),
@@ -118,10 +115,6 @@ void Scene1::Update(const float deltaTime) {
 		enemy->MoveTowardsPlayer(deltaTime, game->getPlayer());
 		enemy->RangeAttack(game->getPlayer());
 		enemy->Update(deltaTime);
-		//if (Collision::CheckCollision(*game->getPlayer(), *enemy))
-		//{
-		//	//game->getBuffManager()->PickRandomBuff();
-		//}
 		for (size_t i = 0; i < game->getGrid()->GetCollisionTiles()->size(); i++)
 		{
 			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(i), *enemy))
@@ -213,19 +206,9 @@ void Scene1::Update(const float deltaTime) {
 			}
 			std::cout << "PlayerHP:" << playerHp << std::endl;
 			return;
-			// Do damage here
 		}
 
 	}
-	/* Transport this block to a getEnemyBullets */
-	//if (Collision::CheckCollision(*game->getBullets()->at(i), *game->getPlayer())) {
-	//	// Handle bullet-player collision
-	//	bulletsToDestroy.push_back(i);
-	//	// Do damage to player here
-	//}
-
-
-
 }
 
 void Scene1::Render() {
@@ -268,7 +251,6 @@ void Scene1::PostRenderUpdate(const float time)
 			i--;
 		}
 	}
-
 }
 
 void Scene1::HandleEvents(const SDL_Event& event)

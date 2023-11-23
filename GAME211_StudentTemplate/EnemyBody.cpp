@@ -9,7 +9,7 @@ EnemyBody::~EnemyBody()
 
 bool EnemyBody::OnCreate()
 {
-	image = IMG_Load("Rogue.png");
+	image = IMG_Load("TreantEnemy.png");
 	SDL_Renderer* renderer = game->getRenderer();
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	if (image == nullptr) {
