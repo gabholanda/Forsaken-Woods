@@ -160,7 +160,7 @@ void Scene1::Update(const float deltaTime) {
 				// Push bullets to deletion 
 				game->getBullets()->at(i)->setMarkedForDeletion(true);
 				float enemyHp = enemy->getHp();
-				float damage = game->getBullets()->at(i)->GetOwninGun()->GetDamage();
+				float damage = game->getBullets()->at(i)->GetOwningGun()->GetDamage();
 				enemy->setHp(enemyHp - damage);
 				if (enemyHp <= 0)
 				{
