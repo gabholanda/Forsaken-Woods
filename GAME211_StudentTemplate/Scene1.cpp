@@ -67,6 +67,7 @@ void Scene1::Update(const float deltaTime) {
 			Collision::ResolveCollision(game->getPlayer(), buffBody);
 			game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 		std:cout << game->getBuffManager()->PickRandomBuffIndex() << std::endl;
+			//buffBody->setMarkedForDeletion(true);
 		}
 	}
 
@@ -176,6 +177,15 @@ void Scene1::PostRenderUpdate(const float time)
 		if (game->getEnemies()->at(i)->getMarkedForDeletion())
 		{
 			game->getEnemies()->erase(game->getEnemies()->begin() + i);
+			i--;
+		}
+	}
+
+	for (int i = 0; i < game->getBuffBodies()->size(); i++)
+	{
+		if (game->getBuffBodies()->at(i)->getMarkedForDeletion())
+		{
+			game->getBuffBodies()->erase(game->getBuffBodies()->begin() + i);
 			i--;
 		}
 	}

@@ -70,9 +70,9 @@ bool GameManager::OnCreate()
 	backgroundReader->SetRects();
 
 	CreateBuffs();
-	CreateBuffBody(1);
 	CreateTiles();
 	CreateEnemies(1);
+	CreateBuffBody(1);
 
 	if (player->OnCreate() == false) {
 		OnDestroy();
@@ -207,6 +207,10 @@ void GameManager::OnRestart()
 	std::uniform_int_distribution<> distrib(0, 9);
 	CreateTiles();
 	CreateEnemies(distrib(gen));
+	std::random_device rd2;
+	std::mt19937 gen2(rd2());
+	std::uniform_int_distribution<> distrib2(0, 3);
+	CreateBuffBody(distrib2(gen2));
 
 	if (player->OnCreate() == false) {
 		OnDestroy();
@@ -215,6 +219,12 @@ void GameManager::OnRestart()
 
 	for (auto& currentEnemy : enemies) {
 		if (currentEnemy->OnCreate() == false) {
+			OnDestroy();
+			isRunning = false;
+		}
+	}
+	for (auto& buffBody : buffBodies) {
+		if (buffBody->OnCreate() == false) {
 			OnDestroy();
 			isRunning = false;
 		}
@@ -240,7 +250,7 @@ void GameManager::CreatePlayer()
 	float orientation = 0.0f;
 	float rotation = 0.0f;
 	float angular = 0.0f;
-	float movementSpeed = 5.0f;
+	float movementSpeed = 8.0f;
 
 	Gun* gun = Randomizer::getRandomWeapon();
 
@@ -385,12 +395,15 @@ void GameManager::CreateBuffBody(int quantity)
 		float angularBuff = 0.0f;
 		float movementSpeedBuffy = 1.0f;
 		float scaleBuff = 0.5;
-		Vec3 sizeBuff(3.f, 3.f, 0.0f);
-		Vec3 positionBuff(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
+		Vec3 sizeBuff(1.5f, 1.5f, 0.0f);
+		std::random_device rd2;
+		std::mt19937 gen2(rd2());
+		std::uniform_int_distribution<> distribution2(0, getGrid()->GetTiles()->size() - 1);
+		int index2 = distribution2(gen2);
+		Vec3 positionBuff = getGrid()->GetTiles()->at(index2).getPos();
 		Vec3 velocityBuff(0.0f, 0.0f, 0.0f);
 		Vec3 accelerationBuff(0.0f, 0.0f, 0.0f);
 		float movementSpeedBuff = 0.0f;
-		Gun* randomEnemyBuff = Randomizer::getRandomWeapon();
 
 		Buff* newBuff = new Buff(
 			positionBuff,
