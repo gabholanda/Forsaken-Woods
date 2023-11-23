@@ -67,7 +67,7 @@ void Scene1::Update(const float deltaTime) {
 			Collision::ResolveCollision(game->getPlayer(), buffBody);
 			game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 		std:cout << game->getBuffManager()->PickRandomBuffIndex() << std::endl;
-			//buffBody->setMarkedForDeletion(true);
+			buffBody->setMarkedForDeletion(true);
 		}
 	}
 
