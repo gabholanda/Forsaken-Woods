@@ -151,6 +151,7 @@ void Scene1::Update(const float deltaTime) {
 
 	for (Buff* buffBody : *game->getBuffBodies()) {
 		if (Collision::CheckCollision(*game->getPlayer(), *buffBody)) {
+			Collision::ResolveCollision(game->getPlayer(), buffBody);
 			game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 		std:cout << game->getBuffManager()->PickRandomBuffIndex() << std::endl;
 		}

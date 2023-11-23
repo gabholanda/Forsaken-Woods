@@ -310,7 +310,7 @@ void GameManager::CreateBuffBody(int quantity)
 		float rotationBuff = 0.0f;
 		float angularBuff = 0.0f;
 		float movementSpeedBuffy = 1.0f;
-		float scaleBuff = 0.25;
+		float scaleBuff = 0.5;
 		Vec3 sizeBuff(3.f, 3.f, 0.0f);
 		Vec3 positionBuff(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
 		Vec3 velocityBuff(0.0f, 0.0f, 0.0f);
