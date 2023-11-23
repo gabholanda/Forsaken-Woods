@@ -5,7 +5,7 @@
 
 class Submachine : public Gun {
 public:
-	Submachine() : Gun(3, 5, 2, 40) {}
+	Submachine() : Gun(0.5f, 5, 2, 40) {}
 };
 #endif
 

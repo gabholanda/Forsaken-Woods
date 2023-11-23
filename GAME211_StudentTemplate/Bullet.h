@@ -43,7 +43,7 @@ public:
 		owningGun = owningGun_;
 		lifeTime = lifeTime_;
 	}
-
+	Gun* GetOwninGun() { return owningGun; }
 	float GetLifeTime() const { return lifeTime; }
 	Vec3 GetDirection() const { return direction; }
 	void SetDirection(Vec3 direction_) { direction = direction_; }

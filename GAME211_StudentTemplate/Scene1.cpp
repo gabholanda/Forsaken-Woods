@@ -30,7 +30,7 @@ bool Scene1::OnCreate() {
 
 	enemyImage = IMG_Load("treantenemy.png");
 	enemyTexture = SDL_CreateTextureFromSurface(renderer, enemyImage);
-	for (EnemyBody* enemy : game->getEnemies()) {
+	for (EnemyBody* enemy : *game->getEnemies()) {
 		enemy->setImage(enemyImage);
 		enemy->setTexture(enemyTexture);
 	}
@@ -42,9 +42,6 @@ bool Scene1::OnCreate() {
 		game);
 	exampleTile->setImage(game->getBackgroundSpritesheetReader()->GetImage());
 	exampleTile->setTexture(game->getBackgroundSpritesheetReader()->GetTexture());
-
-	//game->getGrid()->PushTile(exampleTile, 1);
-	//game->getGrid()->PushTile(exampleTile, 2);
 
 
 	CollisionTile* exampleCollisionTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 1.f,
@@ -104,6 +101,9 @@ bool Scene1::OnCreate() {
 void Scene1::OnDestroy()
 {
 	delete camera;
+	delete randomizer;
+	delete renderer;
+	delete window;
 }
 
 void Scene1::Update(const float deltaTime) {
@@ -111,14 +111,10 @@ void Scene1::Update(const float deltaTime) {
 	camera->updateCameraPosition();
 	// Update player
 	game->getPlayer()->Update(deltaTime);
-	for (auto& enemy : game->getEnemies()) {
+	for (auto& enemy : *game->getEnemies()) {
 		enemy->MoveTowardsPlayer(deltaTime, game->getPlayer());
 		enemy->RangeAttack(game->getPlayer());
 		enemy->Update(deltaTime);
-		//if (Collision::CheckCollision(*game->getPlayer(), *enemy))
-		//{
-		//	//game->getBuffManager()->PickRandomBuff();
-		//}
 		for (size_t i = 0; i < game->getGrid()->GetCollisionTiles()->size(); i++)
 		{
 			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(i), *enemy))
@@ -158,20 +154,23 @@ void Scene1::Update(const float deltaTime) {
 			}
 		}
 
-		for (auto& enemy : game->getEnemies()) {
+		for (auto& enemy : *game->getEnemies()) {
 			if (Collision::CheckCollision(*game->getBullets()->at(i), *enemy))
 			{
-				// Push bullets to deletion pool
-				bulletsToDestroy.push_back(i);
-				float playerHp = game->getPlayer()->getHp();
-				float enemyDamage = enemy->GetGun()->GetDamage();
-				game->getPlayer()->setHp(playerHp - enemyDamage);
-				if (playerHp <= 0)
+				// Push bullets to deletion 
+				game->getBullets()->at(i)->setMarkedForDeletion(true);
+				float enemyHp = enemy->getHp();
+				float damage = game->getBullets()->at(i)->GetOwninGun()->GetDamage();
+				enemy->setHp(enemyHp - damage);
+				if (enemyHp <= 0)
 				{
-					game->getPlayer()->Death();
+					enemy->setMarkedForDeletion(true);
+					return;
 				}
-				std::cout << playerHp;
+				std::cout << "EnemyHP: " << enemyHp << std::endl;
+				return;
 			}
+			return;
 		}
 	}
 
@@ -197,20 +196,19 @@ void Scene1::Update(const float deltaTime) {
 		if (Collision::CheckCollision(*game->getEnemyBullets()->at(i), *game->getPlayer()))
 		{
 			game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
+			float playerHp = game->getPlayer()->getHp();
+			float enemyDamage = game->getEnemyBullets()->at(i)->GetOwninGun()->GetDamage();
+			game->getPlayer()->setHp(playerHp - enemyDamage);
+			if (playerHp <= 0)
+			{
+				game->getPlayer()->Death();
+				return;
+			}
+			std::cout << "PlayerHP:" << playerHp << std::endl;
 			return;
-			// Do damage here
 		}
 
 	}
-		/* Transport this block to a getEnemyBullets */
-		//if (Collision::CheckCollision(*game->getBullets()->at(i), *game->getPlayer())) {
-		//	// Handle bullet-player collision
-		//	bulletsToDestroy.push_back(i);
-		//	// Do damage to player here
-		//}
-
-
-
 }
 
 void Scene1::Render() {
@@ -245,6 +243,14 @@ void Scene1::PostRenderUpdate(const float time)
 		}
 	}
 
+	for (int i = 0; i < game->getEnemies()->size(); i++)
+	{
+		if (game->getEnemies()->at(i)->getMarkedForDeletion())
+		{
+			game->getEnemies()->erase(game->getEnemies()->begin() + i);
+			i--;
+		}
+	}
 }
 
 void Scene1::HandleEvents(const SDL_Event& event)

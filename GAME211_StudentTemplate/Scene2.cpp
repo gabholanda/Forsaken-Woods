@@ -39,7 +39,7 @@ bool Scene2::OnCreate() {
 
 	enemyImage = IMG_Load("rogue.png");
 	enemyTexture = SDL_CreateTextureFromSurface(renderer, enemyImage);
-	for (EnemyBody* enemy : game->getEnemies()) {
+	for (EnemyBody* enemy : *game->getEnemies()) {
 		enemy->setImage(enemyImage);
 		enemy->setTexture(enemyTexture);
 	}
@@ -55,7 +55,7 @@ void Scene2::Update(const float deltaTime) {
 	camera->updateCameraPosition();
 	// Update player
 	game->getPlayer()->Update(deltaTime);
-	for (auto& enemy : game->getEnemies()) {
+	for (auto& enemy : *game->getEnemies()) {
 		enemy->Update(deltaTime);
 		if (Collision::CheckCollision(*game->getPlayer(), *enemy))
 		{

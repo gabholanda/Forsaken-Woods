@@ -264,7 +264,7 @@ void PlayerBody::Render()
 
 	void PlayerBody::Death()
 	{
-		game->OnDestroy();
+		game->SetRestart(true);
 	}
 
 

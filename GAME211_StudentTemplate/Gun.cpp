@@ -7,8 +7,6 @@
 
 Gun::~Gun()
 {
-	delete gunOwner;
-	delete gunOwnerEnemy;
 }
 
 void Gun::ShootForEnemy(PlayerBody* target)
