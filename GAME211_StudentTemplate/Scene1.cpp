@@ -25,8 +25,25 @@ bool Scene1::OnCreate() {
 	SDL_GetWindowSize(window, &w, &h);
 
 	camera = new PlayerCamera(w, h, xAxis, yAxis, game);
+
+
+	SDL_Surface* buffImage;
+	SDL_Texture* buffTexture;
+	buffImage = IMG_Load("BuffRock.png");
+	buffTexture = SDL_CreateTextureFromSurface(renderer, buffImage);
+	for (Buff* buffBody : *game->getBuffBodies()) {
+		buffBody->setImage(buffImage);
+		buffBody->setTexture(buffTexture);
+		buffBody->setPos(game->getPlayer()->getPos());
+	}
+
+
+
 	SDL_Surface* enemyImage;
 	SDL_Texture* enemyTexture;
+
+
+
 
 	enemyImage = IMG_Load("treantenemy.png");
 	enemyTexture = SDL_CreateTextureFromSurface(renderer, enemyImage);
@@ -132,8 +149,11 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 
-	if (Collision::CheckCollision(*game->getPlayer(), *game->getBuffManager()->GetBuffs()[0])) {
-		game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
+	for (Buff* buffBody : *game->getBuffBodies()) {
+		if (Collision::CheckCollision(*game->getPlayer(), *buffBody)) {
+			game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
+		std:cout << game->getBuffManager()->PickRandomBuffIndex() << std::endl;
+		}
 	}
 
 	for (int i = 0; i < game->getBullets()->size(); i++)
@@ -220,6 +240,7 @@ void Scene1::Render() {
 	game->RenderEnemy();
 	game->RenderBullets();
 	game->RenderDebug();
+	game->RenderBuffBody();
 	SDL_RenderPresent(renderer);
 }
 

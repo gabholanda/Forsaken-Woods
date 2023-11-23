@@ -55,6 +55,7 @@ bool GameManager::OnCreate()
 	grid = new Grid(160, 160, 15, 15, this);
 	CreatePlayer();
 	CreateBuffs();
+	CreateBuffBody(1);
 	CreateEnemies(1);
 
 	if (player->OnCreate() == false) {
@@ -64,6 +65,12 @@ bool GameManager::OnCreate()
 
 	for (auto& currentEnemy : enemies) {
 		if (currentEnemy->OnCreate() == false) {
+			OnDestroy();
+			return false;
+		}
+	}
+	for (auto& buffBody : buffBodies) {
+		if (buffBody->OnCreate() == false) {
 			OnDestroy();
 			return false;
 		}
@@ -287,6 +294,47 @@ void GameManager::CreateBuffs()
 	}
 }
 
+void GameManager::CreateBuffBody(int quantity)
+{
+	if (buffBodies.size() > 0)
+	{
+		for (Buff* buffBody : buffBodies) {
+			delete buffBody;
+		}
+		buffBodies.clear();
+	}
+
+	for (int i = 0; i < quantity; i++) {
+		float massBuff = 1.0f;
+		float orientationBuff = 0.0f;
+		float rotationBuff = 0.0f;
+		float angularBuff = 0.0f;
+		float movementSpeedBuffy = 1.0f;
+		float scaleBuff = 0.25;
+		Vec3 sizeBuff(3.f, 3.f, 0.0f);
+		Vec3 positionBuff(0.3f * currentScene->getxAxis(), 0.3f * currentScene->getyAxis(), 0.0f);
+		Vec3 velocityBuff(0.0f, 0.0f, 0.0f);
+		Vec3 accelerationBuff(0.0f, 0.0f, 0.0f);
+		float movementSpeedBuff = 0.0f;
+		Gun* randomEnemyBuff = Randomizer::getRandomWeapon();
+
+		Buff* newBuff = new Buff(
+			positionBuff,
+			velocityBuff,
+			accelerationBuff,
+			sizeBuff,
+			massBuff,
+			orientationBuff,
+			rotationBuff,
+			angularBuff,
+			movementSpeedBuff,
+			scaleBuff,
+			this
+		);
+		buffBodies.push_back(newBuff);
+	}
+}
+
 void GameManager::CreateEnemies(int quantity)
 {
 	if (enemies.size() > 0)
@@ -389,6 +437,13 @@ void GameManager::RenderTiles()
 	//}
 
 	grid->RenderGrid();
+}
+
+void GameManager::RenderBuffBody()
+{
+	for (Buff* buffBody : buffBodies) {
+		buffBody->Render();
+	}
 }
 
 void GameManager::RenderDebug()
