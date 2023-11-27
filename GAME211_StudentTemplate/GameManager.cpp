@@ -311,7 +311,7 @@ void GameManager::CreatePlayer()
 
 	float scale = 0.5;
 	Vec3 size(3.f, 3.f, 0.0f);
-	Vec3 position(10.0f, 10.0f, 0.0f);
+	Vec3 position (10.0f, 10.0f, 0.0f);
 	//Vec3 position(0.0f, 0.0f, 0.0f);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
@@ -570,6 +570,7 @@ void GameManager::CreateEnemies(int quantity)
 		std::uniform_int_distribution<> distribution(0, getGrid()->GetTiles()->size() - 1);
 		int index = distribution(gen);
 		Vec3 positionEnemy = getGrid()->GetTiles()->at(index).getPos();
+		//Vec3 positionEnemy = Randomizer::getRandomGridPosition(grid);
 		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
 		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
 		Gun* randomEnemyGun = Randomizer::getRandomWeapon();
