@@ -6,6 +6,7 @@
 #include "Grid.h"
 #include <random>
 #include "UIText.h"
+#include "DecorationTile.h"
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -15,6 +16,7 @@ GameManager::GameManager() {
 	player = nullptr;
 	isDebugging = false;
 	backgroundReader = nullptr;
+	treeReader = nullptr;
 	healthUI = nullptr;
 	weaponUI = nullptr;
 }
@@ -51,7 +53,7 @@ bool GameManager::OnCreate()
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 
 	/* Grid needs to be same dimension as our sprites */
-	grid = new Grid(160, 160, 15, 15, this);
+	grid = new Grid(160, 160, 20, 20, this);
 	CreatePlayer();
 
 	// need to create Player before validating scene
@@ -64,6 +66,11 @@ bool GameManager::OnCreate()
 	backgroundReader = new SpritesheetReader(160, 160, 7, 4);
 	backgroundReader->LoadFromFile("Ground Tiles_16x16.png", getRenderer());
 	backgroundReader->SetRects();
+
+	treeReader = new SpritesheetReader(320, 380, 4, 1);
+	treeReader->LoadFromFile("Grouped Tree Tiles_32x38.png", getRenderer());
+	treeReader->SetRects();
+
 
 	CreateBuffs();
 	CreateTiles();
@@ -188,11 +195,10 @@ void GameManager::OnRestart()
 	for (Bullet* bullet : bullets) {
 		delete bullet;
 	}
-
 	bullets.clear();
+	grid->Clear();
 
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
-
 	CreatePlayer();
 	CreateBuffs();
 	std::random_device rd;
@@ -233,13 +239,13 @@ void GameManager::CreatePlayer()
 	float orientation = 0.0f;
 	float rotation = 0.0f;
 	float angular = 0.0f;
-	float movementSpeed = 5.0f;
+	float movementSpeed = 20.0f;
 
 	Gun* gun = Randomizer::getRandomWeapon();
 
 	float scale = 0.5;
 	Vec3 size(3.f, 3.f, 0.0f);
-	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+	Vec3 position(10.0f, 10.0f, 0.0f);
 	//Vec3 position(0.0f, 0.0f, 0.0f);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
@@ -282,7 +288,7 @@ void GameManager::CreateTiles()
 		getBackgroundSpritesheetReader()->GetColumns(),
 		Vec3(4.0f, 4.0f, 0.0f),
 		// This defines which section of the spritesheet we gonna get
-		getBackgroundSpritesheetReader()->GetRects()[0][3],
+		getBackgroundSpritesheetReader()->GetRects()[0][0],
 		this);
 	exampleCollisionTile->Tile::setImage(getBackgroundSpritesheetReader()->GetImage());
 	exampleCollisionTile->Tile::setTexture(getBackgroundSpritesheetReader()->GetTexture());
@@ -290,43 +296,61 @@ void GameManager::CreateTiles()
 
 	// Setting grid borders
 	/*TODO: Change this to dynamicly fill the tiles*/
-
+	DecorationTile* treeTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+		treeReader->GetRows(),
+		treeReader->GetColumns(),
+		// This defines which section of the spritesheet we gonna get
+		treeReader->GetRects()[0][0],
+		this);
+	treeTile->setImage(treeReader->GetImage());
+	treeTile->setTexture(treeReader->GetTexture());
+	// Test tile
 	// Down
-	for (size_t i = 0; i < 15; i++)
+	for (size_t i = 0; i < 60; i++)
 	{
+		getGrid()->PushTile(treeTile, i);
 		getGrid()->PushTile(exampleCollisionTile, i);
 	}
 
 	// Left
-	for (size_t i = 15; i < 211; i += 15)
+	for (size_t i = 60; i < 321; i += 20)
 	{
-		getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Up
-	for (size_t i = 211; i < 225; i++)
-	{
-		getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Right
-	for (size_t i = 14; i < 224; i += 15)
-	{
-		getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Set up arena
-	for (size_t i = 16; i < 210; i++)
-	{
-		getGrid()->PushTile(exampleTile, i);
-		if (i % 15 == 13)
+		for (size_t j = i; j < i + 3; j++)
 		{
-			i += 2;
+			getGrid()->PushTile(treeTile, j);
+			getGrid()->PushTile(exampleCollisionTile, j);
 		}
 	}
 
-	// Test tile
-	getGrid()->PushTile(exampleCollisionTile, 34);
+	// Up
+	for (size_t i = 379; i < 399; i++)
+	{
+		for (size_t j = i; j > i - 60; j -= 20)
+		{
+			getGrid()->PushTile(treeTile, j);
+			getGrid()->PushTile(exampleCollisionTile, j);
+		}
+	}
+
+	// Right
+	for (size_t i = 76; i < 339; i += 20)
+	{
+		for (size_t j = i - 3; j < i; j++)
+		{
+			getGrid()->PushTile(treeTile, j);
+			getGrid()->PushTile(exampleCollisionTile, j);
+		}
+	}
+
+	// Set up arena
+	for (size_t i = 63; i < 339; i++)
+	{
+		getGrid()->PushTile(exampleTile, i);
+		if (i % 20 == 12)
+		{
+			i += 10;
+		}
+	}
 }
 
 void GameManager::CreateBuffs()

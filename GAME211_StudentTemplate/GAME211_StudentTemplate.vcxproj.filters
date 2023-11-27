@@ -90,6 +90,7 @@
     <ClCompile Include="UIText.cpp">
       <Filter>Scripts\UI</Filter>
     </ClCompile>
+    <ClCompile Include="DecorationTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -188,6 +189,7 @@
     <ClInclude Include="UIText.h">
       <Filter>Scripts\UI</Filter>
     </ClInclude>
+    <ClInclude Include="DecorationTile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">

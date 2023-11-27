@@ -36,6 +36,7 @@ private:
 	UIText* weaponUI;
 
 	SpritesheetReader* backgroundReader;
+	SpritesheetReader* treeReader;
 public:
 	GameManager();
 	~GameManager();
@@ -60,7 +61,9 @@ public:
 	std::vector<Bullet*>* getEnemyBullets() { return &enemyBullets; }
 	std::vector<Tile*>* getTiles() { return &tiles; }
 	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
+	SpritesheetReader* getTreeSpritesheetReader() { return treeReader; }
 	BuffManager* getBuffManager() { return buffManager; }
+	SDL_Renderer* getRenderer();
 	void RenderUI();
 	void RenderPlayer();
 	void RenderEnemy();
@@ -68,7 +71,6 @@ public:
 	void RenderTiles();
 	void RenderDebug();
 	void RenderDebugGrid();
-	SDL_Renderer* getRenderer();
 
 	void Run();
 	void handleEvents();

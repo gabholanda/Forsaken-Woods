@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include "Tile.h"
 #include "CollisionTile.h"
+#include "DecorationTile.h"
 #include "GameManager.h"
 
 Grid::Grid(int width_, int height_, int rows_, int columns_, GameManager* manager_)
@@ -41,6 +42,15 @@ void Grid::PushTile(Tile* tile, int position)
 		collisionTiles.push_back(*collisionTile);
 		return;
 	}
+
+	if (DecorationTile* decorationTile = dynamic_cast<DecorationTile*>(tile))
+	{
+		decorationTile->Tile::setPos(positions[position]);
+		decorationTile->GameObject::setPos(positions[position]);
+		decorationTiles.push_back(*decorationTile);
+		return;
+	}
+
 	Tile newTile = *tile;
 	newTile.setPos(positions[position]);
 	tiles.push_back(newTile);
@@ -54,6 +64,11 @@ void Grid::RenderGrid()
 	}
 
 	for (Tile tile : collisionTiles)
+	{
+		tile.Render();
+	}
+
+	for (Tile tile : decorationTiles)
 	{
 		tile.Render();
 	}
@@ -76,4 +91,11 @@ void Grid::RenderDebugGrid()
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Set color to white
 		SDL_RenderFillRect(renderer, &screenRect);
 	}
+}
+
+void Grid::Clear()
+{
+	tiles.clear();
+	collisionTiles.clear();
+	decorationTiles.clear();
 }

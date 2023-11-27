@@ -4,9 +4,11 @@
 #include "EnemyBody.h"
 #include "PlayerCamera.h"
 #include "Grid.h"
-#include "CollisionTile.h"
 #include "UIText.h"
 #include "Scene1.h"
+#include "CollisionTile.h"
+#include "DecorationTile.h"
+
 // See notes about this constructor in Scene1.h.
 Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
 	window = sdlWindow_;
