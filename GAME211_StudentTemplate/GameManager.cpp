@@ -80,7 +80,7 @@ bool GameManager::OnCreate()
 	CreateBuffs();
 	CreateTiles();
 	CreateEnemies(1);
-	CreateBuffBody(1);
+	CreateBuffBody(1);	
 
 	if (player->OnCreate() == false) {
 		OnDestroy();
@@ -334,6 +334,30 @@ void GameManager::CreatePlayer()
 		this,
 		playerHp
 	);
+
+	gun->SetGunOwner(player);
+	gun->SaveInitialStats();
+}
+
+void GameManager::PlayerNextLevel()
+{
+	float currentMaxHp = player->getMaxHp();
+	float currentHp = player->getHp();
+	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 3.0f));
+	player->setHp(std::min(newHp, currentMaxHp));
+	Gun* gun = Randomizer::getRandomWeapon();
+
+	player->setPos(Vec3(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f));
+
+	player->GetGun()->SaveState();
+	gun->SaveAdditionalStats();
+
+
+	player->SetGun(gun);
+
+	gun->SaveInitialStats();
+	gun->ApplyAdditionalStats();
+
 
 	gun->SetGunOwner(player);
 }
