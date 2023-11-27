@@ -27,6 +27,8 @@ void UIText::Render()
 	SDL_Rect dest = { position.x, position.y, text->w, text->h };
 
 	SDL_RenderCopy(renderer, texture, NULL, &dest);
+	SDL_FreeSurface(text);
+	SDL_DestroyTexture(texture);
 }
 
 

@@ -181,6 +181,7 @@ void Scene1::PostRenderUpdate(const float time)
 	{
 		if (game->getBullets()->at(i)->getMarkedForDeletion())
 		{
+			delete game->getBullets()->at(i);
 			game->getBullets()->erase(game->getBullets()->begin() + i);
 			i--;
 		}
@@ -190,6 +191,7 @@ void Scene1::PostRenderUpdate(const float time)
 	{
 		if (game->getEnemyBullets()->at(i)->getMarkedForDeletion())
 		{
+			delete game->getEnemyBullets()->at(i);
 			game->getEnemyBullets()->erase(game->getEnemyBullets()->begin() + i);
 			i--;
 		}
@@ -199,6 +201,7 @@ void Scene1::PostRenderUpdate(const float time)
 	{
 		if (game->getEnemies()->at(i)->getMarkedForDeletion())
 		{
+			delete game->getEnemies()->at(i);
 			game->getEnemies()->erase(game->getEnemies()->begin() + i);
 			i--;
 		}
@@ -208,6 +211,7 @@ void Scene1::PostRenderUpdate(const float time)
 	{
 		if (game->getBuffBodies()->at(i)->getMarkedForDeletion())
 		{
+			delete game->getBuffBodies()->at(i);
 			game->getBuffBodies()->erase(game->getBuffBodies()->begin() + i);
 			i--;
 		}
