@@ -5,6 +5,24 @@
 #include "SDL.h"
 #include <string>
 
+struct GunBuffedStats {
+	float fireRate;
+	float damage;
+	float reloadSpeed;
+};
+
+struct GunInitialStats {
+	float fireRate;
+	float damage;
+	float reloadSpeed;
+};
+
+struct GunAdditionalStats {
+	float fireRate;
+	float damage;
+	float reloadSpeed;
+};
+
 class PlayerBody;
 class EnemyBody;
 
@@ -24,6 +42,9 @@ protected:
 	PlayerBody* target;
 	EnemyBody* gunOwnerEnemy;
 	SDL_TimerID timerId;
+	GunBuffedStats gunBuffedStats;
+	GunInitialStats gunInitialStats;
+	GunAdditionalStats gunAdditionalStats;
 
 public:
 	Gun(const char* name_, float fireRate_, float damage_, float reloadSpeed_, int ammo_)
@@ -105,6 +126,14 @@ public:
 
 		return result;
 	}
+
+	void SaveState();
+
+	void SaveAdditionalStats();
+
+	void ApplyAdditionalStats();
+
+	void SaveInitialStats();
 };
 
 #endif

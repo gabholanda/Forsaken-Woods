@@ -10,7 +10,7 @@
 #include "Gun.h"
 
 
-
+PlayerSaveState PlayerBody::playerSaveState;
 
 PlayerBody::~PlayerBody()
 {
@@ -262,9 +262,12 @@ void PlayerBody::Render()
 		return 0; // Timer will not repeat
 	}
 
+
+
 	void PlayerBody::Death()
 	{
 		game->SetRestart(true);
+
 	}
 
 
