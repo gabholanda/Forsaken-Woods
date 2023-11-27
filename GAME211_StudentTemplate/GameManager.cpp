@@ -80,6 +80,7 @@ bool GameManager::OnCreate()
 			return false;
 		}
 	}
+
 	const char* fontName = "MainFont.ttf";
 	SDL_Color color = { 255,255,255 };
 	healthUI = new UIText(getPlayer()->Text(), 24, fontName, getRenderer(), Vec2(25, 550), color);
