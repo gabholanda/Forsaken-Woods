@@ -5,6 +5,7 @@
 #include "PlayerCamera.h"
 #include "Grid.h"
 #include "CollisionTile.h"
+#include "UIText.h"
 #include "Scene1.h"
 // See notes about this constructor in Scene1.h.
 Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
@@ -25,6 +26,7 @@ bool Scene1::OnCreate() {
 	SDL_GetWindowSize(window, &w, &h);
 
 	camera = new PlayerCamera(w, h, xAxis, yAxis, game);
+
 	return true;
 }
 

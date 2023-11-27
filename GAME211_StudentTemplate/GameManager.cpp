@@ -5,6 +5,7 @@
 #include "Collision.h"
 #include "Grid.h"
 #include <random>
+#include "UIText.h"
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -14,6 +15,8 @@ GameManager::GameManager() {
 	player = nullptr;
 	isDebugging = false;
 	backgroundReader = nullptr;
+	healthUI = nullptr;
+	weaponUI = nullptr;
 }
 
 bool GameManager::OnCreate()
@@ -42,13 +45,6 @@ bool GameManager::OnCreate()
 	timer = new Timer();
 	if (timer == nullptr) {
 		OnDestroy();
-		return false;
-	}
-
-	font = TTF_OpenFont("MainFont.ttf", 24);
-	if (!font)
-	{
-		cout << "Failed to load Font" << endl;
 		return false;
 	}
 
@@ -84,7 +80,10 @@ bool GameManager::OnCreate()
 			return false;
 		}
 	}
-
+	const char* fontName = "MainFont.ttf";
+	SDL_Color color = { 255,255,255 };
+	healthUI = new UIText(getPlayer()->Text(), 24, fontName, getRenderer(), Vec2(25, 550), color);
+	weaponUI = new UIText(getPlayer()->GetGun()->Text(), 24, fontName, getRenderer(), Vec2(25, 25), color);
 	Collision::debugImage = IMG_Load("DebugCollisionBox.png");
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 	return true;
@@ -434,42 +433,10 @@ SDL_Renderer* GameManager::getRenderer()
 
 void GameManager::RenderUI()
 {
-	SDL_Surface* gunText;
-
-	SDL_Color color = { 255,255,255 };
-	gunText = TTF_RenderText_Solid(font, player->GetGun()->Text(), color);
-
-	if (!gunText)
-	{
-		cout << "GunText not rendered error: " << TTF_GetError() << endl;
-		return;
-	}
-
-	SDL_Texture* gunTextTexture;
-	gunTextTexture = SDL_CreateTextureFromSurface(getRenderer(), gunText);
-	SDL_Rect dest = { 25,25, gunText->w, gunText->h };
-
-	SDL_RenderCopy(getRenderer(), gunTextTexture, NULL, &dest);
-	SDL_DestroyTexture(gunTextTexture);
-	SDL_FreeSurface(gunText);
-
-	// Player
-	SDL_Surface* healthText;
-	healthText = TTF_RenderText_Solid(font, player->Text(), color);
-
-	if (!healthText)
-	{
-		cout << "healthText not rendered error: " << TTF_GetError() << endl;
-		return;
-	}
-
-	SDL_Texture* healthTextTexture;
-	healthTextTexture = SDL_CreateTextureFromSurface(getRenderer(), healthText);
-	SDL_Rect healthDest = { 25,550, healthText->w, healthText->h };
-
-	SDL_RenderCopy(getRenderer(), healthTextTexture, NULL, &healthDest);
-	SDL_DestroyTexture(healthTextTexture);
-	SDL_FreeSurface(healthText);
+	healthUI->setText(getPlayer()->Text());
+	weaponUI->setText(getPlayer()->GetGun()->Text());
+	healthUI->Render();
+	weaponUI->Render();
 }
 
 // This might be unfamiliar

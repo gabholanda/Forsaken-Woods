@@ -87,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="CollisionTile.cpp" />
+    <ClCompile Include="UIText.cpp">
+      <Filter>Scripts\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -182,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="Grid.h" />
     <ClInclude Include="CollisionTile.h" />
+    <ClInclude Include="UIText.h">
+      <Filter>Scripts\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">
@@ -204,6 +210,9 @@
     </Filter>
     <Filter Include="Scripts\Buffs">
       <UniqueIdentifier>{34a04331-954c-4d2a-8edc-0b747f8c6379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\UI">
+      <UniqueIdentifier>{728675b1-a18e-4387-9bd6-008a14103ccd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

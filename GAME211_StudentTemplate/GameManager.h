@@ -10,11 +10,11 @@
 #include "SpritesheetReader.h"
 #include "Tile.h"
 #include "BuffManager.h"
-#include "SDL_ttf.h"
 
 class EnemyBody;
 class Bullet;
 class Grid;
+class UIText;
 
 class GameManager {
 private:
@@ -42,10 +42,10 @@ private:
 	std::vector<Bullet*> enemyBullets;
 	std::vector<EnemyBody*> enemies;
 	std::vector<Tile*> tiles;
+	UIText* healthUI;
+	UIText* weaponUI;
 
 	SpritesheetReader* backgroundReader;
-
-	TTF_Font* font;
 public:
 	GameManager();
 	~GameManager();
