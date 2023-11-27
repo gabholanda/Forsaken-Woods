@@ -6,7 +6,7 @@ class DamageBuff : public Buff
 
 protected:
 
-	float damageIncrement = 5;
+	float damageIncrement = 2;
 
 public:
 	void ApplyBuff(PlayerBody* player);

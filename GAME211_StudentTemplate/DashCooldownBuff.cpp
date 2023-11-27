@@ -3,5 +3,5 @@
 
 void DashCooldownBuff::ApplyBuff(PlayerBody* player)
 {
-	player->setDashCooldown(player->getDashCooldown() + dashCooldownIncrement);
+	player->setDashCooldown(player->getDashCooldown() - dashCooldownIncrement);
 }

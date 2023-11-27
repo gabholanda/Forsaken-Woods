@@ -37,9 +37,9 @@ protected:
 	bool isMouseButtonDown;
 	bool releasedDuringDash;
 	bool isMoving;
-	float dashMultiplier = 3;
+	float dashMultiplier = 6;
 	float dashCooldown = 3;
-	float dashLength = 0.3;
+	float dashLength = 0.2;
 	SDL_TimerID timerID;
 	Direction dashDirection;
 	float initialDashVelX;
@@ -119,6 +119,8 @@ public:
 	static Uint32 DashCooldownCallback(Uint32 interval, void* param);
 	virtual float getHp() { return playerHp; }
 	void setHp(float playerHp_) { playerHp = playerHp_; }
+	void setMaxHp(float maxPlayerHp_) { maxPlayerHP = maxPlayerHp_; }
+	virtual float getMaxHp() { return maxPlayerHP; }
 	void Death();
 
 	const char* Text() const

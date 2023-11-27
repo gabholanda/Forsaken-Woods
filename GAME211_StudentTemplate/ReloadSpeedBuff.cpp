@@ -4,6 +4,6 @@
 
 void ReloadSpeedBuff::ApplyBuff(PlayerBody* player)
 {
-	player->GetGun()->SetReloadSpeed(player->GetGun()->GetReloadSpeed() + reloadSpeedIncrement);
+	player->GetGun()->SetReloadSpeed(player->GetGun()->GetReloadSpeed() - reloadSpeedIncrement);
 
 }

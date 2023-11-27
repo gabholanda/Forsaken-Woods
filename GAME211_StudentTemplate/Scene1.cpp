@@ -62,8 +62,13 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 
-	if (Collision::CheckCollision(*game->getPlayer(), *game->getBuffManager()->GetBuffs()[0])) {
-		game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
+	for (Buff* buffBody : *game->getBuffBodies()) {
+		if (Collision::CheckCollision(*game->getPlayer(), *buffBody)) {
+			Collision::ResolveCollision(game->getPlayer(), buffBody);
+			game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
+		std:cout << game->getBuffManager()->PickRandomBuffIndex() << std::endl;
+			buffBody->setMarkedForDeletion(true);
+		}
 	}
 
 	for (int i = 0; i < game->getBullets()->size(); i++)
@@ -142,6 +147,7 @@ void Scene1::Render() {
 	game->RenderEnemy();
 	game->RenderBullets();
 	game->RenderDebug();
+	game->RenderBuffBody();
 	game->RenderUI();
 	SDL_RenderPresent(renderer);
 }
@@ -171,6 +177,15 @@ void Scene1::PostRenderUpdate(const float time)
 		if (game->getEnemies()->at(i)->getMarkedForDeletion())
 		{
 			game->getEnemies()->erase(game->getEnemies()->begin() + i);
+			i--;
+		}
+	}
+
+	for (int i = 0; i < game->getBuffBodies()->size(); i++)
+	{
+		if (game->getBuffBodies()->at(i)->getMarkedForDeletion())
+		{
+			game->getBuffBodies()->erase(game->getBuffBodies()->begin() + i);
 			i--;
 		}
 	}

@@ -5,7 +5,7 @@ class ReloadSpeedBuff : public Buff
 {
 protected:
 
-	float reloadSpeedIncrement = 5;	
+	float reloadSpeedIncrement = 0.1;	
 
 public:
 	void ApplyBuff(PlayerBody* player) override;
