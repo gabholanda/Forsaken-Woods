@@ -5,6 +5,8 @@
 #include "Collision.h"
 #include "Grid.h"
 #include <random>
+#include "UIText.h"
+#include "DecorationTile.h"
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -14,6 +16,9 @@ GameManager::GameManager() {
 	player = nullptr;
 	isDebugging = false;
 	backgroundReader = nullptr;
+	treeReader = nullptr;
+	healthUI = nullptr;
+	weaponUI = nullptr;
 }
 
 bool GameManager::OnCreate()
@@ -45,17 +50,10 @@ bool GameManager::OnCreate()
 		return false;
 	}
 
-	font = TTF_OpenFont("MainFont.ttf", 24);
-	if (!font)
-	{
-		cout << "Failed to load Font" << endl;
-		return false;
-	}
-
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 
 	/* Grid needs to be same dimension as our sprites */
-	grid = new Grid(160, 160, 15, 15, this);
+	grid = new Grid(160, 160, 20, 20, this);
 	CreatePlayer();
 
 	// need to create Player before validating scene
@@ -68,6 +66,16 @@ bool GameManager::OnCreate()
 	backgroundReader = new SpritesheetReader(160, 160, 7, 4);
 	backgroundReader->LoadFromFile("Ground Tiles_16x16.png", getRenderer());
 	backgroundReader->SetRects();
+
+	treeReader = new SpritesheetReader(480, 380, 2, 1);
+	treeReader->LoadFromFile("GroupedTreeTiles_48x38.png", getRenderer());
+	treeReader->SetRects();
+
+
+	flowerReader = new SpritesheetReader(160, 160, 9, 1);
+	flowerReader->LoadFromFile("DecorativeTiles1_16x16.png", getRenderer());
+	flowerReader->SetRects();
+
 
 	CreateBuffs();
 	CreateTiles();
@@ -92,6 +100,10 @@ bool GameManager::OnCreate()
 		}
 	}
 
+	const char* fontName = "MainFont.ttf";
+	SDL_Color color = { 255,255,255 };
+	healthUI = new UIText(getPlayer()->Text(), 24, fontName, getRenderer(), Vec2(25, 550), color);
+	weaponUI = new UIText(getPlayer()->GetGun()->Text(), 24, fontName, getRenderer(), Vec2(25, 25), color);
 	Collision::debugImage = IMG_Load("DebugCollisionBox.png");
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 	return true;
@@ -195,8 +207,8 @@ void GameManager::OnRestart()
 	for (Bullet* bullet : bullets) {
 		delete bullet;
 	}
-
 	bullets.clear();
+	grid->Clear();
 
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 	CreatePlayer();
@@ -293,13 +305,13 @@ void GameManager::CreatePlayer()
 	float orientation = 0.0f;
 	float rotation = 0.0f;
 	float angular = 0.0f;
-	float movementSpeed = 8.0f;
+	float movementSpeed = 20.0f;
 
 	Gun* gun = Randomizer::getRandomWeapon();
 
 	float scale = 0.5;
 	Vec3 size(3.f, 3.f, 0.0f);
-	Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+	Vec3 position(10.0f, 10.0f, 0.0f);
 	//Vec3 position(0.0f, 0.0f, 0.0f);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
@@ -366,7 +378,7 @@ void GameManager::CreateTiles()
 		getBackgroundSpritesheetReader()->GetColumns(),
 		Vec3(4.0f, 4.0f, 0.0f),
 		// This defines which section of the spritesheet we gonna get
-		getBackgroundSpritesheetReader()->GetRects()[0][3],
+		getBackgroundSpritesheetReader()->GetRects()[0][0],
 		this);
 	exampleCollisionTile->Tile::setImage(getBackgroundSpritesheetReader()->GetImage());
 	exampleCollisionTile->Tile::setTexture(getBackgroundSpritesheetReader()->GetTexture());
@@ -374,43 +386,89 @@ void GameManager::CreateTiles()
 
 	// Setting grid borders
 	/*TODO: Change this to dynamicly fill the tiles*/
+	DecorationTile* leftTreeTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+		treeReader->GetRows(),
+		treeReader->GetColumns(),
+		treeReader->GetRects()[0][0],
+		this);
+	leftTreeTile->setImage(treeReader->GetImage());
+	leftTreeTile->setTexture(treeReader->GetTexture());
+
+	DecorationTile* rightTreeTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+		treeReader->GetRows(),
+		treeReader->GetColumns(),
+		treeReader->GetRects()[0][1],
+		this);
+	rightTreeTile->setImage(treeReader->GetImage());
+	rightTreeTile->setTexture(treeReader->GetTexture());
+
+	// Up
+	for (size_t i = 379; i < 399; i++)
+	{
+		for (size_t j = i; j > i - 60; j -= 20)
+		{
+			getGrid()->PushTile(rightTreeTile, j);
+			getGrid()->PushTile(exampleCollisionTile, j);
+		}
+	}
 
 	// Down
-	for (size_t i = 0; i < 15; i++)
+	for (size_t i = 0; i < 60; i++)
 	{
+		getGrid()->PushTile(leftTreeTile, i);
 		getGrid()->PushTile(exampleCollisionTile, i);
 	}
 
 	// Left
-	for (size_t i = 15; i < 211; i += 15)
+	for (size_t i = 60; i < 321; i += 20)
 	{
-		getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Up
-	for (size_t i = 211; i < 225; i++)
-	{
-		getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Right
-	for (size_t i = 14; i < 224; i += 15)
-	{
-		getGrid()->PushTile(exampleCollisionTile, i);
-	}
-
-	// Set up arena
-	for (size_t i = 16; i < 210; i++)
-	{
-		getGrid()->PushTile(exampleTile, i);
-		if (i % 15 == 13)
+		for (size_t j = i; j < i + 3; j++)
 		{
-			i += 2;
+			getGrid()->PushTile(leftTreeTile, j);
+			getGrid()->PushTile(exampleCollisionTile, j);
 		}
 	}
 
-	// Test tile
-	getGrid()->PushTile(exampleCollisionTile, 34);
+	// Right
+	for (size_t i = 76; i < 339; i += 20)
+	{
+		for (size_t j = i - 3; j < i; j++)
+		{
+			getGrid()->PushTile(rightTreeTile, j);
+			getGrid()->PushTile(exampleCollisionTile, j);
+		}
+	}
+
+	// Set up arena
+
+
+
+	for (size_t i = 63; i < 339; i++)
+	{
+
+		getGrid()->PushTile(exampleTile, i);
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> distribution(1, 10);
+		int index = distribution(gen);
+		if (index == 2)
+		{
+			distribution = std::uniform_int_distribution<>(0, flowerReader->GetRects()[0].size() - 1);
+			int flowerIndex = distribution(gen);
+			DecorationTile* flowerTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+				flowerReader->GetRows(),
+				flowerReader->GetColumns(),
+				flowerReader->GetRects()[0][flowerIndex],
+				this);
+			flowerTile->setImage(flowerReader->GetImage());
+			flowerTile->setTexture(flowerReader->GetTexture());
+			getGrid()->PushTile(flowerTile, i);
+		}
+		if (i % 20 == 12)
+		{
+			i += 10;
+		}
+	}
 }
 
 void GameManager::CreateBuffs()
@@ -562,42 +620,10 @@ SDL_Renderer* GameManager::getRenderer()
 
 void GameManager::RenderUI()
 {
-	SDL_Surface* gunText;
-
-	SDL_Color color = { 255,255,255 };
-	gunText = TTF_RenderText_Solid(font, player->GetGun()->Text(), color);
-
-	if (!gunText)
-	{
-		cout << "GunText not rendered error: " << TTF_GetError() << endl;
-		return;
-	}
-
-	SDL_Texture* gunTextTexture;
-	gunTextTexture = SDL_CreateTextureFromSurface(getRenderer(), gunText);
-	SDL_Rect dest = { 25,25, gunText->w, gunText->h };
-
-	SDL_RenderCopy(getRenderer(), gunTextTexture, NULL, &dest);
-	SDL_DestroyTexture(gunTextTexture);
-	SDL_FreeSurface(gunText);
-
-	// Player
-	SDL_Surface* healthText;
-	healthText = TTF_RenderText_Solid(font, player->Text(), color);
-
-	if (!healthText)
-	{
-		cout << "healthText not rendered error: " << TTF_GetError() << endl;
-		return;
-	}
-
-	SDL_Texture* healthTextTexture;
-	healthTextTexture = SDL_CreateTextureFromSurface(getRenderer(), healthText);
-	SDL_Rect healthDest = { 25,550, healthText->w, healthText->h };
-
-	SDL_RenderCopy(getRenderer(), healthTextTexture, NULL, &healthDest);
-	SDL_DestroyTexture(healthTextTexture);
-	SDL_FreeSurface(healthText);
+	healthUI->setText(getPlayer()->Text());
+	weaponUI->setText(getPlayer()->GetGun()->Text());
+	healthUI->Render();
+	weaponUI->Render();
 }
 
 // This might be unfamiliar

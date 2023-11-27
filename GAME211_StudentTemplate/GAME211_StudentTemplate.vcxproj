@@ -29,6 +29,7 @@
     <ClCompile Include="CollisionTile.cpp" />
     <ClCompile Include="DamageBuff.cpp" />
     <ClCompile Include="DashCooldownBuff.cpp" />
+    <ClCompile Include="DecorationTile.cpp" />
     <ClCompile Include="EnemyBody.cpp" />
     <ClCompile Include="FireRateBuff.cpp" />
     <ClCompile Include="GameManager.cpp" />
@@ -50,6 +51,7 @@
     <ClCompile Include="Submachine.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="UIText.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +65,7 @@
     <ClInclude Include="CollisionTile.h" />
     <ClInclude Include="DamageBuff.h" />
     <ClInclude Include="DashCooldownBuff.h" />
+    <ClInclude Include="DecorationTile.h" />
     <ClInclude Include="EnemyBody.h" />
     <ClInclude Include="FireRateBuff.h" />
     <ClInclude Include="GameManager.h" />
@@ -87,6 +90,7 @@
     <ClInclude Include="Submachine.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="UIText.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
