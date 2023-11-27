@@ -164,3 +164,36 @@ Uint32 Gun::ReloadTimerCallback(Uint32 interval, void* param)
 	return 0;
 }
 
+void Gun::SaveState() {
+	gunBuffedStats.fireRate = fireRate;
+	gunBuffedStats.damage = damage;
+	gunBuffedStats.reloadSpeed = reloadSpeed;
+	std::cout << "saved stats" << gunBuffedStats.damage << std::endl;
+}
+
+void Gun::SaveAdditionalStats() {
+	gunAdditionalStats.fireRate = gunBuffedStats.fireRate - gunInitialStats.fireRate;
+	gunAdditionalStats.damage = gunBuffedStats.damage - gunInitialStats.damage;
+	gunAdditionalStats.reloadSpeed = gunBuffedStats.reloadSpeed - gunInitialStats.reloadSpeed;
+}
+
+void Gun::ApplyAdditionalStats()
+{
+	fireRate += gunAdditionalStats.fireRate;
+	damage += gunAdditionalStats.damage;
+	reloadSpeed += gunAdditionalStats.reloadSpeed;
+	std::cout << "difference" << gunAdditionalStats.damage << std::endl;
+}
+
+// Apply the difference to the gun's current stats
+
+
+void Gun::SaveInitialStats()
+{
+	gunInitialStats.fireRate = fireRate;
+	gunInitialStats.damage = damage;
+	gunInitialStats.reloadSpeed = reloadSpeed;
+	std::cout << "saved initial stats" << gunInitialStats.damage << std::endl;
+
+}
+
