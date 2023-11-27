@@ -54,7 +54,7 @@ bool GameManager::OnCreate()
 
 	/* Grid needs to be same dimension as our sprites */
 	grid = new Grid(160, 160, 20, 20, this);
-	CreatePlayer();
+	
 
 	// need to create Player before validating scene
 	if (!ValidateCurrentScene()) {
@@ -79,6 +79,7 @@ bool GameManager::OnCreate()
 
 	CreateBuffs();
 	CreateTiles();
+	CreatePlayer();
 	CreateEnemies(1);
 	CreateBuffBody(1);	
 
@@ -117,7 +118,6 @@ void GameManager::Run() {
 	timer->Start();
 
 	while (isRunning) {
-
 		handleEvents();
 		timer->UpdateFrameTicks();
 		currentScene->Update(timer->GetDeltaTime());
@@ -211,12 +211,12 @@ void GameManager::OnRestart()
 	grid->Clear();
 
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+	CreateTiles();
 	CreatePlayer();
 	CreateBuffs();
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(0, 9);
-	CreateTiles();
 	CreateEnemies(distrib(gen));
 	std::random_device rd2;
 	std::mt19937 gen2(rd2());
@@ -311,8 +311,8 @@ void GameManager::CreatePlayer()
 
 	float scale = 0.5;
 	Vec3 size(3.f, 3.f, 0.0f);
-	Vec3 position (10.0f, 10.0f, 0.0f);
-	//Vec3 position(0.0f, 0.0f, 0.0f);
+	//Vec3 position (15.0f, 15.0f, 0.0f);
+	Vec3 position = Randomizer::getRandomGridPosition(grid);
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
 	float playerHp = 150;

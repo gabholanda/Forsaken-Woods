@@ -53,6 +53,7 @@ void Grid::PushTile(Tile* tile, int position)
 
 	Tile newTile = *tile;
 	newTile.setPos(positions[position]);
+
 	tiles.push_back(newTile);
 }
 
