@@ -28,7 +28,6 @@ private:
 	Grid* grid;
 	class PlayerBody* player;
 	class BuffManager* buffManager;
-
 	
 
 	std::vector<Bullet*> bullets;
@@ -41,6 +40,7 @@ private:
 
 	SpritesheetReader* backgroundReader;
 	SpritesheetReader* treeReader;
+	SpritesheetReader* flowerReader;
 public:
 	GameManager();
 	~GameManager();

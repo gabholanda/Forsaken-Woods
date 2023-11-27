@@ -67,9 +67,14 @@ bool GameManager::OnCreate()
 	backgroundReader->LoadFromFile("Ground Tiles_16x16.png", getRenderer());
 	backgroundReader->SetRects();
 
-	treeReader = new SpritesheetReader(320, 380, 4, 1);
-	treeReader->LoadFromFile("Grouped Tree Tiles_32x38.png", getRenderer());
+	treeReader = new SpritesheetReader(480, 380, 2, 1);
+	treeReader->LoadFromFile("GroupedTreeTiles_48x38.png", getRenderer());
 	treeReader->SetRects();
+
+
+	flowerReader = new SpritesheetReader(160, 160, 9, 1);
+	flowerReader->LoadFromFile("DecorativeTiles1_16x16.png", getRenderer());
+	flowerReader->SetRects();
 
 
 	CreateBuffs();
@@ -313,19 +318,36 @@ void GameManager::CreateTiles()
 
 	// Setting grid borders
 	/*TODO: Change this to dynamicly fill the tiles*/
-	DecorationTile* treeTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+	DecorationTile* leftTreeTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
 		treeReader->GetRows(),
 		treeReader->GetColumns(),
-		// This defines which section of the spritesheet we gonna get
 		treeReader->GetRects()[0][0],
 		this);
-	treeTile->setImage(treeReader->GetImage());
-	treeTile->setTexture(treeReader->GetTexture());
-	// Test tile
+	leftTreeTile->setImage(treeReader->GetImage());
+	leftTreeTile->setTexture(treeReader->GetTexture());
+
+	DecorationTile* rightTreeTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+		treeReader->GetRows(),
+		treeReader->GetColumns(),
+		treeReader->GetRects()[0][1],
+		this);
+	rightTreeTile->setImage(treeReader->GetImage());
+	rightTreeTile->setTexture(treeReader->GetTexture());
+
+	// Up
+	for (size_t i = 379; i < 399; i++)
+	{
+		for (size_t j = i; j > i - 60; j -= 20)
+		{
+			getGrid()->PushTile(rightTreeTile, j);
+			getGrid()->PushTile(exampleCollisionTile, j);
+		}
+	}
+
 	// Down
 	for (size_t i = 0; i < 60; i++)
 	{
-		getGrid()->PushTile(treeTile, i);
+		getGrid()->PushTile(leftTreeTile, i);
 		getGrid()->PushTile(exampleCollisionTile, i);
 	}
 
@@ -334,17 +356,7 @@ void GameManager::CreateTiles()
 	{
 		for (size_t j = i; j < i + 3; j++)
 		{
-			getGrid()->PushTile(treeTile, j);
-			getGrid()->PushTile(exampleCollisionTile, j);
-		}
-	}
-
-	// Up
-	for (size_t i = 379; i < 399; i++)
-	{
-		for (size_t j = i; j > i - 60; j -= 20)
-		{
-			getGrid()->PushTile(treeTile, j);
+			getGrid()->PushTile(leftTreeTile, j);
 			getGrid()->PushTile(exampleCollisionTile, j);
 		}
 	}
@@ -354,15 +366,36 @@ void GameManager::CreateTiles()
 	{
 		for (size_t j = i - 3; j < i; j++)
 		{
-			getGrid()->PushTile(treeTile, j);
+			getGrid()->PushTile(rightTreeTile, j);
 			getGrid()->PushTile(exampleCollisionTile, j);
 		}
 	}
 
 	// Set up arena
+
+
+
 	for (size_t i = 63; i < 339; i++)
 	{
+
 		getGrid()->PushTile(exampleTile, i);
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> distribution(1, 10);
+		int index = distribution(gen);
+		if (index == 2)
+		{
+			distribution = std::uniform_int_distribution<>(0, flowerReader->GetRects()[0].size() - 1);
+			int flowerIndex = distribution(gen);
+			DecorationTile* flowerTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+				flowerReader->GetRows(),
+				flowerReader->GetColumns(),
+				flowerReader->GetRects()[0][flowerIndex],
+				this);
+			flowerTile->setImage(flowerReader->GetImage());
+			flowerTile->setTexture(flowerReader->GetTexture());
+			getGrid()->PushTile(flowerTile, i);
+		}
 		if (i % 20 == 12)
 		{
 			i += 10;

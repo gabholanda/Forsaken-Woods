@@ -68,9 +68,9 @@ void Grid::RenderGrid()
 		tile.Render();
 	}
 
-	for (Tile tile : decorationTiles)
+	for (size_t i = decorationTiles.size() - 1; i > 0; i--)
 	{
-		tile.Render();
+		decorationTiles[i].Render();
 	}
 }
 
