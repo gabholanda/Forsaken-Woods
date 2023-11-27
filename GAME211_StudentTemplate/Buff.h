@@ -39,6 +39,8 @@ public:
 	{}
 	virtual void ApplyBuff(PlayerBody* player);
 	void Render();
+	bool OnCreate();
+	void setTexture(SDL_Texture* texture_) { texture = texture_; }
 
 };
 

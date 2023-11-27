@@ -12,6 +12,7 @@
 #include "BuffManager.h"
 
 class EnemyBody;
+class Buff;
 class Bullet;
 class Grid;
 class UIText;
@@ -28,9 +29,12 @@ private:
 	class PlayerBody* player;
 	class BuffManager* buffManager;
 
+	
+
 	std::vector<Bullet*> bullets;
 	std::vector<Bullet*> enemyBullets;
 	std::vector<EnemyBody*> enemies;
+	std::vector<Buff*> buffBodies;
 	std::vector<Tile*> tiles;
 	UIText* healthUI;
 	UIText* weaponUI;
@@ -46,6 +50,7 @@ public:
 	void CreatePlayer();
 	void CreateTiles();
 	void CreateBuffs();
+	void CreateBuffBody(int quantity);
 	void CreateEnemies(int quantity);
 	// These might be unfamiliar
 	float getSceneHeight();
@@ -59,6 +64,7 @@ public:
 	std::vector<EnemyBody*>* getEnemies() { return &enemies; }
 	std::vector<Bullet*>* getBullets() { return &bullets; }
 	std::vector<Bullet*>* getEnemyBullets() { return &enemyBullets; }
+	std::vector<Buff*>* getBuffBodies() { return &buffBodies; }
 	std::vector<Tile*>* getTiles() { return &tiles; }
 	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
 	SpritesheetReader* getTreeSpritesheetReader() { return treeReader; }
@@ -69,6 +75,7 @@ public:
 	void RenderEnemy();
 	void RenderBullets();
 	void RenderTiles();
+	void RenderBuffBody();
 	void RenderDebug();
 	void RenderDebugGrid();
 
