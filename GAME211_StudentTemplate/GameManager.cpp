@@ -404,7 +404,7 @@ void GameManager::CreateTiles()
 	rightTreeTile->setTexture(treeReader->GetTexture());
 
 	// Up
-	for (size_t i = 379; i < 399; i++)
+	for (size_t i = 379; i < 400; i++)
 	{
 		for (size_t j = i; j > i - 60; j -= 20)
 		{
@@ -431,7 +431,7 @@ void GameManager::CreateTiles()
 	}
 
 	// Right
-	for (size_t i = 76; i < 339; i += 20)
+	for (size_t i = 80; i < 342; i += 20)
 	{
 		for (size_t j = i - 3; j < i; j++)
 		{
@@ -465,9 +465,9 @@ void GameManager::CreateTiles()
 			flowerTile->setTexture(flowerReader->GetTexture());
 			getGrid()->PushTile(flowerTile, i);
 		}
-		if (i % 20 == 12)
+		if (i % 20 == 16)
 		{
-			i += 10;
+			i += 6;
 		}
 	}
 }
