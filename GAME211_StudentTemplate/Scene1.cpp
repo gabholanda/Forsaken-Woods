@@ -52,6 +52,11 @@ void Scene1::Update(const float deltaTime) {
 				Collision::ResolveCollision(enemy, &game->getGrid()->GetCollisionTiles()->at(i));
 			}
 		}
+		for (Buff* buffBody : *game->getBuffBodies()) {
+			if (Collision::CheckCollision(*buffBody, *enemy)) {
+				Collision::ResolveCollision(enemy, buffBody);
+			}
+		}
 	}
 
 	for (size_t i = 0; i < game->getGrid()->GetCollisionTiles()->size(); i++)
@@ -64,6 +69,7 @@ void Scene1::Update(const float deltaTime) {
 
 	for (Buff* buffBody : *game->getBuffBodies()) {
 		if (Collision::CheckCollision(*game->getPlayer(), *buffBody)) {
+
 			Collision::ResolveCollision(game->getPlayer(), buffBody);
 			game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 		std:cout << game->getBuffManager()->PickRandomBuffIndex() << std::endl;
@@ -79,6 +85,12 @@ void Scene1::Update(const float deltaTime) {
 			game->getBullets()->at(i)->setMarkedForDeletion(true);
 		}
 
+		for (Buff* buffBody : *game->getBuffBodies()) {
+			if (Collision::CheckCollision(*buffBody, *game->getBullets()->at(i)))
+			{
+				game->getBullets()->at(i)->setMarkedForDeletion(true);
+			}
+		}
 		for (size_t j = 0; j < game->getGrid()->GetCollisionTiles()->size(); j++)
 		{
 			if (Collision::CheckCollision(game->getGrid()->GetCollisionTiles()->at(j), *game->getBullets()->at(i)))
@@ -86,6 +98,7 @@ void Scene1::Update(const float deltaTime) {
 				game->getBullets()->at(i)->setMarkedForDeletion(true);
 			}
 		}
+	
 
 		for (auto& enemy : *game->getEnemies())
 		{
@@ -113,6 +126,12 @@ void Scene1::Update(const float deltaTime) {
 			game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
 		}
 
+		for (Buff* buffBody : *game->getBuffBodies()) {
+			if (Collision::CheckCollision(*buffBody, *game->getEnemyBullets()->at(i)))
+			{
+				game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
+			}
+		}
 
 		for (size_t j = 0; j < game->getGrid()->GetCollisionTiles()->size(); j++)
 		{
@@ -192,7 +211,7 @@ void Scene1::PostRenderUpdate(const float time)
 
 	if (game->getEnemies()->size() == 0)
 	{
-		game->OnRestart();
+		game->OnWin();
 	}
 }
 

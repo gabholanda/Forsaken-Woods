@@ -56,7 +56,9 @@ public:
 	bool OnCreate();
 	void OnDestroy();
 	void OnRestart();
+	void OnWin();
 	void CreatePlayer();
+	void PlayerNextLevel();
 	void CreateTiles();
 	void CreateBuffs();
 	void CreateBuffBody(int quantity);

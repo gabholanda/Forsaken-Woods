@@ -12,6 +12,12 @@
 #include "Body.h"
 #include "GameManager.h"
 #include <string>
+struct PlayerSaveState {
+	float playerHp;
+	float maxPlayerHP;
+	float movementSpeed;
+	float dashCooldown;
+};
 
 enum Direction {
 	NONE,
@@ -46,6 +52,8 @@ protected:
 	float initialDashVelY;
 	float playerHp = 100;
 	float maxPlayerHP;
+	static PlayerSaveState playerSaveState;
+
 public:
 	PlayerBody() : Body{}
 	{
@@ -113,6 +121,7 @@ public:
 	virtual void setDashCooldown(float dashCooldown_) { dashCooldown = dashCooldown_; }
 	Gun* GetGun() const { return gun; }
 	GameManager* GetGame() const { return game; }
+	virtual void SetGun(Gun* gun_) { gun = gun_; }
 	void StartDashTimer();
 	void EndDash();
 	static Uint32 TimerCallback(Uint32 interval, void* param);
