@@ -4,8 +4,8 @@
 #include "Scene.h"
 #include "Randomizer.h"
 #include "Gun.h"
-#include "Pistol.h"
 
+class UIText;
 
 using namespace MATH;
 class Scene1 : public Scene {
