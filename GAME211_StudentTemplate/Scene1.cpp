@@ -62,7 +62,7 @@ void Scene1::Update(const float deltaTime) {
 			}
 		}
 	}
-
+		
 	for (size_t i = 0; i < game->getGrid()->GetCollisionTiles()->size(); i++)
 	{
 		if (Collision::CheckCollision(*game->getPlayer(), game->getGrid()->GetCollisionTiles()->at(i)))
@@ -112,7 +112,9 @@ void Scene1::Update(const float deltaTime) {
 				game->getBullets()->at(i)->setMarkedForDeletion(true);
 				float enemyHp = enemy->getHp();
 				float damage = game->getBullets()->at(i)->GetOwningGun()->GetDamage();
-				enemy->setHp(enemyHp - damage);
+				
+					enemy->setHp(enemyHp - damage);
+				
 				if (enemy->getHp() <= 0.0f)
 				{
 					enemy->setMarkedForDeletion(true);
@@ -150,7 +152,9 @@ void Scene1::Update(const float deltaTime) {
 			game->getEnemyBullets()->at(i)->setMarkedForDeletion(true);
 			float playerHp = game->getPlayer()->getHp();
 			float enemyDamage = game->getEnemyBullets()->at(i)->GetOwningGun()->GetDamage();
-			game->getPlayer()->setHp(playerHp - enemyDamage);
+			if (enemyDamage > 0) {
+				game->getPlayer()->setHp(playerHp - (enemyDamage / 2));
+			}
 			if (game->getPlayer()->getHp() <= 0.0f)
 			{
 				game->getPlayer()->Death();
