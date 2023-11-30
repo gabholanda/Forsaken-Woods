@@ -346,7 +346,7 @@ void GameManager::PlayerNextLevel()
 	player->setHp(std::min(newHp, currentMaxHp));
 	Gun* gun = Randomizer::getRandomWeapon();
 
-	player->setPos(Vec3(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f));
+	player->setPos(Randomizer::getRandomGridPosition(grid));
 
 	player->GetGun()->SaveState();
 	gun->SaveAdditionalStats();
