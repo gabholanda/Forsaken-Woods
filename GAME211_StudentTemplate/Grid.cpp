@@ -57,6 +57,18 @@ void Grid::PushTile(Tile* tile, int position)
 	tiles.push_back(newTile);
 }
 
+int Grid::GetTileIndex(Vec3 position)
+{
+	for (size_t i = 0; i < positions.size(); ++i)
+	{
+		if (positions[i] == position)
+		{
+			return static_cast<int>(i);
+		}
+	}
+	return -1;
+}
+
 void Grid::RenderGrid()
 {
 	for (Tile tile : tiles)
@@ -92,6 +104,22 @@ void Grid::RenderDebugGrid()
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Set color to white
 		SDL_RenderFillRect(renderer, &screenRect);
 	}
+}
+
+std::vector<Tile*> Grid::GetValidTiles(Vec3 playerPosition, float playerSpawnIndex)
+{
+	std::vector<Tile*> validTiles;
+
+	for (size_t i = 0; i < tiles.size(); ++i)
+	{
+		Tile& tile = tiles[i];
+
+		if (static_cast<int>(i) != playerSpawnIndex) {
+			validTiles.push_back(&tile);
+		}
+	}
+
+	return validTiles;
 }
 
 void Grid::Clear()
