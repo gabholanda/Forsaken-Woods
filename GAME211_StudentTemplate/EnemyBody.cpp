@@ -4,6 +4,8 @@
 
 EnemyBody::~EnemyBody()
 {
+	SDL_FreeSurface(image);
+	SDL_DestroyTexture(texture);
 	delete gun;
 }
 
@@ -66,7 +68,7 @@ void EnemyBody::Update(float deltaTime)
 void EnemyBody::MoveTowardsPlayer(float deltaTime, PlayerBody* target)
 {
 	// Check if the player is within the specified range
-	float distanceToPlayer = VMath::distance(pos, target->getPos());	
+	float distanceToPlayer = VMath::distance(pos, target->getPos());
 	if (distanceToPlayer <= 15)
 	{
 		// If within range, rotate towards the player
