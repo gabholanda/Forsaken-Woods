@@ -54,7 +54,7 @@ bool GameManager::OnCreate()
 
 	/* Grid needs to be same dimension as our sprites */
 	grid = new Grid(160, 160, 20, 20, this);
-
+	
 
 	// need to create Player before validating scene
 	if (!ValidateCurrentScene()) {
@@ -81,7 +81,7 @@ bool GameManager::OnCreate()
 	CreateTiles();
 	CreatePlayer();
 	CreateEnemies(1);
-	CreateBuffBody(1);
+	CreateBuffBody(1);	
 
 	if (player->OnCreate() == false) {
 		OnDestroy();
@@ -316,7 +316,7 @@ void GameManager::CreatePlayer()
 	//Vec3 position (15.0f, 15.0f, 0.0f);
 	std::random_device rd2;
 	std::mt19937 gen2(rd2());
-	std::uniform_int_distribution<> distribution2(40, 45);
+	std::uniform_int_distribution<> distribution2(3 * getGrid()->GetTiles()->size() / 25 + 5, 22 * getGrid()->GetTiles()->size() / 25 - 5);
 	playerSpawnIndex = distribution2(gen2);
 	Vec3 position = getGrid()->GetTiles()->at(playerSpawnIndex).getPos();
 	Vec3 velocity(0.0f, 0.0f, 0.0f);

@@ -110,12 +110,17 @@ std::vector<Tile*> Grid::GetValidTiles(Vec3 playerPosition, float playerSpawnInd
 {
 	std::vector<Tile*> validTiles;
 
+	const int exclusionRange = 5; 
+	const int additionalExclusion = 10; 
+
 	for (size_t i = 0; i < tiles.size(); ++i)
 	{
-		Tile& tile = tiles[i];
-
-		if (static_cast<int>(i) != playerSpawnIndex) {
-			validTiles.push_back(&tile);
+		if (i < playerSpawnIndex - exclusionRange ||
+			i > playerSpawnIndex + exclusionRange ||
+			(i > playerSpawnIndex - exclusionRange - additionalExclusion &&
+				i < playerSpawnIndex + exclusionRange + additionalExclusion))
+		{
+			validTiles.push_back(&tiles[i]);
 		}
 	}
 
