@@ -4,7 +4,7 @@ class HealthBuff : public Buff
 {
 protected:
 
-	float healthIncrement = 10;
+	float healthIncrement = 20;
 
 public:
 	void ApplyBuff(PlayerBody* player) override;

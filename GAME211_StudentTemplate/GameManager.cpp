@@ -250,46 +250,50 @@ void GameManager::OnRestart()
 
 void GameManager::OnWin()
 {
-	if (currentScene) delete currentScene;
-	for (Bullet* bullet : bullets) {
-		delete bullet;
-	}
-	bullets.clear();
-	grid->Clear();
+	if (stageNumber < 101) {
+		stageNumber += 1;
+		std::cout << "stageNumber:" << stageNumber << std::endl;
+		if (currentScene) delete currentScene;
+		for (Bullet* bullet : bullets) {
+			delete bullet;
+		}
+		bullets.clear();
+		grid->Clear();
 
-	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
-	PlayerNextLevel();
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> distrib(0, 9);
-	CreateTiles();
-	CreateEnemies(distrib(gen));
-	std::random_device rd2;
-	std::mt19937 gen2(rd2());
-	std::uniform_int_distribution<> distrib2(0, 3);
-	CreateBuffBody(distrib2(gen2));
+		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+		PlayerNextLevel();
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> distrib(0, 9);
+		CreateTiles();
+		CreateEnemies(distrib(gen));
+		std::random_device rd2;
+		std::mt19937 gen2(rd2());
+		std::uniform_int_distribution<> distrib2(0, 3);
+		CreateBuffBody(distrib2(gen2));
 
-	if (player->OnCreate() == false) {
-		OnDestroy();
-		isRunning = false;
-	}
-
-	for (auto& currentEnemy : enemies) {
-		if (currentEnemy->OnCreate() == false) {
+		if (player->OnCreate() == false) {
 			OnDestroy();
 			isRunning = false;
 		}
-	}
-	for (auto& buffBody : buffBodies) {
-		if (buffBody->OnCreate() == false) {
+
+		for (auto& currentEnemy : enemies) {
+			if (currentEnemy->OnCreate() == false) {
+				OnDestroy();
+				isRunning = false;
+			}
+		}
+		for (auto& buffBody : buffBodies) {
+			if (buffBody->OnCreate() == false) {
+				OnDestroy();
+				isRunning = false;
+			}
+		}
+
+		if (!ValidateCurrentScene()) {
 			OnDestroy();
 			isRunning = false;
 		}
-	}
-
-	if (!ValidateCurrentScene()) {
-		OnDestroy();
-		isRunning = false;
 	}
 }
 
@@ -300,14 +304,14 @@ void GameManager::SetRestart(bool isRestarting_)
 
 void GameManager::CreatePlayer()
 {
+	stageNumber = 1;
 	if (player) delete player;
 	// create player
 	float mass = 1.0f;
 	float orientation = 0.0f;
 	float rotation = 0.0f;
 	float angular = 0.0f;
-	float movementSpeed = 20.0f;
-	float playerSpawnIndex;
+	float movementSpeed = 15.0f;
 
 	Gun* gun = Randomizer::getRandomWeapon();
 
@@ -342,6 +346,7 @@ void GameManager::CreatePlayer()
 
 	gun->SetGunOwner(player);
 	gun->SaveInitialStats();
+
 }
 
 void GameManager::PlayerNextLevel()
@@ -351,7 +356,6 @@ void GameManager::PlayerNextLevel()
 	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 3.0f));
 	player->setHp(std::min(newHp, currentMaxHp));
 	Gun* gun = Randomizer::getRandomWeapon();
-
 	player->setPos(Randomizer::getRandomGridPosition(grid));
 
 	player->GetGun()->SaveState();

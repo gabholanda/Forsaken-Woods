@@ -4,7 +4,7 @@ class DashCooldownBuff : public Buff
 {
 protected:
 
-	float dashCooldownIncrement = 0.1;
+	float dashCooldownIncrement = 0.2;
 
 public:
 	void ApplyBuff(PlayerBody* player) override;

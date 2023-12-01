@@ -29,7 +29,7 @@ private:
 	class PlayerBody* player;
 	class BuffManager* buffManager;
 	
-
+	int stageNumber;
 	std::vector<Bullet*> bullets;
 	std::vector<Bullet*> enemyBullets;
 	std::vector<EnemyBody*> enemies;

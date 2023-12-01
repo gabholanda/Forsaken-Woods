@@ -43,9 +43,9 @@ protected:
 	bool isMouseButtonDown;
 	bool releasedDuringDash;
 	bool isMoving;
-	float dashMultiplier = 6;
+	float dashMultiplier = 5;
 	float dashCooldown = 3;
-	float dashLength = 0.2;
+	float dashLength = 0.15;
 	SDL_TimerID timerID;
 	Direction dashDirection;
 	float initialDashVelX;
