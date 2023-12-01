@@ -54,7 +54,7 @@ bool GameManager::OnCreate()
 
 	/* Grid needs to be same dimension as our sprites */
 	grid = new Grid(160, 160, 20, 20, this);
-	
+
 
 	// need to create Player before validating scene
 	if (!ValidateCurrentScene()) {
@@ -81,7 +81,7 @@ bool GameManager::OnCreate()
 	CreateTiles();
 	CreatePlayer();
 	CreateEnemies(1);
-	CreateBuffBody(1);	
+	CreateBuffBody(1);
 
 	if (player->OnCreate() == false) {
 		OnDestroy();
@@ -261,11 +261,11 @@ void GameManager::OnWin()
 		grid->Clear();
 
 		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
-		PlayerNextLevel();
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_int_distribution<> distrib(0, 9);
 		CreateTiles();
+		PlayerNextLevel();
 		CreateEnemies(distrib(gen));
 		std::random_device rd2;
 		std::mt19937 gen2(rd2());
@@ -321,7 +321,7 @@ void GameManager::CreatePlayer()
 	std::random_device rd2;
 	std::mt19937 gen2(rd2());
 	std::uniform_int_distribution<> distribution2(3 * getGrid()->GetTiles()->size() / 25 + 5, 22 * getGrid()->GetTiles()->size() / 25 - 5);
-	playerSpawnIndex = distribution2(gen2);
+	int playerSpawnIndex = distribution2(gen2);
 	Vec3 position = getGrid()->GetTiles()->at(playerSpawnIndex).getPos();
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
@@ -343,7 +343,7 @@ void GameManager::CreatePlayer()
 		this,
 		playerHp
 	);
-
+	player->setPlayerPositionIndex(playerSpawnIndex);
 	gun->SetGunOwner(player);
 	gun->SaveInitialStats();
 

@@ -12,6 +12,7 @@
 #include "Body.h"
 #include "GameManager.h"
 #include <string>
+
 struct PlayerSaveState {
 	float playerHp;
 	float maxPlayerHP;
@@ -53,7 +54,7 @@ protected:
 	float playerHp = 100;
 	float maxPlayerHP;
 	static PlayerSaveState playerSaveState;
-	float playerSpawnIndex;
+	int playerSpawnIndex;
 
 public:
 	PlayerBody() : Body{}
@@ -117,6 +118,7 @@ public:
 	void Render();
 	void HandleEvents(const SDL_Event& event);
 	void Update(float deltaTime);
+	void setPlayerPositionIndex(int index) { playerSpawnIndex = index; }
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }
 	virtual float getDashCooldown() { return dashCooldown; }
 	virtual void setDashCooldown(float dashCooldown_) { dashCooldown = dashCooldown_; }
