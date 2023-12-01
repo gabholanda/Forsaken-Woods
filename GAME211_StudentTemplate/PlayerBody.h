@@ -53,6 +53,7 @@ protected:
 	float playerHp = 100;
 	float maxPlayerHP;
 	static PlayerSaveState playerSaveState;
+	float playerSpawnIndex;
 
 public:
 	PlayerBody() : Body{}
@@ -130,6 +131,7 @@ public:
 	void setHp(float playerHp_) { playerHp = playerHp_; }
 	void setMaxHp(float maxPlayerHp_) { maxPlayerHP = maxPlayerHp_; }
 	virtual float getMaxHp() { return maxPlayerHP; }
+	virtual float GetPlayerSpawnIndex() { return playerSpawnIndex; }
 	void Death();
 
 	const char* Text() const
