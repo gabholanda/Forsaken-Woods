@@ -87,6 +87,5 @@ public:
 	bool ValidateCurrentScene();
 
 };
+
 #endif
-
-
