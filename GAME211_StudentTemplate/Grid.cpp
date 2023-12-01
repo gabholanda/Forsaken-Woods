@@ -76,14 +76,17 @@ void Grid::RenderGrid()
 		tile.Render();
 	}
 
-	for (Tile tile : collisionTiles)
-	{
-		tile.Render();
-	}
-
 	for (size_t i = decorationTiles.size() - 1; i > 0; i--)
 	{
 		decorationTiles[i].Render();
+	}
+}
+
+void Grid::RenderCollisionTiles()
+{
+	for (Tile tile : collisionTiles)
+	{
+		tile.Render();
 	}
 }
 

@@ -19,6 +19,7 @@ GameManager::GameManager() {
 	treeReader = nullptr;
 	healthUI = nullptr;
 	weaponUI = nullptr;
+	stageUI = nullptr;
 }
 
 bool GameManager::OnCreate()
@@ -76,6 +77,9 @@ bool GameManager::OnCreate()
 	flowerReader->LoadFromFile("DecorativeTiles1_16x16.png", getRenderer());
 	flowerReader->SetRects();
 
+	insideTreeReader = new SpritesheetReader(320, 380, 2, 2);
+	insideTreeReader->LoadFromFile("Seperate Tree Tiles_32x38.png", getRenderer());
+	insideTreeReader->SetRects();
 
 	CreateBuffs();
 	CreateTiles();
@@ -105,6 +109,7 @@ bool GameManager::OnCreate()
 	SDL_Color color = { 255,255,255 };
 	healthUI = new UIText(getPlayer()->Text(), 24, fontName, getRenderer(), Vec2(25, 550), color);
 	weaponUI = new UIText(getPlayer()->GetGun()->Text(), 24, fontName, getRenderer(), Vec2(25, 25), color);
+	stageUI = new UIText("1", 24, fontName, getRenderer(), Vec2(925, 25), color);
 	Collision::debugImage = IMG_Load("DebugCollisionBox.png");
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 	return true;
@@ -373,7 +378,7 @@ void GameManager::PlayerNextLevel()
 
 void GameManager::CreateTiles()
 {
-	Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.f,
+	Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.0f,
 		getBackgroundSpritesheetReader()->GetRows(),
 		getBackgroundSpritesheetReader()->GetColumns(),
 		// This defines which section of the spritesheet we gonna get
@@ -383,34 +388,42 @@ void GameManager::CreateTiles()
 	exampleTile->setTexture(getBackgroundSpritesheetReader()->GetTexture());
 
 
-	CollisionTile* exampleCollisionTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 1.f,
-		getBackgroundSpritesheetReader()->GetRows(),
-		getBackgroundSpritesheetReader()->GetColumns(),
+	CollisionTile* leftTreeTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+		treeReader->GetRows(),
+		treeReader->GetColumns(),
 		Vec3(4.0f, 4.0f, 0.0f),
 		// This defines which section of the spritesheet we gonna get
-		getBackgroundSpritesheetReader()->GetRects()[0][0],
-		this);
-	exampleCollisionTile->Tile::setImage(getBackgroundSpritesheetReader()->GetImage());
-	exampleCollisionTile->Tile::setTexture(getBackgroundSpritesheetReader()->GetTexture());
-	//game->getGrid()->PushTile(exampleCollisionTile, 0);
-
-	// Setting grid borders
-	/*TODO: Change this to dynamicly fill the tiles*/
-	DecorationTile* leftTreeTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
-		treeReader->GetRows(),
-		treeReader->GetColumns(),
 		treeReader->GetRects()[0][0],
 		this);
-	leftTreeTile->setImage(treeReader->GetImage());
-	leftTreeTile->setTexture(treeReader->GetTexture());
+	leftTreeTile->Tile::setImage(treeReader->GetImage());
+	leftTreeTile->Tile::setTexture(treeReader->GetTexture());
 
-	DecorationTile* rightTreeTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+	DecorationTile* backgroundDecorationTile = new DecorationTile(Vec3(10, 10, 0), 0.0f, 1.0f,
+		backgroundReader->GetRows(),
+		backgroundReader->GetColumns(),
+		backgroundReader->GetRects()[0][0],
+		this);
+	backgroundDecorationTile->Tile::setImage(backgroundReader->GetImage());
+	backgroundDecorationTile->Tile::setTexture(backgroundReader->GetTexture());
+
+	CollisionTile* rightTreeTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 0.5f,
 		treeReader->GetRows(),
 		treeReader->GetColumns(),
+		Vec3(4.0f, 4.0f, 0.0f),
 		treeReader->GetRects()[0][1],
 		this);
-	rightTreeTile->setImage(treeReader->GetImage());
-	rightTreeTile->setTexture(treeReader->GetTexture());
+	rightTreeTile->Tile::setImage(treeReader->GetImage());
+	rightTreeTile->Tile::setTexture(treeReader->GetTexture());
+
+	CollisionTile* treeCollisionTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 0.5f,
+		insideTreeReader->GetRows(),
+		insideTreeReader->GetColumns(),
+		Vec3(2.0f, 4.0f, 0.0f),
+		// This defines which section of the spritesheet we gonna get
+		insideTreeReader->GetRects()[0][0],
+		this);
+	treeCollisionTile->Tile::setImage(insideTreeReader->GetImage());
+	treeCollisionTile->Tile::setTexture(insideTreeReader->GetTexture());
 
 	// Up
 	for (size_t i = 379; i < 400; i++)
@@ -418,7 +431,7 @@ void GameManager::CreateTiles()
 		for (size_t j = i; j > i - 60; j -= 20)
 		{
 			getGrid()->PushTile(rightTreeTile, j);
-			getGrid()->PushTile(exampleCollisionTile, j);
+			getGrid()->PushTile(backgroundDecorationTile, j);
 		}
 	}
 
@@ -426,7 +439,7 @@ void GameManager::CreateTiles()
 	for (size_t i = 0; i < 60; i++)
 	{
 		getGrid()->PushTile(leftTreeTile, i);
-		getGrid()->PushTile(exampleCollisionTile, i);
+		getGrid()->PushTile(backgroundDecorationTile, i);
 	}
 
 	// Left
@@ -435,7 +448,7 @@ void GameManager::CreateTiles()
 		for (size_t j = i; j < i + 3; j++)
 		{
 			getGrid()->PushTile(leftTreeTile, j);
-			getGrid()->PushTile(exampleCollisionTile, j);
+			getGrid()->PushTile(backgroundDecorationTile, j);
 		}
 	}
 
@@ -445,7 +458,7 @@ void GameManager::CreateTiles()
 		for (size_t j = i - 3; j < i; j++)
 		{
 			getGrid()->PushTile(rightTreeTile, j);
-			getGrid()->PushTile(exampleCollisionTile, j);
+			getGrid()->PushTile(backgroundDecorationTile, j);
 		}
 	}
 
@@ -455,8 +468,6 @@ void GameManager::CreateTiles()
 
 	for (size_t i = 63; i < 339; i++)
 	{
-
-		getGrid()->PushTile(exampleTile, i);
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_int_distribution<> distribution(1, 10);
@@ -474,6 +485,20 @@ void GameManager::CreateTiles()
 			flowerTile->setTexture(flowerReader->GetTexture());
 			getGrid()->PushTile(flowerTile, i);
 		}
+		else
+		{
+			distribution = std::uniform_int_distribution<>(1, 30);
+			int treeIndex = distribution(gen);
+			if (treeIndex == 2)
+			{
+				treeCollisionTile->Tile::setImage(insideTreeReader->GetImage());
+				treeCollisionTile->Tile::setTexture(insideTreeReader->GetTexture());
+				getGrid()->PushTile(treeCollisionTile, i);
+				getGrid()->PushTile(backgroundDecorationTile, i);
+				continue;
+			}
+		}
+		getGrid()->PushTile(exampleTile, i);
 		if (i % 20 == 16)
 		{
 			i += 6;
@@ -645,8 +670,16 @@ void GameManager::RenderUI()
 {
 	healthUI->setText(getPlayer()->Text());
 	weaponUI->setText(getPlayer()->GetGun()->Text());
+	std::string s = std::to_string(stageNumber);
+	char* result = new char[s.length() + 1];
+
+	// Copy the contents of nameString to the newly allocated memory using strcpy_s
+	strcpy_s(result, s.length() + 1, s.c_str());
+	stageUI->setText(result);
+
 	healthUI->Render();
 	weaponUI->Render();
+	stageUI->Render();
 }
 
 // This might be unfamiliar
