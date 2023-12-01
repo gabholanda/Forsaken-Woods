@@ -43,3 +43,12 @@ new Scene3(sdlWindow, game_)
 	int index = distribution(gen);
 	return rooms[index];
 }
+
+Vec3 Randomizer::getRandomGridPosition(Grid* grid)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distrib(0, grid->GetTiles()->size() - 1);
+	int index = distrib(gen);
+	return grid->GetTiles()->at(index).getPos();
+}

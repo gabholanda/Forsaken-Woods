@@ -54,7 +54,7 @@ bool GameManager::OnCreate()
 
 	/* Grid needs to be same dimension as our sprites */
 	grid = new Grid(160, 160, 20, 20, this);
-	CreatePlayer();
+
 
 	// need to create Player before validating scene
 	if (!ValidateCurrentScene()) {
@@ -79,8 +79,9 @@ bool GameManager::OnCreate()
 
 	CreateBuffs();
 	CreateTiles();
+	CreatePlayer();
 	CreateEnemies(1);
-	CreateBuffBody(1);	
+	CreateBuffBody(1);
 
 	if (player->OnCreate() == false) {
 		OnDestroy();
@@ -117,7 +118,6 @@ void GameManager::Run() {
 	timer->Start();
 
 	while (isRunning) {
-
 		handleEvents();
 		timer->UpdateFrameTicks();
 		currentScene->Update(timer->GetDeltaTime());
@@ -211,12 +211,12 @@ void GameManager::OnRestart()
 	grid->Clear();
 
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+	CreateTiles();
 	CreatePlayer();
 	CreateBuffs();
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(0, 9);
-	CreateTiles();
 	CreateEnemies(distrib(gen));
 	std::random_device rd2;
 	std::mt19937 gen2(rd2());
@@ -317,8 +317,12 @@ void GameManager::CreatePlayer()
 
 	float scale = 0.5;
 	Vec3 size(3.f, 3.f, 0.0f);
-	Vec3 position(10.0f, 10.0f, 0.0f);
-	//Vec3 position(0.0f, 0.0f, 0.0f);
+	//Vec3 position (15.0f, 15.0f, 0.0f);
+	std::random_device rd2;
+	std::mt19937 gen2(rd2());
+	std::uniform_int_distribution<> distribution2(40, 45);
+	playerSpawnIndex = distribution2(gen2);
+	Vec3 position = getGrid()->GetTiles()->at(playerSpawnIndex).getPos();
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
 	float playerHp = 150;
@@ -352,8 +356,7 @@ void GameManager::PlayerNextLevel()
 	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 3.0f));
 	player->setHp(std::min(newHp, currentMaxHp));
 	Gun* gun = Randomizer::getRandomWeapon();
-
-	player->setPos(Vec3(10.0f, 10.0f, 0.0f));
+	player->setPos(Randomizer::getRandomGridPosition(grid));
 
 	player->GetGun()->SaveState();
 	gun->SaveAdditionalStats();
@@ -564,6 +567,11 @@ void GameManager::CreateEnemies(int quantity)
 		enemies.clear();
 	}
 
+	Vec3 playerPosition = getPlayer()->getPos();
+	float playerSpawnIndex = getPlayer()->GetPlayerSpawnIndex();
+	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);
+
+
 	for (int i = 0; i < quantity; i++) {
 		float massEnemy = 1.0f;
 		float orientationEnemy = 0.0f;
@@ -574,9 +582,17 @@ void GameManager::CreateEnemies(int quantity)
 		Vec3 sizeEnemy(3.f, 3.f, 0.0f);
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> distribution(0, getGrid()->GetTiles()->size() - 1);
+
+		if (validTiles.empty()) {
+			std::cout << "no tile";
+			break;
+		}
+
+		std::uniform_int_distribution<> distribution(0, validTiles.size() - 1);
 		int index = distribution(gen);
-		Vec3 positionEnemy = getGrid()->GetTiles()->at(index).getPos();
+		Vec3 positionEnemy = validTiles[index]->getPos();
+		std::cout << "enemy spawned at " << positionEnemy;
+		//Vec3 positionEnemy = Randomizer::getRandomGridPosition(grid);
 		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
 		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
 		Gun* randomEnemyGun = Randomizer::getRandomWeapon();
