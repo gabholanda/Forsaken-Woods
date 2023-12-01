@@ -37,6 +37,7 @@ public:
 	int GetColumns() const { return columns; }
 	int GetTileIndex(Vec3 position);
 	void RenderGrid();
+	void RenderCollisionTiles();
 	void RenderDebugGrid();
 	std::vector<Tile*> GetValidTiles(Vec3 playerPosition, float playerSpawnIndex);
 

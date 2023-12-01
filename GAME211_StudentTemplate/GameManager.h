@@ -37,10 +37,12 @@ private:
 	std::vector<Tile*> tiles;
 	UIText* healthUI;
 	UIText* weaponUI;
+	UIText* stageUI;
 
 	SpritesheetReader* backgroundReader;
 	SpritesheetReader* treeReader;
 	SpritesheetReader* flowerReader;
+	SpritesheetReader* insideTreeReader;
 public:
 	GameManager();
 	~GameManager();
