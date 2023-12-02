@@ -4,7 +4,7 @@ class MovementSpeedBuff : public Buff
 {
 protected:
 
-	float movementSpeedIncrement = 1;
+	float movementSpeedIncrement = 0.5;
 
 public:
 	void ApplyBuff(PlayerBody* player) override;

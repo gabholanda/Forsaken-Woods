@@ -36,6 +36,7 @@ protected:
 	float damage;
 	float reloadSpeed;
 	bool canShoot;
+	bool isReloading;
 	int currentAmmo;
 	int maxAmmo;
 	PlayerBody* gunOwner;
@@ -52,6 +53,7 @@ public:
 	{
 		name = name_;
 		canShoot = true;
+		isReloading = false;
 		gunOwner = nullptr;
 		currentAmmo = maxAmmo;
 		timerId = 0;
@@ -93,6 +95,16 @@ public:
 		return damage;
 	}
 
+	int getCurrentAmmo() const {
+		return currentAmmo;
+	}
+	bool getIsReloading() const {
+		return isReloading;
+	}
+
+
+
+
 	// Setters
 	void SetFireRate(float fireRate_) {
 		fireRate = fireRate_;
@@ -110,9 +122,10 @@ public:
 		damage = damage_;
 	}
 
+
 	const char* GetName() const { return name; }
 	const char* Text() const {
-		if (currentAmmo == 0)
+		if (currentAmmo == 0 || isReloading)
 		{
 			return "Reloading...";
 		}
@@ -134,6 +147,8 @@ public:
 	void ApplyAdditionalStats();
 
 	void SaveInitialStats();
+
+	void Reload();
 };
 
 #endif

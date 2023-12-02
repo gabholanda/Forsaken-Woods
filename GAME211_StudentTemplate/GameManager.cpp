@@ -221,11 +221,11 @@ void GameManager::OnRestart()
 	CreateBuffs();
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> distrib(0, 9);
+	std::uniform_int_distribution<> distrib(1, 9);
 	CreateEnemies(distrib(gen));
 	std::random_device rd2;
 	std::mt19937 gen2(rd2());
-	std::uniform_int_distribution<> distrib2(0, 3);
+	std::uniform_int_distribution<> distrib2(1, 4);
 	CreateBuffBody(distrib2(gen2));
 
 	if (player->OnCreate() == false) {

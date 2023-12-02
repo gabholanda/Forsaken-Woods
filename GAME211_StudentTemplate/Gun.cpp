@@ -125,17 +125,7 @@ void Gun::Shoot()
 		manager->getBullets()->push_back(bullet);
 		canShoot = false;
 		currentAmmo--;
-		if (currentAmmo == 0)
-		{
-			canShoot = false;
-			timerId = SDL_AddTimer(reloadSpeed * 1000.f, ReloadTimerCallback, reinterpret_cast<Gun*>(this));
-			if (timerId = 0)
-			{
-				std::cerr << "Error on setting reload timer" << std::endl;
-				canShoot = true;
-			}
-			return;
-		}
+
 		// Timer is in ms, while our value is in seconds
 		timerId = SDL_AddTimer(fireRate * 1000.f, FireRateTimerCallback, reinterpret_cast<Gun*>(this));
 		if (timerId = 0)
@@ -160,6 +150,7 @@ Uint32 Gun::ReloadTimerCallback(Uint32 interval, void* param)
 {
 	Gun* gun = reinterpret_cast<Gun*>(param);
 	gun->currentAmmo = gun->maxAmmo;
+	gun->isReloading = false;
 	gun->canShoot = true;
 	return 0;
 }
@@ -195,5 +186,20 @@ void Gun::SaveInitialStats()
 	gunInitialStats.reloadSpeed = reloadSpeed;
 	std::cout << "saved initial stats" << gunInitialStats.damage << std::endl;
 
+}
+
+void Gun::Reload()
+{
+		isReloading = true;
+		canShoot = false;
+		timerId = SDL_AddTimer(reloadSpeed * 1000.f, ReloadTimerCallback, reinterpret_cast<Gun*>(this));
+		if (timerId = 0)
+		{
+			std::cerr << "Error on setting reload timer" << std::endl;
+			isReloading = false;
+			canShoot = true;
+		}
+		return;
+	
 }
 
