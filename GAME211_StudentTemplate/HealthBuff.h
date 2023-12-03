@@ -8,5 +8,7 @@ protected:
 
 public:
 	void ApplyBuff(PlayerBody* player) override;
+	HealthBuff() : Buff("Health Increased") {}
+
 };
 

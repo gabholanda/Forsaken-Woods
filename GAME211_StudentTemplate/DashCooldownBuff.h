@@ -8,5 +8,6 @@ protected:
 
 public:
 	void ApplyBuff(PlayerBody* player) override;
+	DashCooldownBuff() : Buff("Dash cooldown decreased") {}
 };
 

@@ -20,6 +20,7 @@ GameManager::GameManager() {
 	healthUI = nullptr;
 	weaponUI = nullptr;
 	stageUI = nullptr;
+	buffUI = nullptr;
 }
 
 bool GameManager::OnCreate()
@@ -27,6 +28,12 @@ bool GameManager::OnCreate()
 	if (TTF_Init() < 0)
 	{
 		cout << "Error SDL_ttf:" << TTF_GetError() << endl;
+		return false;
+	}
+	// https://lazyfoo.net/tutorials/SDL/21_sound_effects_and_music/index.php
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 		return false;
 	}
 	// Use 1000x600 for less than full screen
@@ -50,8 +57,8 @@ bool GameManager::OnCreate()
 		OnDestroy();
 		return false;
 	}
-
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+	buff = new DamageBuff;
 
 	/* Grid needs to be same dimension as our sprites */
 	grid = new Grid(160, 160, 20, 20, this);
@@ -86,7 +93,12 @@ bool GameManager::OnCreate()
 	CreatePlayer();
 	CreateEnemies(1);
 	CreateBuffBody(1);
-
+	if (!LoadSounds())
+	{
+		OnDestroy();
+		return false;
+	}
+	Mix_PlayMusic(backgroundMusic, -1);
 	if (player->OnCreate() == false) {
 		OnDestroy();
 		return false;
@@ -110,7 +122,8 @@ bool GameManager::OnCreate()
 	healthUI = new UIText(getPlayer()->Text(), 24, fontName, getRenderer(), Vec2(25, 550), color);
 	weaponUI = new UIText(getPlayer()->GetGun()->Text(), 24, fontName, getRenderer(), Vec2(25, 25), color);
 	stageUI = new UIText("1", 24, fontName, getRenderer(), Vec2(925, 25), color);
-	Collision::debugImage = IMG_Load("DebugCollisionBox.png");
+	buffUI = new UIText(getBuff()->Text(), 24, fontName, getRenderer(), Vec2(550, 25), color);
+		Collision::debugImage = IMG_Load("DebugCollisionBox.png");
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 	return true;
 
@@ -203,6 +216,11 @@ void GameManager::OnDestroy()
 			delete bullet;
 		}
 		bullets.clear();
+
+		Mix_FreeMusic(backgroundMusic);
+		backgroundMusic = NULL;
+		Mix_Quit();
+		IMG_Quit();
 	}
 }
 
@@ -645,6 +663,18 @@ void GameManager::CreateEnemies(int quantity)
 	}
 }
 
+bool GameManager::LoadSounds()
+{
+	backgroundMusic = Mix_LoadMUS("SLOWER-TEMPO2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3");
+	if (backgroundMusic == NULL)
+	{
+		printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
+		return false;
+	}
+
+	return true;
+}
+
 // This might be unfamiliar
 float GameManager::getSceneHeight() { return currentScene->getyAxis(); }
 
@@ -670,13 +700,17 @@ void GameManager::RenderUI()
 {
 	healthUI->setText(getPlayer()->Text());
 	weaponUI->setText(getPlayer()->GetGun()->Text());
+	buffUI->setText(getBuff()->Text());
 	std::string s = std::to_string(stageNumber);
 	char* result = new char[s.length() + 1];
 
 	// Copy the contents of nameString to the newly allocated memory using strcpy_s
 	strcpy_s(result, s.length() + 1, s.c_str());
 	stageUI->setText(result);
-
+	if (getBuff()->getCanCollect() == true)
+	{
+	buffUI->Render();
+	}
 	healthUI->Render();
 	weaponUI->Render();
 	stageUI->Render();

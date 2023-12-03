@@ -8,5 +8,7 @@ protected:
 
 public:
 	void ApplyBuff(PlayerBody* player) override;
+	MovementSpeedBuff() : Buff("Movespeed Increased") {}
+
 };
 

@@ -29,6 +29,8 @@ bool Scene1::OnCreate() {
 
 	camera = new PlayerCamera(w, h, xAxis, yAxis, game);
 
+	buffUITimer = 0.0;
+
 	return true;
 }
 
@@ -41,6 +43,15 @@ void Scene1::OnDestroy()
 }
 
 void Scene1::Update(const float deltaTime) {
+
+	if (buffUITimer > 0)
+	{
+		buffUITimer -= deltaTime;
+	}
+	else
+	{
+		game->getBuff()->setCanCollect(false);
+	}
 
 	camera->updateCameraPosition();
 	// Update player
@@ -75,9 +86,14 @@ void Scene1::Update(const float deltaTime) {
 		if (Collision::CheckCollision(*game->getPlayer(), *buffBody)) {
 
 			Collision::ResolveCollision(game->getPlayer(), buffBody);
-			game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
-		std:cout << game->getBuffManager()->PickRandomBuffIndex() << std::endl;
+			//game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
+			Buff* tempBuff = game->getBuffManager()->randomBuff();
+			tempBuff->ApplyBuff(game->getPlayer());
+			game->setBuff(tempBuff);
+		std:cout << tempBuff->Text() << std::endl;
 			buffBody->setMarkedForDeletion(true);
+			game->getBuff()->setCanCollect(true);
+			buffUITimer = 2.0;
 		}
 	}
 
@@ -93,7 +109,9 @@ void Scene1::Update(const float deltaTime) {
 			if (Collision::CheckCollision(*buffBody, *game->getBullets()->at(i)))
 			{
 				game->getBullets()->at(i)->setMarkedForDeletion(true);
+
 			}
+
 		}
 		for (size_t j = 0; j < game->getGrid()->GetCollisionTiles()->size(); j++)
 		{
