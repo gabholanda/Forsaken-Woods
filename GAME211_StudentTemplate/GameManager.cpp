@@ -29,6 +29,12 @@ bool GameManager::OnCreate()
 		cout << "Error SDL_ttf:" << TTF_GetError() << endl;
 		return false;
 	}
+	// https://lazyfoo.net/tutorials/SDL/21_sound_effects_and_music/index.php
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+		return false;
+	}
 	// Use 1000x600 for less than full screen
 	const int SCREEN_WIDTH = 1000;
 	const int SCREEN_HEIGHT = 600;
@@ -86,7 +92,12 @@ bool GameManager::OnCreate()
 	CreatePlayer();
 	CreateEnemies(1);
 	CreateBuffBody(1);
-
+	if (!LoadSounds())
+	{
+		OnDestroy();
+		return false;
+	}
+	Mix_PlayMusic(backgroundMusic, -1);
 	if (player->OnCreate() == false) {
 		OnDestroy();
 		return false;
@@ -203,6 +214,11 @@ void GameManager::OnDestroy()
 			delete bullet;
 		}
 		bullets.clear();
+
+		Mix_FreeMusic(backgroundMusic);
+		backgroundMusic = NULL;
+		Mix_Quit();
+		IMG_Quit();
 	}
 }
 
@@ -643,6 +659,18 @@ void GameManager::CreateEnemies(int quantity)
 		randomEnemyGun->SetEnemyGunOwner(newEnemy);
 		enemies.push_back(newEnemy);
 	}
+}
+
+bool GameManager::LoadSounds()
+{
+	backgroundMusic = Mix_LoadMUS("SLOWER-TEMPO2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3");
+	if (backgroundMusic == NULL)
+	{
+		printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
+		return false;
+	}
+
+	return true;
 }
 
 // This might be unfamiliar

@@ -10,7 +10,8 @@
 #include "SpritesheetReader.h"
 #include "Tile.h"
 #include "BuffManager.h"
-
+#include <SDL_mixer.h>
+	
 class EnemyBody;
 class Buff;
 class Bullet;
@@ -38,7 +39,7 @@ private:
 	UIText* healthUI;
 	UIText* weaponUI;
 	UIText* stageUI;
-
+	Mix_Music* backgroundMusic = NULL;
 	SpritesheetReader* backgroundReader;
 	SpritesheetReader* treeReader;
 	SpritesheetReader* flowerReader;
@@ -56,6 +57,7 @@ public:
 	void CreateBuffs();
 	void CreateBuffBody(int quantity);
 	void CreateEnemies(int quantity);
+	bool LoadSounds();
 	// These might be unfamiliar
 	float getSceneHeight();
 	float getSceneWidth();
