@@ -22,5 +22,6 @@ public:
 	 std::vector<Buff*> GetBuffs() const {
 		return buffs;
 	}
+	 Buff* randomBuff();
 };
 
