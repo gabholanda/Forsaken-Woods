@@ -51,3 +51,8 @@ bool Buff::OnCreate()
 	return true;
 }
 
+void Buff::setCanCollect(bool canCollect_)
+{
+	canCollect = canCollect_;
+}
+

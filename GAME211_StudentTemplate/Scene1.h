@@ -17,6 +17,8 @@ private:
 	Matrix4 projectionMatrix;	// set in OnCreate()
 	Matrix4     inverseProjection;	// set in OnCreate()
 	Randomizer* randomizer;
+	float buffUITimer;
+
 
 public:
 	// This constructor may be different from what you've seen before
@@ -35,6 +37,7 @@ public:
 	SDL_Window* getWindow() { return window; }
 	Matrix4 getProjectionMatrix() { return camera->getProjectionMatrix(); }
 	Matrix4 getInverseMatrix() { return inverseProjection; }
+	float GetbuffUITimer() { return buffUITimer; }
 };
 
 #endif

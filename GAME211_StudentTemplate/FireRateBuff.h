@@ -10,5 +10,7 @@ protected:
 
 public:
 	void ApplyBuff(PlayerBody* player) override;
+	FireRateBuff() : Buff("Fire rate increased") {}
+
 };
 

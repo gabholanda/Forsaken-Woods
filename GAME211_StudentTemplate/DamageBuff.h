@@ -9,6 +9,8 @@ protected:
 	float damageIncrement = 3;
 
 public:
+	DamageBuff() : Buff("Damage increased"){}
 	void ApplyBuff(PlayerBody* player);
+
 };
 

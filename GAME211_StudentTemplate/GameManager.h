@@ -11,7 +11,7 @@
 #include "Tile.h"
 #include "BuffManager.h"
 #include <SDL_mixer.h>
-	
+
 class EnemyBody;
 class Buff;
 class Bullet;
@@ -29,7 +29,8 @@ private:
 	Grid* grid;
 	class PlayerBody* player;
 	class BuffManager* buffManager;
-	
+	class Buff* buff;
+
 	int stageNumber;
 	std::vector<Bullet*> bullets;
 	std::vector<Bullet*> enemyBullets;
@@ -39,6 +40,7 @@ private:
 	UIText* healthUI;
 	UIText* weaponUI;
 	UIText* stageUI;
+	UIText* buffUI;
 	Mix_Music* backgroundMusic = NULL;
 	SpritesheetReader* backgroundReader;
 	SpritesheetReader* treeReader;
@@ -63,6 +65,8 @@ public:
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
 
+	UIText* getBuffUI() { return buffUI; }
+
 	void SetRestart(bool isRestarting_);
 	bool GetRestart() const { return isRestarting; };
 	PlayerBody* getPlayer() { return player; }
@@ -75,6 +79,8 @@ public:
 	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
 	SpritesheetReader* getTreeSpritesheetReader() { return treeReader; }
 	BuffManager* getBuffManager() { return buffManager; }
+	Buff* getBuff() { return buff; }
+	void setBuff(Buff* buff_) { buff = buff_; }
 	SDL_Renderer* getRenderer();
 	void RenderUI();
 	void RenderPlayer();
