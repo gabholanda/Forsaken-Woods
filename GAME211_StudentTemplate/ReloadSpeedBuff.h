@@ -9,5 +9,7 @@ protected:
 
 public:
 	void ApplyBuff(PlayerBody* player) override;
+	ReloadSpeedBuff() : Buff("Reload Speed Increased") {}
+
 };
 

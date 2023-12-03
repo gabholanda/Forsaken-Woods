@@ -7,8 +7,16 @@ class Buff : public Body
 
 protected:
     class GameManager* game;
+	const char* name;
+	bool canCollect = false;
 
 public:
+	Buff(const char* name_)
+	{
+		name = name_;
+	
+	}
+
     Buff() : Body{}
     {
         game = nullptr;
@@ -41,6 +49,17 @@ public:
 	void Render();
 	bool OnCreate();
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }
+	void setCanCollect(bool canCollect_);
+	bool getCanCollect() {return canCollect;}
+	const char* GetName() const { return name; }
+	const char* Text() const {
+		std::string nameString = std::string(name);
+		char* result = new char[nameString.length() + 1];
+
+		strcpy_s(result, nameString.length() + 1, nameString.c_str());
+
+		return result;
+	}
 
 };
 

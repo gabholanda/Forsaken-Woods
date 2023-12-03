@@ -20,6 +20,7 @@ GameManager::GameManager() {
 	healthUI = nullptr;
 	weaponUI = nullptr;
 	stageUI = nullptr;
+	buffUI = nullptr;
 }
 
 bool GameManager::OnCreate()
@@ -56,8 +57,8 @@ bool GameManager::OnCreate()
 		OnDestroy();
 		return false;
 	}
-
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+	buff = new DamageBuff;
 
 	/* Grid needs to be same dimension as our sprites */
 	grid = new Grid(160, 160, 20, 20, this);
@@ -121,7 +122,8 @@ bool GameManager::OnCreate()
 	healthUI = new UIText(getPlayer()->Text(), 24, fontName, getRenderer(), Vec2(25, 550), color);
 	weaponUI = new UIText(getPlayer()->GetGun()->Text(), 24, fontName, getRenderer(), Vec2(25, 25), color);
 	stageUI = new UIText("1", 24, fontName, getRenderer(), Vec2(925, 25), color);
-	Collision::debugImage = IMG_Load("DebugCollisionBox.png");
+	buffUI = new UIText(getBuff()->Text(), 24, fontName, getRenderer(), Vec2(550, 25), color);
+		Collision::debugImage = IMG_Load("DebugCollisionBox.png");
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 	return true;
 
@@ -698,13 +700,17 @@ void GameManager::RenderUI()
 {
 	healthUI->setText(getPlayer()->Text());
 	weaponUI->setText(getPlayer()->GetGun()->Text());
+	buffUI->setText(getBuff()->Text());
 	std::string s = std::to_string(stageNumber);
 	char* result = new char[s.length() + 1];
 
 	// Copy the contents of nameString to the newly allocated memory using strcpy_s
 	strcpy_s(result, s.length() + 1, s.c_str());
 	stageUI->setText(result);
-
+	if (getBuff()->getCanCollect() == true)
+	{
+	buffUI->Render();
+	}
 	healthUI->Render();
 	weaponUI->Render();
 	stageUI->Render();
