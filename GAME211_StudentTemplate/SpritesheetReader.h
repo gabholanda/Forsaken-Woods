@@ -10,6 +10,11 @@ class SpritesheetReader
 {
 public:
 	SpritesheetReader(int width_, int height, int rows_, int columns_);
+	~SpritesheetReader()
+	{
+		SDL_FreeSurface(image);
+		SDL_DestroyTexture(texture);
+	}
 	bool LoadFromFile(const char* path, SDL_Renderer* renderer);
 	SDL_Texture* GetTexture() const { return texture; }
 	SDL_Surface* GetImage() const { return image; }

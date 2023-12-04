@@ -16,6 +16,17 @@ protected:
 	SDL_Surface* image;
 	SDL_Texture* texture;
 public:
+	~GameObject()
+	{
+		//if (image != nullptr)
+		//{
+		//	SDL_FreeSurface(image);
+		//}
+		//if (texture != nullptr)
+		//{
+		//	SDL_DestroyTexture(texture);
+		//}
+	}
 	virtual void setImage(SDL_Surface* image_) { image = image_; }
 	virtual SDL_Surface* getImage() { return image; }
 
@@ -29,5 +40,6 @@ public:
 	virtual Vec3 getPos() { return pos; }
 	virtual float getOrientation() { return orientation; }
 	virtual void setPos(Vec3 pos_) { pos = pos_; };
+	virtual float getScale() { return scale; }
 };
 
