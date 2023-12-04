@@ -30,7 +30,7 @@ public:
 		SDL_DestroyTexture(texture);
 		SDL_FreeSurface(text);
 	}
-
+	void clear();
 	void setText(const char* text_);
 };
 

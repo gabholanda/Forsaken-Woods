@@ -24,11 +24,7 @@ protected:
 	float scale;
 
 	Vec3 imageSizeWorldCoords;
-	SDL_Surface* image;
-	SDL_Texture* texture;
-
 	bool markedForDeletion = false;
-
 public:
 	Body();
 	Body(

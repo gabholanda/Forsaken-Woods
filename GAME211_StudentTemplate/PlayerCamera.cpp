@@ -3,6 +3,14 @@
 
 void PlayerCamera::updateCameraPosition()
 {
+	if (!manager)
+	{
+		return;
+	}
+	if (!manager->getPlayer())
+	{
+		return;
+	}
 	//projectionMatrix = MMath::translate(manager->getPlayer()->getPos());
 	ortho = MMath::orthographic(
 		manager->getPlayer()->getPos().x - manager->getSceneWidth() / 2.0f,

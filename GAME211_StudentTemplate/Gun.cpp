@@ -25,7 +25,10 @@ void Gun::ShootForEnemy(PlayerBody* target)
 
 	if (GameManager* manager = gunOwnerEnemy->GetGame())
 	{
-	
+		if (VMath::distance(target->getPos(), gunOwnerEnemy->getPos()) <= VERY_SMALL)
+		{
+			return;
+		}
 		Vec3 direction = VMath::normalize(target->getPos() - gunOwnerEnemy->getPos());
 		float desiredAngle = std::atan2(direction.y, direction.x);
 		float orientation = -desiredAngle;
@@ -190,16 +193,16 @@ void Gun::SaveInitialStats()
 
 void Gun::Reload()
 {
-		isReloading = true;
-		canShoot = false;
-		timerId = SDL_AddTimer(reloadSpeed * 1000.f, ReloadTimerCallback, reinterpret_cast<Gun*>(this));
-		if (timerId = 0)
-		{
-			std::cerr << "Error on setting reload timer" << std::endl;
-			isReloading = false;
-			canShoot = true;
-		}
-		return;
-	
+	isReloading = true;
+	canShoot = false;
+	timerId = SDL_AddTimer(reloadSpeed * 1000.f, ReloadTimerCallback, reinterpret_cast<Gun*>(this));
+	if (timerId = 0)
+	{
+		std::cerr << "Error on setting reload timer" << std::endl;
+		isReloading = false;
+		canShoot = true;
+	}
+	return;
+
 }
 

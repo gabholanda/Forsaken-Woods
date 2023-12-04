@@ -13,6 +13,10 @@ void RotationUtils::RotateTowardsMouse(float& outOrientation, Matrix4 projection
 
 void RotationUtils::RotateTowardsTarget(float& outOrietation, Vec3 targetPos, Vec3 pos)
 {
+	if (VMath::distance(targetPos, pos) <= VERY_SMALL)
+	{
+		return;
+	}
 	Vec3 direction = VMath::normalize(targetPos - pos);
 	float desiredAngle = std::atan2(direction.y, direction.x);
 	float newOrientation = -desiredAngle;

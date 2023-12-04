@@ -16,6 +16,18 @@ UIText::UIText(const char* text_, int fontSize, const char* fontName, SDL_Render
 	texture = SDL_CreateTextureFromSurface(renderer, text);
 }
 
+void UIText::clear()
+{
+	if (text)
+	{
+		SDL_FreeSurface(text);
+	}
+	if (texture)
+	{
+		SDL_DestroyTexture(texture);
+	}
+}
+
 void UIText::setText(const char* text_)
 {
 	text = TTF_RenderText_Solid(font, text_, color);
@@ -27,8 +39,5 @@ void UIText::Render()
 	SDL_Rect dest = { position.x, position.y, text->w, text->h };
 
 	SDL_RenderCopy(renderer, texture, NULL, &dest);
-	SDL_FreeSurface(text);
-	SDL_DestroyTexture(texture);
+	clear();
 }
-
-

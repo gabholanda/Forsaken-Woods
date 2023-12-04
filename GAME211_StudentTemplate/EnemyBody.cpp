@@ -75,6 +75,10 @@ void EnemyBody::MoveTowardsPlayer(float deltaTime, PlayerBody* target)
 		RotationUtils::RotateTowardsTarget(orientation, target->getPos(), pos);
 
 		// Move towards the player
+		if (VMath::distance(target->getPos(), pos) < VERY_SMALL)
+		{
+			return;
+		}
 		Vec3 direction = VMath::normalize(target->getPos() - pos);
 		pos.x += direction.x * movementSpeed * deltaTime;
 		pos.y += direction.y * movementSpeed * deltaTime;

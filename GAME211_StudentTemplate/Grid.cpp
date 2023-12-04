@@ -39,7 +39,17 @@ void Grid::PushTile(Tile* tile, int position)
 		collisionTile->Body::setPos(positions[position]);
 		collisionTile->Tile::setPos(positions[position]);
 		collisionTile->GameObject::setPos(positions[position]);
-		collisionTiles.push_back(*collisionTile);
+		CollisionTile newCollisionTile = CollisionTile(collisionTile->Body::getPos(),
+			collisionTile->Body::getOrientation(),
+			collisionTile->Body::getScale(),
+			collisionTile->getRows(),
+			collisionTile->getColumns(),
+			collisionTile->getSize(),
+			collisionTile->getSourceRect(),
+			collisionTile->getManager());
+		newCollisionTile.Tile::setImage(collisionTile->Tile::getImage());
+		newCollisionTile.Tile::setTexture(collisionTile->Tile::getTexture());
+		collisionTiles.push_back(newCollisionTile);
 		return;
 	}
 
@@ -47,13 +57,29 @@ void Grid::PushTile(Tile* tile, int position)
 	{
 		decorationTile->Tile::setPos(positions[position]);
 		decorationTile->GameObject::setPos(positions[position]);
-		decorationTiles.push_back(*decorationTile);
+		DecorationTile newDecorationTile = DecorationTile(decorationTile->getPos(),
+			decorationTile->getOrientation(),
+			decorationTile->getScale(),
+			decorationTile->getRows(),
+			decorationTile->getColumns(),
+			decorationTile->getSourceRect(),
+			decorationTile->getManager());
+		newDecorationTile.setImage(decorationTile->getImage());
+		newDecorationTile.setTexture(decorationTile->getTexture());
+		decorationTiles.push_back(newDecorationTile);
 		return;
 	}
 
-	Tile newTile = *tile;
+	Tile newTile = Tile(tile->getPos(),
+		tile->getOrientation(),
+		tile->getScale(),
+		tile->getRows(),
+		tile->getColumns(),
+		tile->getSourceRect(),
+		tile->getManager());
 	newTile.setPos(positions[position]);
-
+	newTile.setImage(tile->getImage());
+	newTile.setTexture(tile->getTexture());
 	tiles.push_back(newTile);
 }
 
@@ -113,8 +139,8 @@ std::vector<Tile*> Grid::GetValidTiles(Vec3 playerPosition, float playerSpawnInd
 {
 	std::vector<Tile*> validTiles;
 
-	const int exclusionRange = 5; 
-	const int additionalExclusion = 10; 
+	const int exclusionRange = 5;
+	const int additionalExclusion = 10;
 
 	for (size_t i = 0; i < tiles.size(); ++i)
 	{

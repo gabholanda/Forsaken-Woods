@@ -127,11 +127,11 @@ bool GameManager::OnCreate()
 	weaponUI = new UIText(getPlayer()->GetGun()->Text(), 24, fontName, getRenderer(), Vec2(25, 25), color);
 	stageUI = new UIText("1", 24, fontName, getRenderer(), Vec2(925, 25), color);
 	buffUI = new UIText(getBuff()->Text(), 24, fontName, getRenderer(), Vec2(550, 25), color);
-	InstructionsUI1= new UIText("test", 24, fontName, getRenderer(), Vec2(25, 100), color);
-	InstructionsUI2= new UIText("test", 24, fontName, getRenderer(), Vec2(25, 200), color);
-	InstructionsUI3= new UIText("test", 24, fontName, getRenderer(), Vec2(25, 300), color);
-	InstructionsUI4= new UIText("test", 24, fontName, getRenderer(), Vec2(25, 400), color);
-		Collision::debugImage = IMG_Load("DebugCollisionBox.png");
+	InstructionsUI1 = new UIText("test", 24, fontName, getRenderer(), Vec2(25, 100), color);
+	InstructionsUI2 = new UIText("test", 24, fontName, getRenderer(), Vec2(25, 200), color);
+	InstructionsUI3 = new UIText("test", 24, fontName, getRenderer(), Vec2(25, 300), color);
+	InstructionsUI4 = new UIText("test", 24, fontName, getRenderer(), Vec2(25, 400), color);
+	Collision::debugImage = IMG_Load("DebugCollisionBox.png");
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 	return true;
 
@@ -195,7 +195,8 @@ void GameManager::handleEvents()
 			case SDL_SCANCODE_APOSTROPHE:
 				isDebugging = !isDebugging;
 				break;
-			default:
+			case SDL_SCANCODE_SPACE:
+				OnRestart();
 				break;
 			}
 		}
@@ -246,6 +247,18 @@ void GameManager::OnRestart()
 	for (Bullet* bullet : bullets) {
 		delete bullet;
 	}
+	for (EnemyBody* enemy : enemies)
+	{
+		delete enemy;
+	}
+	for (Buff* buff : buffBodies)
+	{
+		delete buff;
+	}
+
+	// Clear lists
+	buffBodies.clear();
+	enemies.clear();
 	bullets.clear();
 	grid->Clear();
 
@@ -296,9 +309,22 @@ void GameManager::OnWin()
 		for (Bullet* bullet : bullets) {
 			delete bullet;
 		}
+		for (EnemyBody* enemy : enemies)
+		{
+			delete enemy;
+		}
+		for (Buff* buff : buffBodies)
+		{
+			delete buff;
+		}
+
+		// Clear lists
+		buffBodies.clear();
+		enemies.clear();
 		bullets.clear();
 		grid->Clear();
 
+		// Start creating stuff
 		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 		std::random_device rd;
 		std::mt19937 gen(rd());
@@ -414,6 +440,8 @@ void GameManager::PlayerNextLevel()
 
 void GameManager::CreateTiles()
 {
+	grid->Clear();
+
 	Tile* exampleTile = new Tile(Vec3(10, 10, 0), 0.0f, 1.0f,
 		getBackgroundSpritesheetReader()->GetRows(),
 		getBackgroundSpritesheetReader()->GetColumns(),
@@ -422,7 +450,6 @@ void GameManager::CreateTiles()
 		this);
 	exampleTile->setImage(getBackgroundSpritesheetReader()->GetImage());
 	exampleTile->setTexture(getBackgroundSpritesheetReader()->GetTexture());
-
 
 	CollisionTile* leftTreeTile = new CollisionTile(Vec3(10, 10, 0), 0.0f, 0.5f,
 		treeReader->GetRows(),
@@ -531,6 +558,10 @@ void GameManager::CreateTiles()
 				treeCollisionTile->Tile::setTexture(insideTreeReader->GetTexture());
 				getGrid()->PushTile(treeCollisionTile, i);
 				getGrid()->PushTile(backgroundDecorationTile, i);
+				if (i % 20 == 16)
+				{
+					i += 6;
+				}
 				continue;
 			}
 		}
@@ -630,7 +661,7 @@ void GameManager::CreateEnemies(int quantity)
 
 	Vec3 playerPosition = getPlayer()->getPos();
 	float playerSpawnIndex = getPlayer()->GetPlayerSpawnIndex();
-	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);	
+	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);
 
 
 	for (int i = 0; i < quantity; i++) {
@@ -743,7 +774,6 @@ void GameManager::RenderUI()
 	if (!player->getIsBeginningOfGame()) {
 		healthUI->setText(getPlayer()->Text());
 		weaponUI->setText(getPlayer()->GetGun()->Text());
-		buffUI->setText(getBuff()->Text());
 
 		std::string s = std::to_string(stageNumber);
 		char* result = new char[s.length() + 1];
@@ -753,12 +783,13 @@ void GameManager::RenderUI()
 		stageUI->setText(result);
 		if (getBuff()->getCanCollect() == true)
 		{
+			buffUI->setText(getBuff()->Text());
 			buffUI->Render();
 		}
 		healthUI->Render();
 		weaponUI->Render();
 		stageUI->Render();
-	
+
 	}
 	else if (player->getIsBeginningOfGame()) {
 		InstructionsUI1->setText("You have been trapped in the ForsakenWoods...");
@@ -805,10 +836,6 @@ void GameManager::RenderBullets()
 
 void GameManager::RenderTiles()
 {
-	//for (Tile* tile : tiles) {
-	//	tile->Render();
-	//}
-
 	grid->RenderGrid();
 }
 
