@@ -243,6 +243,7 @@ void Scene1::PostRenderUpdate(const float time)
 
 	if (game->getEnemies()->size() == 0)
 	{
+		Mix_PlayChannel(-1, game->getWinSound(), 0);
 		game->OnWin();
 	}
 }

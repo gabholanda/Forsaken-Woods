@@ -49,6 +49,7 @@ private:
 	Mix_Chunk* shootSoundEffect = NULL;
 	Mix_Chunk* buffSoundEffect = NULL;
 	Mix_Chunk* deathSoundEffect = NULL;
+	Mix_Chunk* winSoundEffect = NULL;
 	SpritesheetReader* backgroundReader;
 	SpritesheetReader* treeReader;
 	SpritesheetReader* flowerReader;
@@ -89,6 +90,7 @@ public:
 	Mix_Chunk* getShootSound() { return shootSoundEffect; }
 	Mix_Chunk* getBuffSound() { return buffSoundEffect; }
 	Mix_Chunk* getDeathSound() { return deathSoundEffect; }
+	Mix_Chunk* getWinSound() { return winSoundEffect; }
 	Buff* getBuff() { return buff; }
 	void setBuff(Buff* buff_) { buff = buff_; }
 	SDL_Renderer* getRenderer();

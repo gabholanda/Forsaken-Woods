@@ -160,16 +160,13 @@ void Gun::SaveState() {
 	gunBuffedStats.fireRate = fireRate;
 	gunBuffedStats.damage = damage;
 	gunBuffedStats.reloadSpeed = reloadSpeed;
-	std::cout << "saved stats" << gunBuffedStats.damage << std::endl;
 }
 
 void Gun::SaveAdditionalStats() {
 	gunAdditionalStats.fireRate = gunBuffedStats.fireRate - gunInitialStats.fireRate;
 	gunAdditionalStats.damage = gunBuffedStats.damage - gunInitialStats.damage;
 	gunAdditionalStats.reloadSpeed = gunBuffedStats.reloadSpeed - gunInitialStats.reloadSpeed;
-	std::cout << "difference gunInitialStats" << gunInitialStats.damage << std::endl;
-	std::cout << "difference gunBuffedStats" << gunBuffedStats.damage << std::endl;
-	std::cout << "difference additionalStats" << gunAdditionalStats.damage << std::endl;
+
 
 }
 
@@ -178,7 +175,6 @@ void Gun::ApplyAdditionalStats(Gun* gun)
 	fireRate += gun->gunAdditionalStats.fireRate;
 	damage += gun->gunAdditionalStats.damage;
 	reloadSpeed += gun->gunAdditionalStats.reloadSpeed;
-	std::cout << "difference" << gun->gunAdditionalStats.damage << std::endl;
 }
 
 // Apply the difference to the gun's current stats
@@ -189,7 +185,6 @@ void Gun::SaveInitialStats()
 	gunInitialStats.fireRate = fireRate;
 	gunInitialStats.damage = damage;
 	gunInitialStats.reloadSpeed = reloadSpeed;
-	std::cout << "saved initial stats" << gunInitialStats.damage << std::endl;
 
 }
 

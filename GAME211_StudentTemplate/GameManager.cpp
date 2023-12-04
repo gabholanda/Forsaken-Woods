@@ -229,7 +229,12 @@ void GameManager::OnDestroy()
 		Mix_FreeChunk(shootSoundEffect);
 		Mix_FreeChunk(buffSoundEffect);
 		Mix_FreeChunk(deathSoundEffect);
+		Mix_FreeChunk(winSoundEffect);
 		backgroundMusic = NULL;
+		shootSoundEffect = NULL;
+		buffSoundEffect = NULL;
+		deathSoundEffect = NULL;
+		winSoundEffect = NULL;
 		Mix_Quit();
 		IMG_Quit();
 	}
@@ -359,7 +364,7 @@ void GameManager::CreatePlayer()
 	Vec3 position = getGrid()->GetTiles()->at(playerSpawnIndex).getPos();
 	Vec3 velocity(0.0f, 0.0f, 0.0f);
 	Vec3 acceleration(0.0f, 0.0f, 0.0f);
-	float playerHp = 200;
+	float playerHp = 150;
 
 	player = new PlayerBody
 	(
@@ -387,7 +392,7 @@ void GameManager::PlayerNextLevel()
 {
 	float currentMaxHp = player->getMaxHp();
 	float currentHp = player->getHp();
-	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 3.0f));
+	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 2.0f));
 	player->setHp(std::min(newHp, currentMaxHp));
 	Gun* gun = Randomizer::getRandomWeapon();
 	player->setPos(Randomizer::getRandomGridPosition(grid));
@@ -625,7 +630,7 @@ void GameManager::CreateEnemies(int quantity)
 
 	Vec3 playerPosition = getPlayer()->getPos();
 	float playerSpawnIndex = getPlayer()->GetPlayerSpawnIndex();
-	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);
+	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);	
 
 
 	for (int i = 0; i < quantity; i++) {
@@ -698,6 +703,12 @@ bool GameManager::LoadSounds()
 	}
 	buffSoundEffect = Mix_LoadWAV("Power Up.wav");
 	if (buffSoundEffect == NULL)
+	{
+		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+		return false;
+	}
+	winSoundEffect = Mix_LoadWAV("Win Level.wav");
+	if (winSoundEffect == NULL)
 	{
 		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
 		return false;
