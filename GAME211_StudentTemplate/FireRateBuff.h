@@ -6,7 +6,7 @@ class FireRateBuff : public Buff
 
 protected:
 
-	float fireRateIncrement = 0.1;
+	float fireRateIncrement = 0.02;
 
 public:
 	void ApplyBuff(PlayerBody* player) override;

@@ -44,6 +44,7 @@ protected:
 	bool isMouseButtonDown;
 	bool releasedDuringDash;
 	bool isMoving;
+	bool isBeginningOfGame = true;
 	float dashMultiplier = 5;
 	float dashCooldown = 3;
 	float dashLength = 0.15;
@@ -56,6 +57,8 @@ protected:
 	static PlayerSaveState playerSaveState;
 	int playerSpawnIndex;
 
+
+
 public:
 	PlayerBody() : Body{}
 	{
@@ -65,6 +68,7 @@ public:
 		canDash = true;
 		releasedDuringDash = false;
 		isMoving = false;
+		isBeginningOfGame = true;
 		dashMultiplier = 3.0f;
 		dashCooldown = 3.0f;
 		dashLength = 0.3f;
@@ -72,6 +76,7 @@ public:
 		dashDirection = Direction::NONE;
 		initialDashVelX = 0.0f;
 		initialDashVelY = 0.0f;
+
 	}
 
 	~PlayerBody();
@@ -133,6 +138,7 @@ public:
 	void setHp(float playerHp_) { playerHp = playerHp_; }
 	void setMaxHp(float maxPlayerHp_) { maxPlayerHP = maxPlayerHp_; }
 	virtual float getMaxHp() { return maxPlayerHP; }
+	virtual float getIsBeginningOfGame() { return isBeginningOfGame; }
 	virtual float GetPlayerSpawnIndex() { return playerSpawnIndex; }
 	void Death();
 

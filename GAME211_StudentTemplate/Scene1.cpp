@@ -86,6 +86,7 @@ void Scene1::Update(const float deltaTime) {
 		if (Collision::CheckCollision(*game->getPlayer(), *buffBody)) {
 
 			Collision::ResolveCollision(game->getPlayer(), buffBody);
+			Mix_PlayChannel(-1, game->getBuffSound(), 0);
 			//game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 			Buff* tempBuff = game->getBuffManager()->randomBuff();
 			tempBuff->ApplyBuff(game->getPlayer());
@@ -171,7 +172,7 @@ void Scene1::Update(const float deltaTime) {
 			float playerHp = game->getPlayer()->getHp();
 			float enemyDamage = game->getEnemyBullets()->at(i)->GetOwningGun()->GetDamage();
 			if (enemyDamage > 0) {
-				game->getPlayer()->setHp(playerHp - (enemyDamage / 2));
+				game->getPlayer()->setHp(playerHp - (enemyDamage / 2.5));
 			}
 			if (game->getPlayer()->getHp() <= 0.0f)
 			{
@@ -242,6 +243,7 @@ void Scene1::PostRenderUpdate(const float time)
 
 	if (game->getEnemies()->size() == 0)
 	{
+		Mix_PlayChannel(-1, game->getWinSound(), 0);
 		game->OnWin();
 	}
 }

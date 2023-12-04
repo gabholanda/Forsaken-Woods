@@ -87,6 +87,7 @@ void Gun::Shoot()
 
 	if (GameManager* manager = gunOwner->GetGame())
 	{
+		Mix_PlayChannel(-1, manager->getShootSound(), 0);
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		Vec3 mousePos = MMath::inverse(manager->getProjectionMatrix()) * Vec3(float(x), float(y), 0.0f);
@@ -125,17 +126,7 @@ void Gun::Shoot()
 		manager->getBullets()->push_back(bullet);
 		canShoot = false;
 		currentAmmo--;
-		if (currentAmmo == 0)
-		{
-			canShoot = false;
-			timerId = SDL_AddTimer(reloadSpeed * 1000.f, ReloadTimerCallback, reinterpret_cast<Gun*>(this));
-			if (timerId = 0)
-			{
-				std::cerr << "Error on setting reload timer" << std::endl;
-				canShoot = true;
-			}
-			return;
-		}
+
 		// Timer is in ms, while our value is in seconds
 		timerId = SDL_AddTimer(fireRate * 1000.f, FireRateTimerCallback, reinterpret_cast<Gun*>(this));
 		if (timerId = 0)
@@ -160,6 +151,7 @@ Uint32 Gun::ReloadTimerCallback(Uint32 interval, void* param)
 {
 	Gun* gun = reinterpret_cast<Gun*>(param);
 	gun->currentAmmo = gun->maxAmmo;
+	gun->isReloading = false;
 	gun->canShoot = true;
 	return 0;
 }
@@ -168,21 +160,21 @@ void Gun::SaveState() {
 	gunBuffedStats.fireRate = fireRate;
 	gunBuffedStats.damage = damage;
 	gunBuffedStats.reloadSpeed = reloadSpeed;
-	std::cout << "saved stats" << gunBuffedStats.damage << std::endl;
 }
 
 void Gun::SaveAdditionalStats() {
 	gunAdditionalStats.fireRate = gunBuffedStats.fireRate - gunInitialStats.fireRate;
 	gunAdditionalStats.damage = gunBuffedStats.damage - gunInitialStats.damage;
 	gunAdditionalStats.reloadSpeed = gunBuffedStats.reloadSpeed - gunInitialStats.reloadSpeed;
+
+
 }
 
-void Gun::ApplyAdditionalStats()
+void Gun::ApplyAdditionalStats(Gun* gun)
 {
-	fireRate += gunAdditionalStats.fireRate;
-	damage += gunAdditionalStats.damage;
-	reloadSpeed += gunAdditionalStats.reloadSpeed;
-	std::cout << "difference" << gunAdditionalStats.damage << std::endl;
+	fireRate += gun->gunAdditionalStats.fireRate;
+	damage += gun->gunAdditionalStats.damage;
+	reloadSpeed += gun->gunAdditionalStats.reloadSpeed;
 }
 
 // Apply the difference to the gun's current stats
@@ -193,7 +185,21 @@ void Gun::SaveInitialStats()
 	gunInitialStats.fireRate = fireRate;
 	gunInitialStats.damage = damage;
 	gunInitialStats.reloadSpeed = reloadSpeed;
-	std::cout << "saved initial stats" << gunInitialStats.damage << std::endl;
 
+}
+
+void Gun::Reload()
+{
+		isReloading = true;
+		canShoot = false;
+		timerId = SDL_AddTimer(reloadSpeed * 1000.f, ReloadTimerCallback, reinterpret_cast<Gun*>(this));
+		if (timerId = 0)
+		{
+			std::cerr << "Error on setting reload timer" << std::endl;
+			isReloading = false;
+			canShoot = true;
+		}
+		return;
+	
 }
 

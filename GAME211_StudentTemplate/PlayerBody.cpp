@@ -65,6 +65,9 @@ void PlayerBody::Render()
 
 	void PlayerBody::HandleEvents(const SDL_Event& event)
 	{
+		if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+				isBeginningOfGame = false;
+		}
 
 		if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
 
@@ -208,12 +211,28 @@ void PlayerBody::Render()
 			{
 				if (gun)
 				{
-					gun->Shoot();
+					if (gun->getCurrentAmmo() > 0 && !gun->getIsReloading()) {
+						
+						gun->Shoot();
+
+					}
+					else {
+						if (!gun->getIsReloading()) {
+							gun->Reload();
+						}
+					}
+
 				}
 
 
 			}
-}
+
+			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_r) {
+				if (!gun->getIsReloading()) {
+					gun->Reload();
+				}
+			}
+	}
 
 	void PlayerBody::StartDashTimer() {
 		timerID = SDL_AddTimer(static_cast<Uint32>(dashLength * 1000.0f), TimerCallback, this);
@@ -266,6 +285,7 @@ void PlayerBody::Render()
 
 	void PlayerBody::Death()
 	{
+		Mix_PlayChannel(-1, game->getDeathSound(), 0);
 		game->SetRestart(true);
 
 	}

@@ -21,6 +21,10 @@ GameManager::GameManager() {
 	weaponUI = nullptr;
 	stageUI = nullptr;
 	buffUI = nullptr;
+	InstructionsUI1 = nullptr;
+	InstructionsUI2 = nullptr;
+	InstructionsUI3 = nullptr;
+	InstructionsUI4 = nullptr;
 }
 
 bool GameManager::OnCreate()
@@ -123,6 +127,10 @@ bool GameManager::OnCreate()
 	weaponUI = new UIText(getPlayer()->GetGun()->Text(), 24, fontName, getRenderer(), Vec2(25, 25), color);
 	stageUI = new UIText("1", 24, fontName, getRenderer(), Vec2(925, 25), color);
 	buffUI = new UIText(getBuff()->Text(), 24, fontName, getRenderer(), Vec2(550, 25), color);
+	InstructionsUI1= new UIText("test", 24, fontName, getRenderer(), Vec2(25, 100), color);
+	InstructionsUI2= new UIText("test", 24, fontName, getRenderer(), Vec2(25, 200), color);
+	InstructionsUI3= new UIText("test", 24, fontName, getRenderer(), Vec2(25, 300), color);
+	InstructionsUI4= new UIText("test", 24, fontName, getRenderer(), Vec2(25, 400), color);
 		Collision::debugImage = IMG_Load("DebugCollisionBox.png");
 	Collision::debugTexture = SDL_CreateTextureFromSurface(getRenderer(), Collision::debugImage);
 	return true;
@@ -218,7 +226,15 @@ void GameManager::OnDestroy()
 		bullets.clear();
 
 		Mix_FreeMusic(backgroundMusic);
+		Mix_FreeChunk(shootSoundEffect);
+		Mix_FreeChunk(buffSoundEffect);
+		Mix_FreeChunk(deathSoundEffect);
+		Mix_FreeChunk(winSoundEffect);
 		backgroundMusic = NULL;
+		shootSoundEffect = NULL;
+		buffSoundEffect = NULL;
+		deathSoundEffect = NULL;
+		winSoundEffect = NULL;
 		Mix_Quit();
 		IMG_Quit();
 	}
@@ -239,11 +255,11 @@ void GameManager::OnRestart()
 	CreateBuffs();
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> distrib(0, 9);
+	std::uniform_int_distribution<> distrib(1, 9);
 	CreateEnemies(distrib(gen));
 	std::random_device rd2;
 	std::mt19937 gen2(rd2());
-	std::uniform_int_distribution<> distrib2(0, 3);
+	std::uniform_int_distribution<> distrib2(1, 4);
 	CreateBuffBody(distrib2(gen2));
 
 	if (player->OnCreate() == false) {
@@ -286,13 +302,13 @@ void GameManager::OnWin()
 		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> distrib(0, 9);
+		std::uniform_int_distribution<> distrib(1, 9);
 		CreateTiles();
 		PlayerNextLevel();
 		CreateEnemies(distrib(gen));
 		std::random_device rd2;
 		std::mt19937 gen2(rd2());
-		std::uniform_int_distribution<> distrib2(0, 3);
+		std::uniform_int_distribution<> distrib2(1, 4);
 		CreateBuffBody(distrib2(gen2));
 
 		if (player->OnCreate() == false) {
@@ -376,19 +392,21 @@ void GameManager::PlayerNextLevel()
 {
 	float currentMaxHp = player->getMaxHp();
 	float currentHp = player->getHp();
-	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 3.0f));
+	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 2.0f));
 	player->setHp(std::min(newHp, currentMaxHp));
 	Gun* gun = Randomizer::getRandomWeapon();
 	player->setPos(Randomizer::getRandomGridPosition(grid));
 
 	player->GetGun()->SaveState();
-	gun->SaveAdditionalStats();
+	player->GetGun()->SaveAdditionalStats();
 
+	Gun* previousGun;
+	previousGun = player->GetGun();
 
 	player->SetGun(gun);
 
 	gun->SaveInitialStats();
-	gun->ApplyAdditionalStats();
+	gun->ApplyAdditionalStats(previousGun);
 
 
 	gun->SetGunOwner(player);
@@ -612,7 +630,7 @@ void GameManager::CreateEnemies(int quantity)
 
 	Vec3 playerPosition = getPlayer()->getPos();
 	float playerSpawnIndex = getPlayer()->GetPlayerSpawnIndex();
-	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);
+	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);	
 
 
 	for (int i = 0; i < quantity; i++) {
@@ -665,10 +683,34 @@ void GameManager::CreateEnemies(int quantity)
 
 bool GameManager::LoadSounds()
 {
-	backgroundMusic = Mix_LoadMUS("SLOWER-TEMPO2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3");
+	backgroundMusic = Mix_LoadMUS("Retro Forest.mp3");
 	if (backgroundMusic == NULL)
 	{
 		printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
+		return false;
+	}
+	shootSoundEffect = Mix_LoadWAV("Shoot Sound Effect.wav");
+	if (shootSoundEffect == NULL)
+	{
+		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+		return false;
+	}
+	deathSoundEffect = Mix_LoadWAV("Lose Sound Effect.wav");
+	if (deathSoundEffect == NULL)
+	{
+		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+		return false;
+	}
+	buffSoundEffect = Mix_LoadWAV("Power Up.wav");
+	if (buffSoundEffect == NULL)
+	{
+		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+		return false;
+	}
+	winSoundEffect = Mix_LoadWAV("Win Level.wav");
+	if (winSoundEffect == NULL)
+	{
+		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
 		return false;
 	}
 
@@ -698,22 +740,37 @@ SDL_Renderer* GameManager::getRenderer()
 
 void GameManager::RenderUI()
 {
-	healthUI->setText(getPlayer()->Text());
-	weaponUI->setText(getPlayer()->GetGun()->Text());
-	buffUI->setText(getBuff()->Text());
-	std::string s = std::to_string(stageNumber);
-	char* result = new char[s.length() + 1];
+	if (!player->getIsBeginningOfGame()) {
+		healthUI->setText(getPlayer()->Text());
+		weaponUI->setText(getPlayer()->GetGun()->Text());
+		buffUI->setText(getBuff()->Text());
 
-	// Copy the contents of nameString to the newly allocated memory using strcpy_s
-	strcpy_s(result, s.length() + 1, s.c_str());
-	stageUI->setText(result);
-	if (getBuff()->getCanCollect() == true)
-	{
-	buffUI->Render();
+		std::string s = std::to_string(stageNumber);
+		char* result = new char[s.length() + 1];
+
+		// Copy the contents of nameString to the newly allocated memory using strcpy_s
+		strcpy_s(result, s.length() + 1, s.c_str());
+		stageUI->setText(result);
+		if (getBuff()->getCanCollect() == true)
+		{
+			buffUI->Render();
+		}
+		healthUI->Render();
+		weaponUI->Render();
+		stageUI->Render();
+	
 	}
-	healthUI->Render();
-	weaponUI->Render();
-	stageUI->Render();
+	else if (player->getIsBeginningOfGame()) {
+		InstructionsUI1->setText("You have been trapped in the ForsakenWoods...");
+		InstructionsUI2->setText("WASD To Move, R To reload, Right Click to Dash");
+		InstructionsUI3->setText("Walk into shiny rocks to get stronger! How far can you get?");
+		InstructionsUI4->setText("Press Any Key To Continue");
+		InstructionsUI1->Render();
+		InstructionsUI2->Render();
+		InstructionsUI3->Render();
+		InstructionsUI4->Render();
+
+	}
 }
 
 // This might be unfamiliar

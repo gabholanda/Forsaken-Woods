@@ -6,7 +6,7 @@ class DamageBuff : public Buff
 
 protected:
 
-	float damageIncrement = 3;
+	float damageIncrement = 2;
 
 public:
 	DamageBuff() : Buff("Damage increased"){}
