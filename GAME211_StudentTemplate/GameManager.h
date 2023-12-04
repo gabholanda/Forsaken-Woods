@@ -41,7 +41,14 @@ private:
 	UIText* weaponUI;
 	UIText* stageUI;
 	UIText* buffUI;
+	UIText* InstructionsUI1;
+	UIText* InstructionsUI2;
+	UIText* InstructionsUI3;
+	UIText* InstructionsUI4;
 	Mix_Music* backgroundMusic = NULL;
+	Mix_Chunk* shootSoundEffect = NULL;
+	Mix_Chunk* buffSoundEffect = NULL;
+	Mix_Chunk* deathSoundEffect = NULL;
 	SpritesheetReader* backgroundReader;
 	SpritesheetReader* treeReader;
 	SpritesheetReader* flowerReader;
@@ -79,6 +86,9 @@ public:
 	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
 	SpritesheetReader* getTreeSpritesheetReader() { return treeReader; }
 	BuffManager* getBuffManager() { return buffManager; }
+	Mix_Chunk* getShootSound() { return shootSoundEffect; }
+	Mix_Chunk* getBuffSound() { return buffSoundEffect; }
+	Mix_Chunk* getDeathSound() { return deathSoundEffect; }
 	Buff* getBuff() { return buff; }
 	void setBuff(Buff* buff_) { buff = buff_; }
 	SDL_Renderer* getRenderer();

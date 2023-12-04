@@ -65,6 +65,9 @@ void PlayerBody::Render()
 
 	void PlayerBody::HandleEvents(const SDL_Event& event)
 	{
+		if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+				isBeginningOfGame = false;
+		}
 
 		if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
 
@@ -209,7 +212,9 @@ void PlayerBody::Render()
 				if (gun)
 				{
 					if (gun->getCurrentAmmo() > 0 && !gun->getIsReloading()) {
+						
 						gun->Shoot();
+
 					}
 					else {
 						if (!gun->getIsReloading()) {
@@ -280,6 +285,7 @@ void PlayerBody::Render()
 
 	void PlayerBody::Death()
 	{
+		Mix_PlayChannel(-1, game->getDeathSound(), 0);
 		game->SetRestart(true);
 
 	}

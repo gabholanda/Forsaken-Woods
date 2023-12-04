@@ -87,6 +87,7 @@ void Gun::Shoot()
 
 	if (GameManager* manager = gunOwner->GetGame())
 	{
+		Mix_PlayChannel(-1, manager->getShootSound(), 0);
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		Vec3 mousePos = MMath::inverse(manager->getProjectionMatrix()) * Vec3(float(x), float(y), 0.0f);
@@ -166,14 +167,18 @@ void Gun::SaveAdditionalStats() {
 	gunAdditionalStats.fireRate = gunBuffedStats.fireRate - gunInitialStats.fireRate;
 	gunAdditionalStats.damage = gunBuffedStats.damage - gunInitialStats.damage;
 	gunAdditionalStats.reloadSpeed = gunBuffedStats.reloadSpeed - gunInitialStats.reloadSpeed;
+	std::cout << "difference gunInitialStats" << gunInitialStats.damage << std::endl;
+	std::cout << "difference gunBuffedStats" << gunBuffedStats.damage << std::endl;
+	std::cout << "difference additionalStats" << gunAdditionalStats.damage << std::endl;
+
 }
 
-void Gun::ApplyAdditionalStats()
+void Gun::ApplyAdditionalStats(Gun* gun)
 {
-	fireRate += gunAdditionalStats.fireRate;
-	damage += gunAdditionalStats.damage;
-	reloadSpeed += gunAdditionalStats.reloadSpeed;
-	std::cout << "difference" << gunAdditionalStats.damage << std::endl;
+	fireRate += gun->gunAdditionalStats.fireRate;
+	damage += gun->gunAdditionalStats.damage;
+	reloadSpeed += gun->gunAdditionalStats.reloadSpeed;
+	std::cout << "difference" << gun->gunAdditionalStats.damage << std::endl;
 }
 
 // Apply the difference to the gun's current stats

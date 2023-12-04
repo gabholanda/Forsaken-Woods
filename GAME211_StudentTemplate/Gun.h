@@ -144,7 +144,7 @@ public:
 
 	void SaveAdditionalStats();
 
-	void ApplyAdditionalStats();
+	void ApplyAdditionalStats(Gun* gun);
 
 	void SaveInitialStats();
 
