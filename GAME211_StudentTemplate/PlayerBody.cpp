@@ -65,6 +65,7 @@ void PlayerBody::Render()
 
 	void PlayerBody::HandleEvents(const SDL_Event& event)
 	{
+
 		if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
 				isBeginningOfGame = false;
 		}
@@ -82,6 +83,23 @@ void PlayerBody::Render()
 				vel.y = -(movementSpeed); // Move up
 				break;
 			case SDL_SCANCODE_D:
+				vel.x = movementSpeed; // Move right
+				break;
+			}
+		}
+		if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+
+			switch (event.cbutton.button) {
+			case SDL_CONTROLLER_BUTTON_DPAD_UP:
+				vel.y = movementSpeed; // Move up
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+				vel.x = -(movementSpeed); // Move left
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+				vel.y = -(movementSpeed); // Move down
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
 				vel.x = movementSpeed; // Move right
 				break;
 			}
@@ -117,6 +135,31 @@ void PlayerBody::Render()
 				break;
 			}
 		}
+		if (event.type == SDL_CONTROLLERBUTTONUP && !isDashing) {
+
+			switch (event.cbutton.button) {
+			case SDL_CONTROLLER_BUTTON_DPAD_UP:
+				if (vel.y > 0) {
+					vel.y = 0; // Stop moving up only if the button was released and the entity is moving up
+				}
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+				if (vel.x < 0) {
+					vel.x = 0; // Stop moving left only if the button was released and the entity is moving left
+				}
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+				if (vel.y < 0) {
+					vel.y = 0; // Stop moving down only if the button was released and the entity is moving down
+				}
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+				if (vel.x > 0) {
+					vel.x = 0; // Stop moving right only if the button was released and the entity is moving right
+				}
+				break;
+			}
+		}
 		if (event.type == SDL_KEYUP && isDashing) {
 			switch (event.key.keysym.scancode) {
 			case SDL_SCANCODE_W:
@@ -141,71 +184,45 @@ void PlayerBody::Render()
 				break;
 			}
 		}
+		if (event.type == SDL_CONTROLLERBUTTONUP && isDashing) {
+			switch (event.cbutton.button) {
+			case SDL_CONTROLLER_BUTTON_DPAD_UP:
+				if (dashDirection == UP || dashDirection == UP_LEFT || dashDirection == UP_RIGHT) {
+					releasedDuringDash = true;
+				}
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+				if (dashDirection == LEFT || dashDirection == UP_LEFT || dashDirection == DOWN_LEFT) {
+					releasedDuringDash = true;
+				}
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+				if (dashDirection == DOWN || dashDirection == DOWN_LEFT || dashDirection == DOWN_RIGHT) {
+					releasedDuringDash = true;
+				}
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+				if (dashDirection == RIGHT || dashDirection == UP_RIGHT || dashDirection == DOWN_RIGHT) {
+					releasedDuringDash = true;
+				}
+				break;
+			}
+		}
 
 		if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT) {
 			if (!isDashing && canDash) {
-				isDashing = true;
-				float diagonalDashSpeed = movementSpeed * dashMultiplier / sqrt(2.0f); // Adjusted diagonal dash speed
-				if (vel.x > 0 && vel.y > 0) {
-					// initiate diagonal dash down-right
-					dashDirection = DOWN_RIGHT;
-					initialDashVelX = diagonalDashSpeed;
-					initialDashVelY = diagonalDashSpeed;
-				}
-				else if (vel.x < 0 && vel.y > 0) {
-					// initiate diagonal dash down-left
-					dashDirection = DOWN_LEFT;
-					initialDashVelX = -diagonalDashSpeed;
-					initialDashVelY = diagonalDashSpeed;
-				}
-				else if (vel.x > 0 && vel.y < 0) {
-					// initiate diagonal dash up-right
-					dashDirection = UP_RIGHT;
-					initialDashVelX = diagonalDashSpeed;
-					initialDashVelY = -diagonalDashSpeed;
-				}
-				else if (vel.x < 0 && vel.y < 0) {
-					// initiate diagonal dash up-left
-					dashDirection = UP_LEFT;
-					initialDashVelX = -diagonalDashSpeed;
-					initialDashVelY = -diagonalDashSpeed;
-				}
-				else {
-					// handle cardinal direction dash as before
-					if (vel.x > 0) {
-						dashDirection = RIGHT;
-						initialDashVelX = movementSpeed * dashMultiplier;
-						initialDashVelY = 0;
-					}
-					else if (vel.x < 0) {
-						dashDirection = LEFT;
-						initialDashVelX = -movementSpeed * dashMultiplier;
-						initialDashVelY = 0;
-					}
-					else if (vel.y > 0) {
-						dashDirection = UP;
-						initialDashVelY = movementSpeed * dashMultiplier;
-						initialDashVelX = 0;
-					}
-					else if (vel.y < 0) {
-						dashDirection = DOWN;
-						initialDashVelY = -movementSpeed * dashMultiplier;
-						initialDashVelX = 0;
-					}
-				}
-				// Apply initial dash velocity
-				vel.x = initialDashVelX;
-				vel.y = initialDashVelY;
-				StartDashTimer();
-				canDash = false;
+				StartDash(vel.x, vel.y); // Reuse StartDash method for keyboard/mouse dash
 			}
 		}
+
 
 
 			if (event.type == SDL_MOUSEMOTION)
 			{
 				RotationUtils::RotateTowardsMouse(orientation, game->getProjectionMatrix(), pos);
 			}
+
+	
 
 			if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
 			{
@@ -226,14 +243,136 @@ void PlayerBody::Render()
 
 
 			}
+			// Handle shooting with controller button
+			if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+				switch (event.cbutton.button) {
+				case SDL_CONTROLLER_BUTTON_A: // Assuming 'A' button is used for shooting
+					if (gun) {
+						if (gun->getCurrentAmmo() > 0 && !gun->getIsReloading()) {
+							gun->Shoot();
+						}
+						else {
+							if (!gun->getIsReloading()) {
+								gun->Reload();
+							}
+						}
+					}
+					break;
+
+				case SDL_CONTROLLER_BUTTON_X: // Assuming 'X' button is used for reloading
+					if (gun && !gun->getIsReloading()) {
+						gun->Reload(); // Simulate R key reload
+					}
+					break;
+				}
+			}
+
+			// Handle reloading with keyboard 'R' key
+			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_r) {
+				if (gun && !gun->getIsReloading()) {
+					gun->Reload();
+				}
+			}
 
 			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_r) {
 				if (!gun->getIsReloading()) {
 					gun->Reload();
 				}
 			}
+
+			
+			if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+				if (event.cbutton.button == SDL_CONTROLLER_BUTTON_Y) { 
+					if (!isDashing && canDash) {
+						StartDash(vel.x, vel.y); 
+					}
+				}
+			}
+
+			// Define a small threshold to act as a "deadzone"
+			//const float deadzone = 20000;  // Adjust this based on your controller sensitivity
+
+			//if (event.type == SDL_CONTROLLERAXISMOTION) {
+			//	// Handle movement based on analog stick
+			//	if (event.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
+			//		if (abs(event.caxis.value) > deadzone) {
+			//			// Only move if the axis value is outside the deadzone
+			//			vel.x = (event.caxis.value / 32767.0f) * movementSpeed;
+			//		}
+			//		else {
+			//			// Reset velocity if within the deadzone (stick released or close to neutral)
+			//			vel.x = 0;
+			//		}
+			//	}
+			//	else if (event.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
+			//		if (abs(event.caxis.value) > deadzone) {
+			//			// Only move if the axis value is outside the deadzone
+			//			vel.y = -(event.caxis.value / 32767.0f) * movementSpeed;
+			//		}
+			//		else {
+			//			// Reset velocity if within the deadzone (stick released or close to neutral)
+			//			vel.y = 0;
+			//		}
+			//	}
+			//}
+			//works but cant use other inputs after and doesnt work with my shitty dodge logic
 	}
 
+	void PlayerBody::StartDash(float velX, float velY)
+	{
+		isDashing = true;
+		float diagonalDashSpeed = movementSpeed * dashMultiplier / sqrt(2.0f); // Adjust diagonal dash speed
+
+		if (velX > 0 && velY > 0) {
+			dashDirection = DOWN_RIGHT;
+			initialDashVelX = diagonalDashSpeed;
+			initialDashVelY = diagonalDashSpeed;
+		}
+		else if (velX < 0 && velY > 0) {
+			dashDirection = DOWN_LEFT;
+			initialDashVelX = -diagonalDashSpeed;
+			initialDashVelY = diagonalDashSpeed;
+		}
+		else if (velX > 0 && velY < 0) {
+			dashDirection = UP_RIGHT;
+			initialDashVelX = diagonalDashSpeed;
+			initialDashVelY = -diagonalDashSpeed;
+		}
+		else if (velX < 0 && velY < 0) {
+			dashDirection = UP_LEFT;
+			initialDashVelX = -diagonalDashSpeed;
+			initialDashVelY = -diagonalDashSpeed;
+		}
+		else {
+			// Handle cardinal direction dash
+			if (velX > 0) {
+				dashDirection = RIGHT;
+				initialDashVelX = movementSpeed * dashMultiplier;
+				initialDashVelY = 0;
+			}
+			else if (velX < 0) {
+				dashDirection = LEFT;
+				initialDashVelX = -movementSpeed * dashMultiplier;
+				initialDashVelY = 0;
+			}
+			else if (velY > 0) {
+				dashDirection = UP;
+				initialDashVelY = movementSpeed * dashMultiplier;
+				initialDashVelX = 0;
+			}
+			else if (velY < 0) {
+				dashDirection = DOWN;
+				initialDashVelY = -movementSpeed * dashMultiplier;
+				initialDashVelX = 0;
+			}
+		}
+
+		// Apply initial dash velocity
+		vel.x = initialDashVelX;
+		vel.y = initialDashVelY;
+		StartDashTimer();
+		canDash = false;
+	}
 	void PlayerBody::StartDashTimer() {
 		timerID = SDL_AddTimer(static_cast<Uint32>(dashLength * 1000.0f), TimerCallback, this);
 		timerID = SDL_AddTimer(static_cast<Uint32>(dashCooldown * 1000.0f), DashCooldownCallback, this);

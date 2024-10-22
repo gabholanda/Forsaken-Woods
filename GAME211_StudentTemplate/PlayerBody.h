@@ -130,6 +130,7 @@ public:
 	Gun* GetGun() const { return gun; }
 	GameManager* GetGame() const { return game; }
 	virtual void SetGun(Gun* gun_) { gun = gun_; }
+	void StartDash(float velX, float velY);
 	void StartDashTimer();
 	void EndDash();
 	static Uint32 TimerCallback(Uint32 interval, void* param);
