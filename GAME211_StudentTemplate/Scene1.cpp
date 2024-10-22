@@ -90,7 +90,7 @@ void Scene1::Update(const float deltaTime) {
 			//game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 			Buff* tempBuff = game->getBuffManager()->randomBuff();
 			tempBuff->ApplyBuff(game->getPlayer());
-			// delete previous pointed buff
+			// delete previous pointed buff	
 			delete game->getBuff();
 			game->setBuff(tempBuff);
 		std:cout << tempBuff->Text() << std::endl;

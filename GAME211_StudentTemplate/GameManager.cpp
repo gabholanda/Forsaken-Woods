@@ -92,6 +92,7 @@ bool GameManager::OnCreate()
 	insideTreeReader->LoadFromFile("Seperate Tree Tiles_32x38.png", getRenderer());
 	insideTreeReader->SetRects();
 
+	InitializeController();
 	CreateBuffs();
 	CreateTiles();
 	CreatePlayer();
@@ -758,6 +759,27 @@ float GameManager::getSceneWidth() { return currentScene->getxAxis(); }
 Matrix4 GameManager::getProjectionMatrix()
 {
 	return currentScene->getProjectionMatrix();
+}
+
+void GameManager::InitializeController()
+{
+	// Initialize SDL GameController subsystem
+	if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
+		printf("SDL_Init Error: %s\n", SDL_GetError());
+		return; // Exit the function if SDL_Init fails
+	}
+
+	SDL_GameController* controller = nullptr;
+
+	// Check if a controller is connected
+	if (SDL_NumJoysticks() > 0) {
+		controller = SDL_GameControllerOpen(0);
+		if (controller == nullptr) {
+			printf("Could not open gamecontroller: %s\n", SDL_GetError());
+		}
+	}
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+
 }
 
 // This might be unfamiliar

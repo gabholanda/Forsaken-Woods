@@ -72,6 +72,7 @@ public:
 	float getSceneHeight();
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
+	void InitializeController();
 
 	UIText* getBuffUI() { return buffUI; }
 
