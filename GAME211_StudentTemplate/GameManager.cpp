@@ -928,9 +928,9 @@ void GameManager::StartRenderImGui() {
 		ImGui::Text("Fire Rate: %.2f", player->GetGun()->GetFireRate());
 		ImGui::Text("Damage: %.2f", player->GetGun()->GetDamage());
 	}
-	ImGui::Separator(); // Adds a horizontal line
+	ImGui::Separator(); 
 	ImGui::Text("Apply Buffs");
-	ImGui::Separator(); // Adds a horizontal line
+	ImGui::Separator(); 
 	PlayerBody* player = getPlayer();
 	if (player) {
 		BuffManager* buffManager = getBuffManager();
@@ -990,9 +990,9 @@ void GameManager::StartRenderImGui() {
 	}
 
 
-	ImGui::Separator(); // Adds a horizontal line
+	ImGui::Separator(); 
 	ImGui::Text("Settings");
-	ImGui::Separator(); // Adds a horizontal line
+	ImGui::Separator(); 
 	// Create a slider for volume, clamping the values between 0.0f and 2.0f
 	if (ImGui::SliderFloat("Volume", &volume, 0.0f, 2.0f)) {
 
