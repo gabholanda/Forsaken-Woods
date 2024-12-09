@@ -48,6 +48,7 @@ public:
         lifeTime = lifeTime_;
         game = game_;
         direction = Vec3(0.0f, 0.0f, 0.0f);
+        markedForDeletion = false;
     }
 
     Gun* GetOwningGun() { return owningGun; }

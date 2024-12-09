@@ -742,10 +742,6 @@ EnemyBody* GameManager::CreateEnemy(
 
 void GameManager::DestroyEnemy(EnemyBody* e) {
 
-	auto it = std::find(enemies.begin(), enemies.end(), e);
-	if (it != enemies.end()) {
-		enemies.erase(it);
-	}
 	enemyPool->ReturnObject(e);
 }
 
@@ -942,15 +938,8 @@ Bullet* GameManager::CreateBullet(
 }
 
 void GameManager::DestroyBullet(Bullet* b) {
-	{
-		auto it = std::find(bullets.begin(), bullets.end(), b);
-		if (it != bullets.end()) {
-			bullets.erase(it);
-			// Return to bulletPool
-			bulletPool->ReturnObject(b);
-			return;
-		}
-
-	}
+	
+			bulletPool->ReturnObject(b);	
+	
 
 }
