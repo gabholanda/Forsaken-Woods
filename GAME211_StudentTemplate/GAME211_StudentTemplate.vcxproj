@@ -38,6 +38,7 @@
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="HealthBuff.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MovementSpeedBuff.cpp" />
     <ClCompile Include="ReloadSpeedBuff.cpp" />
     <ClCompile Include="RotationUtils.cpp" />
@@ -74,6 +75,7 @@
     <ClInclude Include="Gun.h" />
     <ClInclude Include="HealthBuff.h" />
     <ClInclude Include="IRender.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MovementSpeedBuff.h" />
     <ClInclude Include="ReloadSpeedBuff.h" />
     <ClInclude Include="RotationUtils.h" />

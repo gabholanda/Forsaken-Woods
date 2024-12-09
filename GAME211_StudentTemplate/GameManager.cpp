@@ -1,7 +1,6 @@
 #include "GameManager.h"
 #include "Scene1.h"
 #include "EnemyBody.h"
-#include "Bullet.h"
 #include "Collision.h"
 #include "Grid.h"
 #include <random>
@@ -101,6 +100,8 @@ bool GameManager::OnCreate()
 	insideTreeReader = new SpritesheetReader(320, 380, 2, 2);
 	insideTreeReader->LoadFromFile("Seperate Tree Tiles_32x38.png", getRenderer());
 	insideTreeReader->SetRects();
+	bulletPool = new MemoryPool<Bullet>(1000);     // Pre-allocate bullets for player
+	enemyPool = new MemoryPool<EnemyBody>(100);    // Pre-allocate enemies
 
 	InitializeController();
 	CreateBuffs();
@@ -228,19 +229,11 @@ void GameManager::OnDestroy()
 		if (timer) delete timer;
 		if (player) delete player;
 		TTF_Quit();
-		for (EnemyBody* enemy : enemies)
-		{
-			delete enemy;
-		}
-		enemies.clear();
+		delete bulletPool;
+		delete enemyPool;
 
-		for (Bullet* bullet : bullets)
-		{
-			delete bullet;
-		}
-		bullets.clear();
 
-		if (soundEngine) 
+		if (soundEngine)
 		{
 			soundEngine->drop(); // Release the engine
 			soundEngine = nullptr;
@@ -254,13 +247,6 @@ void GameManager::OnDestroy()
 void GameManager::OnRestart()
 {
 	if (currentScene) delete currentScene;
-	for (Bullet* bullet : bullets) {
-		delete bullet;
-	}
-	for (EnemyBody* enemy : enemies)
-	{
-		delete enemy;
-	}
 	for (Buff* buff : buffBodies)
 	{
 		delete buff;
@@ -274,11 +260,12 @@ void GameManager::OnRestart()
 
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 	CreateTiles();
-	CreatePlayer();
 	CreateBuffs();
+	CreatePlayer();
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(1, 9);
+
 	CreateEnemies(distrib(gen));
 	std::random_device rd2;
 	std::mt19937 gen2(rd2());
@@ -290,12 +277,7 @@ void GameManager::OnRestart()
 		isRunning = false;
 	}
 
-	for (auto& currentEnemy : enemies) {
-		if (currentEnemy->OnCreate() == false) {
-			OnDestroy();
-			isRunning = false;
-		}
-	}
+
 	for (auto& buffBody : buffBodies) {
 		if (buffBody->OnCreate() == false) {
 			OnDestroy();
@@ -316,13 +298,8 @@ void GameManager::OnWin()
 		stageNumber += 1;
 		std::cout << "stageNumber:" << stageNumber << std::endl;
 		if (currentScene) delete currentScene;
-		for (Bullet* bullet : bullets) {
-			delete bullet;
-		}
-		for (EnemyBody* enemy : enemies)
-		{
-			delete enemy;
-		}
+
+
 		for (Buff* buff : buffBodies)
 		{
 			delete buff;
@@ -336,12 +313,14 @@ void GameManager::OnWin()
 
 		// Start creating stuff
 		currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+		CreateTiles();
+		PlayerNextLevel();
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_int_distribution<> distrib(1, 9);
-		CreateTiles();
-		PlayerNextLevel();
 		CreateEnemies(distrib(gen));
+
+
 		std::random_device rd2;
 		std::mt19937 gen2(rd2());
 		std::uniform_int_distribution<> distrib2(1, 4);
@@ -352,12 +331,7 @@ void GameManager::OnWin()
 			isRunning = false;
 		}
 
-		for (auto& currentEnemy : enemies) {
-			if (currentEnemy->OnCreate() == false) {
-				OnDestroy();
-				isRunning = false;
-			}
-		}
+
 		for (auto& buffBody : buffBodies) {
 			if (buffBody->OnCreate() == false) {
 				OnDestroy();
@@ -674,81 +648,101 @@ void GameManager::CreateBuffBody(int quantity) {
 	}
 }
 
-
-void GameManager::CreateEnemies(int quantity) {
-	// Clear old enemies safely
-	{
-		std::lock_guard<std::mutex> lock(enemiesMutex);
-		for (EnemyBody* enemy : enemies) {
-			delete enemy;
-		}
-		enemies.clear();
+void GameManager::CreateEnemies(int quantity)
+{
+	// If we currently have enemies, destroy them properly (returning them to the pool)
+	while (!enemies.empty()) {
+		DestroyEnemy(enemies.back());
 	}
 
 	Vec3 playerPosition = getPlayer()->getPos();
 	float playerSpawnIndex = getPlayer()->GetPlayerSpawnIndex();
 	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);
 
-	if (validTiles.empty()) {
-		std::cout << "No valid tiles for enemy spawn" << std::endl;
-		return;  // No need to proceed if we have no tiles
-	}
-
-	// We'll use async to create enemies in parallel
-	std::vector<std::future<EnemyBody*>> futures;
-	futures.reserve(quantity);
-
-	// Create a random generator outside the lambda for consistency
-	std::random_device rd;
-	std::mt19937 mainGen(rd());
-	std::uniform_int_distribution<> indexDist(0, (int)validTiles.size() - 1);
-	std::uniform_int_distribution<> hpDist(10, 35);
-
 	for (int i = 0; i < quantity; i++) {
-		futures.push_back(std::async(std::launch::async, [this, &validTiles, indexDist, hpDist, mainGen]() mutable -> EnemyBody* {
-			// Capture by value and mutate copies locally if needed
-			std::mt19937 gen(mainGen());
 
-			int index = indexDist(gen);
-			Vec3 positionEnemy = validTiles[index]->getPos();
+		float massEnemy = 1.0f;
+		float orientationEnemy = 0.0f;
+		float rotationEnemy = 0.0f;
+		float angularEnemy = 0.0f;
+		float movementSpeedEnemy = 1.0f;
+		float scaleEnemy = 0.5f;
+		Vec3 sizeEnemy(3.f, 3.f, 0.0f);
 
-			float massEnemy = 1.0f;
-			float orientationEnemy = 0.0f;
-			float rotationEnemy = 0.0f;
-			float angularEnemy = 0.0f;
-			float movementSpeedEnemy = 1.0f;
-			float scaleEnemy = 0.5f;
-			Vec3 sizeEnemy(3.f, 3.f, 0.0f);
+		if (validTiles.empty()) {
+			std::cout << "No valid tile found for enemy spawn.\n";
+			break;
+		}
 
-			float enemyHp = (float)hpDist(gen);
-			Gun* randomEnemyGun = Randomizer::getRandomWeapon();
+		// Use a random tile from the validTiles list
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> tileDist(0, static_cast<int>(validTiles.size()) - 1);
+		int index = tileDist(gen);
+		Vec3 positionEnemy = validTiles[index]->getPos();
+		std::cout << "Enemy spawned at: " << positionEnemy << std::endl;
 
-			EnemyBody* newEnemy = new EnemyBody(
-				randomEnemyGun,
-				positionEnemy,
-				Vec3(0.0f, 0.0f, 0.0f),
-				Vec3(0.0f, 0.0f, 0.0f),
-				sizeEnemy,
-				massEnemy,
-				orientationEnemy,
-				rotationEnemy,
-				angularEnemy,
-				movementSpeedEnemy,
-				scaleEnemy,
-				this,
-				enemyHp
-			);
+		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
+		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
+
+		// Get a random gun for the enemy
+		Gun* randomEnemyGun = Randomizer::getRandomWeapon();
+
+		// Give the enemy some random HP between 10 and 35
+		std::uniform_int_distribution<> hpDist(10, 35);
+		float enemyHp = static_cast<float>(hpDist(gen));
+
+		// Now create the enemy using the memory pool
+		EnemyBody* newEnemy = CreateEnemy(
+			randomEnemyGun,
+			positionEnemy,
+			velocityEnemy,
+			accelerationEnemy,
+			sizeEnemy,
+			massEnemy,
+			orientationEnemy,
+			rotationEnemy,
+			angularEnemy,
+			movementSpeedEnemy,
+			scaleEnemy,
+			enemyHp
+		);
+
+		// Assign the gun owner to this newly created enemy
+		if (randomEnemyGun) {
 			randomEnemyGun->SetEnemyGunOwner(newEnemy);
-			return newEnemy;
-			}));
+		}
 	}
+	std::cout << "ENEMIES SPAWNED " << enemies.size() << std::endl;
+}
 
-	// Gather results
-	for (auto& f : futures) {
-		EnemyBody* createdEnemy = f.get();
-		std::lock_guard<std::mutex> lock(enemiesMutex);
-		enemies.push_back(createdEnemy);
-	}
+
+
+
+EnemyBody* GameManager::CreateEnemy(
+	Gun* gun_,
+	const Vec3& pos_, const Vec3& vel_, const Vec3& accel_,
+	const Vec3& size_,
+	float mass_,
+	float orientation_,
+	float rotation_,
+	float angular_,
+	float movementSpeed_,
+	float scale_,
+	float enemyHp_
+) {
+	
+	EnemyBody* e = enemyPool->GetObject();
+	e->SetParameters(gun_, pos_, vel_, accel_, size_, mass_, orientation_, rotation_, angular_, movementSpeed_, scale_, this, enemyHp_);
+	e->OnCreate();
+	e->setMarkedForDeletion(false);
+	enemies.push_back(e);
+	return e;
+}
+
+void GameManager::DestroyEnemy(EnemyBody* e) {
+
+	enemyPool->ReturnObject(e);
 }
 
 
@@ -917,3 +911,35 @@ bool GameManager::ValidateCurrentScene()
 	return true;
 }
 
+Bullet* GameManager::CreateBullet(
+	Gun* owningGun_,
+	const Vec3& pos_, const Vec3& vel_, const Vec3& accel_,
+	const Vec3& size_,
+	float mass_,
+	float orientation_,
+	float rotation_,
+	float angular_,
+	float movementSpeed_,
+	float scale_,
+	float lifeTime_
+) {
+	// Decide which pool to use based on owningGun_ if needed
+	// For simplicity, use bulletPool for player bullets, enemyBulletPool for enemy bullets.
+	// If owningGun_ belongs to enemy, use enemyBulletPool, else bulletPool.
+
+	MemoryPool<Bullet>* poolToUse = bulletPool;
+	// If we have a way to check if it's an enemy gun:
+	// if (dynamic_cast<EnemyBody*>(owningGun_->GetGunOwnerEnemy()) != nullptr) poolToUse = enemyBulletPool;
+
+	Bullet* b = poolToUse->GetObject();
+	b->SetParameters(owningGun_, pos_, vel_, accel_, size_, mass_, orientation_, rotation_, angular_, movementSpeed_, scale_, lifeTime_, this);
+	b->OnCreate();
+	return b;
+}
+
+void GameManager::DestroyBullet(Bullet* b) {
+	
+			bulletPool->ReturnObject(b);	
+	
+
+}

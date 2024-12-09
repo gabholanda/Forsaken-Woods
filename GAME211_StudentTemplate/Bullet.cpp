@@ -3,52 +3,56 @@
 
 bool Bullet::OnCreate()
 {
-	image = IMG_Load("Bullet.png");
-	SDL_Renderer* renderer = game->getRenderer();
-	texture = SDL_CreateTextureFromSurface(renderer, image);
-	if (image == nullptr) {
-		std::cerr << "Can't open the image" << std::endl;
-		return false;
-	}
-	return true;
+    if (image) {
+        SDL_FreeSurface(image);
+        image = nullptr;
+    }
+    if (texture) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+
+    image = IMG_Load("Bullet.png");
+    if (!image) {
+        std::cerr << "Can't open the image Bullet.png" << std::endl;
+        return false;
+    }
+
+    SDL_Renderer* renderer = game->getRenderer();
+    texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (!texture) {
+        std::cerr << "Failed to create bullet texture" << std::endl;
+        return false;
+    }
+    return true;
 }
 
 void Bullet::Render()
 {
-	// This is why we need game in the constructor, to get the renderer, etc.
-	SDL_Renderer* renderer = game->getRenderer();
-	Matrix4 projectionMatrix = game->getProjectionMatrix();
+    SDL_Renderer* renderer = game->getRenderer();
+    Matrix4 projectionMatrix = game->getProjectionMatrix();
 
-	// square represents the position and dimensions for where to draw the image
-	SDL_Rect square;
-	Vec3 screenCoords;
-	float    w, h;
+    SDL_Rect square;
+    Vec3 screenCoords = projectionMatrix * pos;
+    float w = image->w * scale;
+    float h = image->h * scale;
 
-	// convert the position from game coords to screen coords.
-	screenCoords = projectionMatrix * pos;
+    square.x = static_cast<int>(screenCoords.x - 0.5f * w);
+    square.y = static_cast<int>(screenCoords.y - 0.5f * h);
+    square.w = static_cast<int>(w);
+    square.h = static_cast<int>(h);
 
-	// Scale the image, in case the .png file is too big or small
-	w = image->w * scale;
-	h = image->h * scale;
+    float orientationDegrees = orientation * 180.0f / M_PI;
 
-	// The square's x and y values represent the top left corner of 
-	// where SDL will draw the .png image.
-	// The 0.5f * w/h offset is to place the .png so that pos represents the center
-	// (Note the y axis for screen coords points downward, hence subtraction!!!!)
-	square.x = static_cast<int>(screenCoords.x - 0.5f * w);
-	square.y = static_cast<int>(screenCoords.y - 0.5f * h);
-	square.w = static_cast<int>(w);
-	square.h = static_cast<int>(h);
-
-	// Convert character orientation from radians to degrees.
-	float orientationDegrees = orientation * 180.0f / M_PI;
-
-	SDL_RenderCopyEx(renderer, texture, nullptr, &square,
-		orientationDegrees, nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, texture, nullptr, &square,
+        orientationDegrees, nullptr, SDL_FLIP_NONE);
 }
 
 void Bullet::Update(float deltaTime)
 {
-	pos += direction * movementSpeed * deltaTime;
-	lifeTime -= deltaTime;
+    pos += direction * movementSpeed * deltaTime;
+    lifeTime -= deltaTime;
+    if (lifeTime <= 0.0f) {
+        setMarkedForDeletion(true);
+    }
 }
