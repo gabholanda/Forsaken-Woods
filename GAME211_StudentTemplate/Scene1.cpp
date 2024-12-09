@@ -89,7 +89,7 @@ void Scene1::Update(const float deltaTime) {
 
 			irrklang::ISound* sound = game->getSoundEngine()->play2D("Power Up.wav", false, false, true);
 			sound->setVolume(1.5f);
-		
+
 			//game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 			Buff* tempBuff = game->getBuffManager()->randomBuff();
 			tempBuff->ApplyBuff(game->getPlayer());
@@ -192,6 +192,7 @@ void Scene1::Update(const float deltaTime) {
 void Scene1::Render() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
+	game->StartRenderImGui();
 	game->RenderDebugGrid();
 	game->RenderTiles();
 	game->RenderPlayer();
@@ -201,7 +202,10 @@ void Scene1::Render() {
 	game->RenderDebug();
 	game->RenderBuffBody();
 	game->RenderUI();
-	SDL_RenderPresent(renderer);
+	if (game->inUi) {
+		game->EndRenderImGui();
+	}
+	SDL_GL_SwapWindow(game->getWindor()->GetSDL_Window()); // Swap OpenGL buffers
 }
 
 void Scene1::PostRenderUpdate(const float time)

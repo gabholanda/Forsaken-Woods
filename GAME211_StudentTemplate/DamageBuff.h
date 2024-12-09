@@ -10,6 +10,7 @@ protected:
 
 public:
 	DamageBuff() : Buff("Damage increased"){}
+	std::string getName() const { return "Damage"; }
 	void ApplyBuff(PlayerBody* player);
 
 };

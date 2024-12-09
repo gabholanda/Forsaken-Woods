@@ -10,6 +10,7 @@ protected:
 	const char* name;
 	bool canCollect = false;
 
+
 public:
 	Buff(const char* name_)
 	{
@@ -51,7 +52,7 @@ public:
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }
 	void setCanCollect(bool canCollect_);
 	bool getCanCollect() {return canCollect;}
-	const char* GetName() const { return name; }
+	std::string getName() const;  // Pure virtual function for buff name
 	const char* Text() const {
 		std::string nameString = std::string(name);
 		char* result = new char[nameString.length() + 1];

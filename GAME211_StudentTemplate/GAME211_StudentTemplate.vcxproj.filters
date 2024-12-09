@@ -91,6 +91,27 @@
       <Filter>Scripts\UI</Filter>
     </ClCompile>
     <ClCompile Include="DecorationTile.cpp" />
+    <ClCompile Include="imgui.cpp">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_opengl3.cpp">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_sdl2.cpp">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -190,6 +211,39 @@
       <Filter>Scripts\UI</Filter>
     </ClInclude>
     <ClInclude Include="DecorationTile.h" />
+    <ClInclude Include="imgui.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_sdl2.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3_loader.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="gl3w.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="glcorearb.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="khrplatform.h">
+      <Filter>Scripts\UI\imGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">
@@ -215,6 +269,9 @@
     </Filter>
     <Filter Include="Scripts\UI">
       <UniqueIdentifier>{728675b1-a18e-4387-9bd6-008a14103ccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\UI\imGui">
+      <UniqueIdentifier>{ba20285e-39d1-486a-b36f-c678f7a77a34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -56,3 +56,8 @@ void Buff::setCanCollect(bool canCollect_)
 	canCollect = canCollect_;
 }
 
+std::string Buff::getName() const
+{
+	return std::string();
+}
+
