@@ -90,7 +90,9 @@ void Gun::Shoot()
 
 	if (GameManager* manager = gunOwner->GetGame())
 	{
-		Mix_PlayChannel(-1, manager->getShootSound(), 0);
+		irrklang::ISound* sound = manager->getSoundEngine()->play2D("Shoot Sound Effect.wav", false, false, true);
+		sound->setVolume(0.8f);
+
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		Vec3 mousePos = MMath::inverse(manager->getProjectionMatrix()) * Vec3(float(x), float(y), 0.0f);
