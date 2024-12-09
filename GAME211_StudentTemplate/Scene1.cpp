@@ -86,7 +86,10 @@ void Scene1::Update(const float deltaTime) {
 		if (Collision::CheckCollision(*game->getPlayer(), *buffBody)) {
 
 			Collision::ResolveCollision(game->getPlayer(), buffBody);
-			Mix_PlayChannel(-1, game->getBuffSound(), 0);
+
+			irrklang::ISound* sound = game->getSoundEngine()->play2D("Power Up.wav", false, false, true);
+			sound->setVolume(1.5f);
+		
 			//game->getBuffManager()->GetBuffs()[game->getBuffManager()->PickRandomBuffIndex()]->ApplyBuff(game->getPlayer());
 			Buff* tempBuff = game->getBuffManager()->randomBuff();
 			tempBuff->ApplyBuff(game->getPlayer());
@@ -245,7 +248,8 @@ void Scene1::PostRenderUpdate(const float time)
 
 	if (game->getEnemies()->size() == 0)
 	{
-		Mix_PlayChannel(-1, game->getWinSound(), 0);
+		irrklang::ISound* sound = game->getSoundEngine()->play2D("Win Level.wav", false, false, true);
+		sound->setVolume(2.0f);
 		game->OnWin();
 	}
 }

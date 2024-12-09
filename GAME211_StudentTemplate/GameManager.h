@@ -11,10 +11,14 @@
 #include "Tile.h"
 #include "BuffManager.h"
 #include <SDL_mixer.h>
+
 #include <thread>
 #include <future>
 #include <mutex>
 #include <vector>
+
+#include <irrKlang.h>
+
 
 class EnemyBody;
 class Buff;
@@ -48,11 +52,8 @@ private:
 	UIText* InstructionsUI2;
 	UIText* InstructionsUI3;
 	UIText* InstructionsUI4;
-	Mix_Music* backgroundMusic = NULL;
-	Mix_Chunk* shootSoundEffect = NULL;
-	Mix_Chunk* buffSoundEffect = NULL;
-	Mix_Chunk* deathSoundEffect = NULL;
-	Mix_Chunk* winSoundEffect = NULL;
+	irrklang::ISoundEngine* soundEngine = nullptr; 
+	irrklang::ISound* backgroundMusic = nullptr;  
 	SpritesheetReader* backgroundReader;
 	SpritesheetReader* treeReader;
 	SpritesheetReader* flowerReader;
@@ -72,7 +73,6 @@ public:
 	void CreateBuffs();
 	void CreateBuffBody(int quantity);
 	void CreateEnemies(int quantity);
-	bool LoadSounds();
 	// These might be unfamiliar
 	float getSceneHeight();
 	float getSceneWidth();
@@ -94,10 +94,7 @@ public:
 	SpritesheetReader* getBackgroundSpritesheetReader() { return backgroundReader; }
 	SpritesheetReader* getTreeSpritesheetReader() { return treeReader; }
 	BuffManager* getBuffManager() { return buffManager; }
-	Mix_Chunk* getShootSound() { return shootSoundEffect; }
-	Mix_Chunk* getBuffSound() { return buffSoundEffect; }
-	Mix_Chunk* getDeathSound() { return deathSoundEffect; }
-	Mix_Chunk* getWinSound() { return winSoundEffect; }
+	irrklang::ISoundEngine* getSoundEngine() { return soundEngine; };
 	Buff* getBuff() { return buff; }
 	void setBuff(Buff* buff_) { buff = buff_; }
 	SDL_Renderer* getRenderer();

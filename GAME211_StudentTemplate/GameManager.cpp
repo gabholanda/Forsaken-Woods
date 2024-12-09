@@ -45,6 +45,11 @@ bool GameManager::OnCreate()
 		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 		return false;
 	}
+	soundEngine = irrklang::createIrrKlangDevice();
+	if (!soundEngine) {
+		std::cerr << "Failed to initialize IrrKlang!" << std::endl;
+		return -1;
+	}
 	// Use 1000x600 for less than full screen
 	const int SCREEN_WIDTH = 1000;
 	const int SCREEN_HEIGHT = 600;
@@ -103,12 +108,15 @@ bool GameManager::OnCreate()
 	CreatePlayer();
 	CreateEnemies(1);
 	CreateBuffBody(1);
-	if (!LoadSounds())
+
+	backgroundMusic = soundEngine->play2D("Retro Forest.mp3", true, true, true);
+	if (!backgroundMusic)
 	{
-		OnDestroy();
+		printf("Failed to load background music: Retro Forest.mp3\n");
 		return false;
 	}
-	Mix_PlayMusic(backgroundMusic, -1);
+	backgroundMusic->setVolume(0.8f);
+	backgroundMusic->setIsPaused(false); // Start playing
 	if (player->OnCreate() == false) {
 		OnDestroy();
 		return false;
@@ -232,16 +240,12 @@ void GameManager::OnDestroy()
 		}
 		bullets.clear();
 
-		Mix_FreeMusic(backgroundMusic);
-		Mix_FreeChunk(shootSoundEffect);
-		Mix_FreeChunk(buffSoundEffect);
-		Mix_FreeChunk(deathSoundEffect);
-		Mix_FreeChunk(winSoundEffect);
+		if (soundEngine) 
+		{
+			soundEngine->drop(); // Release the engine
+			soundEngine = nullptr;
+		}
 		backgroundMusic = NULL;
-		shootSoundEffect = NULL;
-		buffSoundEffect = NULL;
-		deathSoundEffect = NULL;
-		winSoundEffect = NULL;
 		Mix_Quit();
 		IMG_Quit();
 	}
@@ -748,42 +752,6 @@ void GameManager::CreateEnemies(int quantity) {
 }
 
 
-bool GameManager::LoadSounds()
-{
-	backgroundMusic = Mix_LoadMUS("Retro Forest.mp3");
-	if (backgroundMusic == NULL)
-	{
-		printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
-		return false;
-	}
-	shootSoundEffect = Mix_LoadWAV("Shoot Sound Effect.wav");
-	if (shootSoundEffect == NULL)
-	{
-		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
-		return false;
-	}
-	deathSoundEffect = Mix_LoadWAV("Lose Sound Effect.wav");
-	if (deathSoundEffect == NULL)
-	{
-		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
-		return false;
-	}
-	buffSoundEffect = Mix_LoadWAV("Power Up.wav");
-	if (buffSoundEffect == NULL)
-	{
-		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
-		return false;
-	}
-	winSoundEffect = Mix_LoadWAV("Win Level.wav");
-	if (winSoundEffect == NULL)
-	{
-		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
-		return false;
-	}
-
-	return true;
-}
-
 // This might be unfamiliar
 float GameManager::getSceneHeight() { return currentScene->getyAxis(); }
 
@@ -813,7 +781,6 @@ void GameManager::InitializeController()
 			printf("Could not open gamecontroller: %s\n", SDL_GetError());
 		}
 	}
-	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 }
 

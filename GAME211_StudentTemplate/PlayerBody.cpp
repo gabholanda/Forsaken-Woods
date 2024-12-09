@@ -65,7 +65,42 @@ void PlayerBody::Render()
 
 	void PlayerBody::HandleEvents(const SDL_Event& event)
 	{
+		// Assuming you have a variable to store volume level
+		static float volume = 1.0f; // Default volume level
 
+		if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+
+			if (event.key.keysym.sym == SDLK_UP) {
+
+				volume = std::min(volume + 0.1f, 2.0f);
+				std::cout << "Volume increased to: " << volume << std::endl;
+
+
+				game->getSoundEngine()->setSoundVolume(volume);
+			}
+			else if (event.key.keysym.sym == SDLK_DOWN) {
+
+				volume = std::max(volume - 0.1f, 0.0f);
+				std::cout << "Volume decreased to: " << volume << std::endl;
+
+
+				game->getSoundEngine()->setSoundVolume(volume);
+			}
+
+			if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEMOTION) {
+				// If mouse event occurs, disable relative mouse mode
+				if (SDL_GetRelativeMouseMode()) {
+					SDL_SetRelativeMouseMode(SDL_FALSE);  // Disable relative mode
+				}
+			}
+
+			if (event.type == SDL_CONTROLLERBUTTONDOWN || event.type == SDL_CONTROLLERAXISMOTION) {
+				// If controller event occurs, enable relative mouse mode
+				if (!SDL_GetRelativeMouseMode()) {
+					SDL_SetRelativeMouseMode(SDL_TRUE);  // Enable relative mode
+				}
+			}
+		}
 		if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
 				isBeginningOfGame = false;
 		}
@@ -424,7 +459,8 @@ void PlayerBody::Render()
 
 	void PlayerBody::Death()
 	{
-		Mix_PlayChannel(-1, game->getDeathSound(), 0);
+		irrklang::ISound* sound = game->getSoundEngine()->play2D("Lose Sound Effect.wav", false, false, true);
+		sound->setVolume(1.5f);
 		game->SetRestart(true);
 
 	}
