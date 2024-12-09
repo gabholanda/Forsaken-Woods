@@ -11,6 +11,10 @@
 #include "Tile.h"
 #include "BuffManager.h"
 #include <SDL_mixer.h>
+#include <thread>
+#include <future>
+#include <mutex>
+#include <vector>
 
 class EnemyBody;
 class Buff;
@@ -30,7 +34,6 @@ private:
 	class PlayerBody* player;
 	class BuffManager* buffManager;
 	class Buff* buff;
-
 	int stageNumber;
 	std::vector<Bullet*> bullets;
 	std::vector<Bullet*> enemyBullets;
@@ -54,6 +57,8 @@ private:
 	SpritesheetReader* treeReader;
 	SpritesheetReader* flowerReader;
 	SpritesheetReader* insideTreeReader;
+	std::mutex buffMutex;
+	std::mutex enemiesMutex;
 public:
 	GameManager();
 	~GameManager();
@@ -73,6 +78,7 @@ public:
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
 	void InitializeController();
+
 
 	UIText* getBuffUI() { return buffUI; }
 

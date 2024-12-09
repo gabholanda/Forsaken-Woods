@@ -7,6 +7,11 @@
 #include <random>
 #include "UIText.h"
 #include "DecorationTile.h"
+#include <thread>
+#include <future>
+#include <mutex>
+#include <vector>
+
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -606,54 +611,70 @@ void GameManager::CreateBuffs()
 	}
 }
 
-void GameManager::CreateBuffBody(int quantity)
-{
-	if (buffBodies.size() > 0)
+void GameManager::CreateBuffBody(int quantity) {
+	// Clear existing buffs
 	{
+		std::lock_guard<std::mutex> lock(buffMutex);
 		for (Buff* buffBody : buffBodies) {
 			delete buffBody;
 		}
 		buffBodies.clear();
 	}
 
-	for (int i = 0; i < quantity; i++) {
-		float massBuff = 1.0f;
-		float orientationBuff = 0.0f;
-		float rotationBuff = 0.0f;
-		float angularBuff = 0.0f;
-		float movementSpeedBuffy = 1.0f;
-		float scaleBuff = 0.5;
-		Vec3 sizeBuff(1.5f, 1.5f, 0.0f);
-		std::random_device rd2;
-		std::mt19937 gen2(rd2());
-		std::uniform_int_distribution<> distribution2(0, getGrid()->GetTiles()->size() - 1);
-		int index2 = distribution2(gen2);
-		Vec3 positionBuff = getGrid()->GetTiles()->at(index2).getPos();
-		Vec3 velocityBuff(0.0f, 0.0f, 0.0f);
-		Vec3 accelerationBuff(0.0f, 0.0f, 0.0f);
-		float movementSpeedBuff = 0.0f;
+	// Prepare a vector of futures to hold results from async calls
+	std::vector<std::future<Buff*>> futures;
+	futures.reserve(quantity);
 
-		Buff* newBuff = new Buff(
-			positionBuff,
-			velocityBuff,
-			accelerationBuff,
-			sizeBuff,
-			massBuff,
-			orientationBuff,
-			rotationBuff,
-			angularBuff,
-			movementSpeedBuff,
-			scaleBuff,
-			this
-		);
-		buffBodies.push_back(newBuff);
+	for (int i = 0; i < quantity; i++) {
+		//USING ASYNC to ensure it runs asynchronously  
+		futures.push_back(std::async(std::launch::async, [this]() -> Buff* {
+			// Each thread gets its own random generator
+			std::random_device rd2;
+			std::mt19937 gen2(rd2());
+			std::uniform_int_distribution<> distribution2(0, getGrid()->GetTiles()->size() - 1);
+			int index2 = distribution2(gen2);
+			Vec3 positionBuff = getGrid()->GetTiles()->at(index2).getPos();
+
+			float massBuff = 1.0f;
+			float orientationBuff = 0.0f;
+			float rotationBuff = 0.0f;
+			float angularBuff = 0.0f;
+			float movementSpeedBuff = 0.0f;
+			float scaleBuff = 0.5f;
+			Vec3 sizeBuff(1.5f, 1.5f, 0.0f);
+			Vec3 velocityBuff(0.0f, 0.0f, 0.0f);
+			Vec3 accelerationBuff(0.0f, 0.0f, 0.0f);
+
+			Buff* newBuff = new Buff(
+				positionBuff,
+				velocityBuff,
+				accelerationBuff,
+				sizeBuff,
+				massBuff,
+				orientationBuff,
+				rotationBuff,
+				angularBuff,
+				movementSpeedBuff,
+				scaleBuff,
+				this
+			);
+			return newBuff;
+			}));
+	}
+
+	// Gather results and push them into the main buffBodies vector
+	for (auto& f : futures) {
+		Buff* createdBuff = f.get();
+		std::lock_guard<std::mutex> lock(buffMutex);
+		buffBodies.push_back(createdBuff);
 	}
 }
 
-void GameManager::CreateEnemies(int quantity)
-{
-	if (enemies.size() > 0)
+
+void GameManager::CreateEnemies(int quantity) {
+	// Clear old enemies safely
 	{
+		std::lock_guard<std::mutex> lock(enemiesMutex);
 		for (EnemyBody* enemy : enemies) {
 			delete enemy;
 		}
@@ -664,54 +685,68 @@ void GameManager::CreateEnemies(int quantity)
 	float playerSpawnIndex = getPlayer()->GetPlayerSpawnIndex();
 	std::vector<Tile*> validTiles = getGrid()->GetValidTiles(playerPosition, playerSpawnIndex);
 
+	if (validTiles.empty()) {
+		std::cout << "No valid tiles for enemy spawn" << std::endl;
+		return;  // No need to proceed if we have no tiles
+	}
+
+	// We'll use async to create enemies in parallel
+	std::vector<std::future<EnemyBody*>> futures;
+	futures.reserve(quantity);
+
+	// Create a random generator outside the lambda for consistency
+	std::random_device rd;
+	std::mt19937 mainGen(rd());
+	std::uniform_int_distribution<> indexDist(0, (int)validTiles.size() - 1);
+	std::uniform_int_distribution<> hpDist(10, 35);
 
 	for (int i = 0; i < quantity; i++) {
-		float massEnemy = 1.0f;
-		float orientationEnemy = 0.0f;
-		float rotationEnemy = 0.0f;
-		float angularEnemy = 0.0f;
-		float movementSpeedEnemy = 1.0f;
-		float scaleEnemy = 0.5;
-		Vec3 sizeEnemy(3.f, 3.f, 0.0f);
-		std::random_device rd;
-		std::mt19937 gen(rd());
+		futures.push_back(std::async(std::launch::async, [this, &validTiles, indexDist, hpDist, mainGen]() mutable -> EnemyBody* {
+			// Capture by value and mutate copies locally if needed
+			std::mt19937 gen(mainGen());
 
-		if (validTiles.empty()) {
-			std::cout << "no tile";
-			break;
-		}
+			int index = indexDist(gen);
+			Vec3 positionEnemy = validTiles[index]->getPos();
 
-		std::uniform_int_distribution<> distribution(0, validTiles.size() - 1);
-		int index = distribution(gen);
-		Vec3 positionEnemy = validTiles[index]->getPos();
-		std::cout << "enemy spawned at " << positionEnemy;
-		//Vec3 positionEnemy = Randomizer::getRandomGridPosition(grid);
-		Vec3 velocityEnemy(0.0f, 0.0f, 0.0f);
-		Vec3 accelerationEnemy(0.0f, 0.0f, 0.0f);
-		Gun* randomEnemyGun = Randomizer::getRandomWeapon();
-		// Giving some random HP
-		distribution = std::uniform_int_distribution<>(10, 35);
-		float enemyHp = distribution(gen);
+			float massEnemy = 1.0f;
+			float orientationEnemy = 0.0f;
+			float rotationEnemy = 0.0f;
+			float angularEnemy = 0.0f;
+			float movementSpeedEnemy = 1.0f;
+			float scaleEnemy = 0.5f;
+			Vec3 sizeEnemy(3.f, 3.f, 0.0f);
 
-		EnemyBody* newEnemy = new EnemyBody(
-			randomEnemyGun,
-			positionEnemy,
-			velocityEnemy,
-			accelerationEnemy,
-			sizeEnemy,
-			massEnemy,
-			orientationEnemy,
-			rotationEnemy,
-			angularEnemy,
-			movementSpeedEnemy,
-			scaleEnemy,
-			this,
-			enemyHp
-		);
-		randomEnemyGun->SetEnemyGunOwner(newEnemy);
-		enemies.push_back(newEnemy);
+			float enemyHp = (float)hpDist(gen);
+			Gun* randomEnemyGun = Randomizer::getRandomWeapon();
+
+			EnemyBody* newEnemy = new EnemyBody(
+				randomEnemyGun,
+				positionEnemy,
+				Vec3(0.0f, 0.0f, 0.0f),
+				Vec3(0.0f, 0.0f, 0.0f),
+				sizeEnemy,
+				massEnemy,
+				orientationEnemy,
+				rotationEnemy,
+				angularEnemy,
+				movementSpeedEnemy,
+				scaleEnemy,
+				this,
+				enemyHp
+			);
+			randomEnemyGun->SetEnemyGunOwner(newEnemy);
+			return newEnemy;
+			}));
+	}
+
+	// Gather results
+	for (auto& f : futures) {
+		EnemyBody* createdEnemy = f.get();
+		std::lock_guard<std::mutex> lock(enemiesMutex);
+		enemies.push_back(createdEnemy);
 	}
 }
+
 
 bool GameManager::LoadSounds()
 {
