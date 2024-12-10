@@ -9,14 +9,15 @@
 #include "PlayerBody.h"
 #include "SpritesheetReader.h"
 #include "Tile.h"
+#include "Bullet.h"
 #include "BuffManager.h"
 #include <SDL_mixer.h>
-
+#include "MemoryPool.h"
 #include <thread>
 #include <future>
 #include <mutex>
 #include <vector>
-
+#include <algorithm>
 #include <irrKlang.h>
 
 
@@ -25,6 +26,17 @@ class Buff;
 class Bullet;
 class Grid;
 class UIText;
+class Gun;
+class Bullet;
+
+struct GameState {
+	Vec3 playerPosition;
+	float playerHealth;
+	int stageNumber;
+};
+
+
+
 
 class GameManager {
 private:
@@ -39,9 +51,10 @@ private:
 	class BuffManager* buffManager;
 	class Buff* buff;
 	int stageNumber;
+	MemoryPool<Bullet>* bulletPool;
+	MemoryPool<EnemyBody>* enemyPool;
 	std::vector<Bullet*> bullets;
 	std::vector<Bullet*> enemyBullets;
-	std::vector<EnemyBody*> enemies;
 	std::vector<Buff*> buffBodies;
 	std::vector<Tile*> tiles;
 	UIText* healthUI;
@@ -52,15 +65,15 @@ private:
 	UIText* InstructionsUI2;
 	UIText* InstructionsUI3;
 	UIText* InstructionsUI4;
-	irrklang::ISoundEngine* soundEngine = nullptr; 
-	irrklang::ISound* backgroundMusic = nullptr;  
+	irrklang::ISoundEngine* soundEngine = nullptr;
+	irrklang::ISound* backgroundMusic = nullptr;
 	SpritesheetReader* backgroundReader;
 	SpritesheetReader* treeReader;
 	SpritesheetReader* flowerReader;
 	SpritesheetReader* insideTreeReader;
 	std::mutex buffMutex;
 	std::mutex enemiesMutex;
-
+	std::vector<EnemyBody*> enemies;
 public:
 	bool inUi;
 	float volume = 1.0f;
@@ -82,6 +95,10 @@ public:
 	Matrix4 getProjectionMatrix();
 	void InitializeController();
 
+	Bullet* CreateBullet(Gun* owningGun_, const Vec3& pos_, const Vec3& vel_, const Vec3& accel_, const Vec3& size_, float mass_, float orientation_, float rotation_, float angular_, float movementSpeed_, float scale_, float lifeTime_);
+	void DestroyBullet(Bullet* b);
+	EnemyBody* CreateEnemy(Gun* gun_, const Vec3& pos_, const Vec3& vel_, const Vec3& accel_, const Vec3& size_, float mass_, float orientation_, float rotation_, float angular_, float movementSpeed_, float scale_, float enemyHp_);
+	void DestroyEnemy(EnemyBody* e);
 
 	UIText* getBuffUI() { return buffUI; }
 
@@ -112,7 +129,8 @@ public:
 	void RenderDebugGrid();
 	void StartRenderImGui();
 	void EndRenderImGui();
-
+	void SaveGame(const std::string& filePath);
+	void LoadGame(const std::string& filePath);
 	void Run();
 	void handleEvents();
 	void LoadScene(int i);

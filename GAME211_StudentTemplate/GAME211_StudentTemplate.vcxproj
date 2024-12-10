@@ -45,6 +45,7 @@
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MovementSpeedBuff.cpp" />
     <ClCompile Include="ReloadSpeedBuff.cpp" />
     <ClCompile Include="RotationUtils.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="IRender.h" />
     <ClInclude Include="khrplatform.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MovementSpeedBuff.h" />
     <ClInclude Include="ReloadSpeedBuff.h" />
     <ClInclude Include="RotationUtils.h" />
