@@ -37,6 +37,7 @@ public:
 	SDL_Window* getWindow() { return window; }
 	Matrix4 getProjectionMatrix() { return camera->getProjectionMatrix(); }
 	Matrix4 getInverseMatrix() { return inverseProjection; }
+	PlayerCamera* getCamera() { return camera; }
 	float GetbuffUITimer() { return buffUITimer; }
 };
 
