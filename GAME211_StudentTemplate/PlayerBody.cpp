@@ -8,6 +8,7 @@
 #include "PlayerBody.h"
 #include "RotationUtils.h"
 #include "Gun.h"
+#include "imgui_impl_sdl2.h"
 
 
 PlayerSaveState PlayerBody::playerSaveState;
@@ -66,25 +67,29 @@ void PlayerBody::Render()
 	void PlayerBody::HandleEvents(const SDL_Event& event)
 	{
 		// Assuming you have a variable to store volume level
-		static float volume = 1.0f; // Default volume level
 
+		ImGui_ImplSDL2_ProcessEvent(&event);
 		if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
 
 			if (event.key.keysym.sym == SDLK_UP) {
 
-				volume = std::min(volume + 0.1f, 2.0f);
-				std::cout << "Volume increased to: " << volume << std::endl;
+				game->volume = std::min(game->volume + 0.1f, 2.0f);
+				std::cout << "Volume increased to: " << game->volume << std::endl;
 
 
-				game->getSoundEngine()->setSoundVolume(volume);
+				game->getSoundEngine()->setSoundVolume(game->volume);
 			}
 			else if (event.key.keysym.sym == SDLK_DOWN) {
 
-				volume = std::max(volume - 0.1f, 0.0f);
-				std::cout << "Volume decreased to: " << volume << std::endl;
+				game->volume = std::max(game->volume - 0.1f, 0.0f);
+				std::cout << "Volume decreased to: " << game->volume << std::endl;
 
 
-				game->getSoundEngine()->setSoundVolume(volume);
+				game->getSoundEngine()->setSoundVolume(game->volume);
+			}
+			else if (event.key.keysym.sym == SDLK_g) {  // Check for G key press
+
+				game->inUi = !game->inUi;  // Invert the boolean value
 			}
 
 			if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEMOTION) {

@@ -75,6 +75,8 @@ private:
 	std::mutex enemiesMutex;
 	std::vector<EnemyBody*> enemies;
 public:
+	bool inUi;
+	float volume = 1.0f;
 	GameManager();
 	~GameManager();
 	bool OnCreate();
@@ -104,6 +106,7 @@ public:
 	bool GetRestart() const { return isRestarting; };
 	PlayerBody* getPlayer() { return player; }
 	Grid* getGrid() { return grid; }
+	Window* getWindor() { return windowPtr; }
 	std::vector<EnemyBody*>* getEnemies() { return &enemies; }
 	std::vector<Bullet*>* getBullets() { return &bullets; }
 	std::vector<Bullet*>* getEnemyBullets() { return &enemyBullets; }
@@ -124,6 +127,8 @@ public:
 	void RenderBuffBody();
 	void RenderDebug();
 	void RenderDebugGrid();
+	void StartRenderImGui();
+	void EndRenderImGui();
 	void SaveGame(const std::string& filePath);
 	void LoadGame(const std::string& filePath);
 	void Run();

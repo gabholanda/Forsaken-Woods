@@ -10,6 +10,8 @@ protected:
 
 public:
 	void ApplyBuff(PlayerBody* player) override;
+	std::string getName() const  { return "FireRate"; }
+
 	FireRateBuff() : Buff("Fire rate increased") {}
 
 };

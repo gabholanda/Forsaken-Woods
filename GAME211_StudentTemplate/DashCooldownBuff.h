@@ -8,6 +8,8 @@ protected:
 
 public:
 	void ApplyBuff(PlayerBody* player) override;
+	std::string getName() const  { return "DashCooldown"; }
+
 	DashCooldownBuff() : Buff("Dash cooldown decreased") {}
 };
 

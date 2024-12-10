@@ -6,6 +6,10 @@
 #include <random>
 #include "UIText.h"
 #include "DecorationTile.h"
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_opengl3.h"
+#include "gl3w.h"
 #include <thread>
 #include <future>
 #include <mutex>
@@ -170,7 +174,6 @@ void GameManager::Run() {
 		{
 			OnRestart();
 		}
-		SDL_Delay(timer->GetSleepTime(60)); ///60 frames per sec
 	}
 	OnDestroy();
 }
@@ -410,7 +413,7 @@ void GameManager::PlayerNextLevel()
 	float currentMaxHp = player->getMaxHp();
 	float currentHp = player->getHp();
 	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 2.0f));
-	player->setHp(std::min(newHp, currentMaxHp));
+	player->setHp(min(newHp, currentMaxHp));
 	Gun* gun = Randomizer::getRandomWeapon();
 	player->setPos(Randomizer::getRandomGridPosition(grid));
 
@@ -739,7 +742,7 @@ EnemyBody* GameManager::CreateEnemy(
 	float enemyHp_
 ) {
 	
-	EnemyBody* e = enemyPool->GetObject();
+	EnemyBody* e = enemyPool->getObject();
 	e->SetParameters(gun_, pos_, vel_, accel_, size_, mass_, orientation_, rotation_, angular_, movementSpeed_, scale_, this, enemyHp_);
 	e->OnCreate();
 	e->setMarkedForDeletion(false);
@@ -906,6 +909,109 @@ void GameManager::RenderDebugGrid()
 	}
 }
 
+void GameManager::StartRenderImGui() {
+	// Start a new ImGui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::Begin("Debug Window");
+
+	if (player) {
+		ImGui::Text("Player Stats");
+		ImGui::Separator();
+		ImGui::Text("Max HP: %.2f", player->getMaxHp());
+		ImGui::Text("Current Speed: %.2f", player->getMovementSpeed());
+		ImGui::Text("Dash Cooldown: %.2f", player->getDashCooldown());
+		ImGui::Text("Movement Speed: %.2f", player->getMovementSpeed());
+		ImGui::Text("Gun: %s", player->GetGun()->GetName());
+		ImGui::Text("Reload Speed: %.2f", player->GetGun()->GetReloadSpeed());
+		ImGui::Text("Fire Rate: %.2f", player->GetGun()->GetFireRate());
+		ImGui::Text("Damage: %.2f", player->GetGun()->GetDamage());
+	}
+	ImGui::Separator(); 
+	ImGui::Text("Apply Buffs");
+	ImGui::Separator(); 
+	PlayerBody* player = getPlayer();
+	if (player) {
+		BuffManager* buffManager = getBuffManager();
+
+		// Ensure BuffManager exists
+		if (buffManager) {
+			// Apply Health Buff
+			if (ImGui::Button("Apply Health Buff")) {
+				for (Buff* buff : buffManager->GetBuffs()) {
+					if (dynamic_cast<HealthBuff*>(buff)) {
+						buff->ApplyBuff(player);
+						break;
+					}
+				}
+			}
+
+			// Apply Movement Speed Buff
+			if (ImGui::Button("Apply Movement Speed Buff")) {
+				for (Buff* buff : buffManager->GetBuffs()) {
+					if (dynamic_cast<MovementSpeedBuff*>(buff)) {
+						buff->ApplyBuff(player);
+						break;
+					}
+				}
+			}
+
+			// Apply Fire Rate Buff
+			if (ImGui::Button("Apply Fire Rate Buff")) {
+				for (Buff* buff : buffManager->GetBuffs()) {
+					if (dynamic_cast<FireRateBuff*>(buff)) {
+						buff->ApplyBuff(player);
+						break;
+					}
+				}
+			}
+
+			// Apply Reload Speed Buff
+			if (ImGui::Button("Apply Reload Speed Buff")) {
+				for (Buff* buff : buffManager->GetBuffs()) {
+					if (dynamic_cast<ReloadSpeedBuff*>(buff)) {
+						buff->ApplyBuff(player);
+						break;
+					}
+				}
+			}
+
+			// Apply Damage Buff
+			if (ImGui::Button("Apply Damage Buff")) {
+				for (Buff* buff : buffManager->GetBuffs()) {
+					if (dynamic_cast<DamageBuff*>(buff)) {
+						buff->ApplyBuff(player);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+
+	ImGui::Separator(); 
+	ImGui::Text("Settings");
+	ImGui::Separator(); 
+	// Create a slider for volume, clamping the values between 0.0f and 2.0f
+	if (ImGui::SliderFloat("Volume", &volume, 0.0f, 2.0f)) {
+
+		getSoundEngine()->setSoundVolume(volume);
+	}
+
+	ImGui::End();
+
+	// Render the ImGui data
+	ImGui::Render();
+	glClear(GL_COLOR_BUFFER_BIT); // Clear the OpenGL buffer before rendering ImGui
+}
+
+void GameManager::EndRenderImGui()
+{
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+}
 
 bool GameManager::ValidateCurrentScene()
 {
@@ -938,7 +1044,7 @@ Bullet* GameManager::CreateBullet(
 	// If we have a way to check if it's an enemy gun:
 	// if (dynamic_cast<EnemyBody*>(owningGun_->GetGunOwnerEnemy()) != nullptr) poolToUse = enemyBulletPool;
 
-	Bullet* b = poolToUse->GetObject();
+	Bullet* b = poolToUse->getObject();
 	b->SetParameters(owningGun_, pos_, vel_, accel_, size_, mass_, orientation_, rotation_, angular_, movementSpeed_, scale_, lifeTime_, this);
 	b->OnCreate();
 	return b;
