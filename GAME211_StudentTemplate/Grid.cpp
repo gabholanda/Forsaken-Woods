@@ -5,13 +5,14 @@
 #include "DecorationTile.h"
 #include "GameManager.h"
 
-Grid::Grid(int width_, int height_, int rows_, int columns_, GameManager* manager_)
+Grid::Grid(int width_, int height_, int rows_, int columns_, GameManager* manager_, PlayerCamera* camera_)
 {
 	manager = manager_;
 	width = width_;
 	height = height_;
 	rows = rows_;
 	columns = columns_;
+	camera = camera_;
 
 	for (int i = 0; i < columns; i++)
 	{
@@ -95,25 +96,41 @@ int Grid::GetTileIndex(Vec3 position)
 	return -1;
 }
 
-void Grid::RenderGrid()
-{
-	for (Tile tile : tiles)
-	{
-		tile.Render();
-	}
+void Grid::RenderGrid() {
+    for (Tile& tile : tiles) {
+        if (isTileInView(tile.getPos())) {
+            tile.Render();
+        }
+    }
 
-	for (size_t i = decorationTiles.size() - 1; i > 0; i--)
+    for (size_t i = decorationTiles.size() - 1; i > 0; i--) {
+        if (isTileInView(decorationTiles[i].getPos())) {
+            decorationTiles[i].Render();
+        }
+    }
+}
+
+void Grid::RenderCollisionTiles() {
+	for (Tile tile : collisionTiles)
 	{
-		decorationTiles[i].Render();
+		if (isTileInView(tile.getPos())) {
+			tile.Render();
+		}
 	}
 }
 
-void Grid::RenderCollisionTiles()
-{
-	for (Tile tile : collisionTiles)
-	{
-		tile.Render();
-	}
+bool Grid::isTileInView(const Vec3& position) const {
+	Vec3 cameraCenter = camera->getCameraCenter();
+	Vec2 cameraBounds = camera->getCameraBounds();
+
+	const float margin = 2.0f; // extend past bounds of camera for seamless rendering
+	float minX = cameraCenter.x - cameraBounds.x / 2.0f - margin;
+	float maxX = cameraCenter.x + cameraBounds.x / 2.0f + margin;
+	float minY = cameraCenter.y - cameraBounds.y / 2.0f - margin;
+	float maxY = cameraCenter.y + cameraBounds.y / 2.0f + margin;
+
+	return (position.x >= minX && position.x <= maxX &&
+		position.y >= minY && position.y <= maxY);
 }
 
 void Grid::RenderDebugGrid()

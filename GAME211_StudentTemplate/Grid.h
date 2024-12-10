@@ -8,6 +8,7 @@ class Tile;
 class CollisionTile;
 class DecorationTile;
 class GameManager;
+class PlayerCamera;
 
 using namespace MATH;
 
@@ -19,6 +20,7 @@ private:
 	std::vector<CollisionTile> collisionTiles;
 	std::vector<DecorationTile> decorationTiles;
 	GameManager* manager;
+	PlayerCamera* camera;
 	//Window* window;
 	int width;
 	int height;
@@ -26,7 +28,7 @@ private:
 	int columns;
 public:
 
-	Grid(int width_, int height_, int rows_, int columns_, GameManager* manager_);
+	Grid(int width_, int height_, int rows_, int columns_, GameManager* manager_, PlayerCamera* camera_);
 	std::vector<Tile>* GetTiles() { return &tiles; }
 	std::vector<CollisionTile>* GetCollisionTiles() { return &collisionTiles; }
 	std::vector<DecorationTile>* GetDecorationTiles() { return &decorationTiles; }
@@ -40,6 +42,7 @@ public:
 	void RenderCollisionTiles();
 	void RenderDebugGrid();
 	std::vector<Tile*> GetValidTiles(Vec3 playerPosition, float playerSpawnIndex);
+	bool isTileInView(const Vec3& position) const;
 
 	void Clear();
 };

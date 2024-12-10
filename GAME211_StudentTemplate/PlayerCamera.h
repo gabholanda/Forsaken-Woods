@@ -16,5 +16,7 @@ public:
 
 	void updateCameraPosition();
 	void OnDestroy();
+	Vec2 getCameraBounds() const; // Get the current camera bounds (width, height)
+	Vec3 getCameraCenter() const; // Get the current camera center position (player's position)
 };
 

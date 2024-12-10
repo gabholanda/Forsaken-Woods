@@ -78,15 +78,15 @@ bool GameManager::OnCreate()
 	currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
 	buff = new DamageBuff;
 
-	/* Grid needs to be same dimension as our sprites */
-	grid = new Grid(160, 160, 20, 20, this);
-
-
 	// need to create Player before validating scene
 	if (!ValidateCurrentScene()) {
 		OnDestroy();
 		return false;
 	}
+	/* Grid needs to be same dimension as our sprites */
+	grid = new Grid(160, 160, 20, 20, this, currentScene->getCamera());
+
+
 
 	// the image is actually 1120x640, 7 rows of 160 and 7 columns of 4
 	backgroundReader = new SpritesheetReader(160, 160, 7, 4);
