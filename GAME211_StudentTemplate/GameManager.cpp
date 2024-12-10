@@ -10,6 +10,7 @@
 #include <future>
 #include <mutex>
 #include <vector>
+#include <fstream>
 
 
 GameManager::GameManager() {
@@ -209,6 +210,12 @@ void GameManager::handleEvents()
 				break;
 			case SDL_SCANCODE_APOSTROPHE:
 				isDebugging = !isDebugging;
+				break;
+			case SDL_SCANCODE_F5: // Save game
+				SaveGame("savegame.bin");
+				break;
+			case SDL_SCANCODE_F9: // Load game
+				LoadGame("savegame.bin");
 				break;
 			case SDL_SCANCODE_SPACE:
 				OnRestart();
@@ -943,3 +950,57 @@ void GameManager::DestroyBullet(Bullet* b) {
 	
 
 }
+
+void GameManager::SaveGame(const std::string& filePath) {
+	GameState gameState;
+	gameState.playerPosition = player->getPos();
+	gameState.playerHealth = player->getHp();
+	gameState.stageNumber = stageNumber;
+
+	std::ofstream outFile(filePath, std::ios::binary);
+	if (!outFile) {
+		std::cerr << "Failed to open file for saving.\n";
+		return;
+	}
+
+	// Serialize player position
+	outFile.write(reinterpret_cast<char*>(&gameState.playerPosition), sizeof(gameState.playerPosition));
+
+	// Serialize player health
+	outFile.write(reinterpret_cast<char*>(&gameState.playerHealth), sizeof(gameState.playerHealth));
+
+	// Serialize stage number
+	outFile.write(reinterpret_cast<char*>(&gameState.stageNumber), sizeof(gameState.stageNumber));
+
+	outFile.close();
+	std::cout << "Game saved successfully.\n";
+}
+
+void GameManager::LoadGame(const std::string& filePath) {
+	GameState gameState;
+
+	std::ifstream inFile(filePath, std::ios::binary);
+	if (!inFile) {
+		std::cerr << "Failed to open file for loading.\n";
+		return;
+	}
+
+	// Deserialize player position
+	inFile.read(reinterpret_cast<char*>(&gameState.playerPosition), sizeof(gameState.playerPosition));
+
+	// Deserialize player health
+	inFile.read(reinterpret_cast<char*>(&gameState.playerHealth), sizeof(gameState.playerHealth));
+
+	// Deserialize stage number
+	inFile.read(reinterpret_cast<char*>(&gameState.stageNumber), sizeof(gameState.stageNumber));
+
+	inFile.close();
+
+	// Apply the loaded data to the player and game manager
+	player->setPos(gameState.playerPosition);
+	player->setHp(gameState.playerHealth);
+	stageNumber = gameState.stageNumber;
+
+	std::cout << "Game loaded successfully.\n";
+}
+
