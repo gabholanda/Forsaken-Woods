@@ -20,7 +20,7 @@ public:
         }
     }
 
-    T* GetObject() {
+    T* getObject() {
         if (objects.empty()) {
             std::cout << "Pool exhausted! No objects available.\n";
             return nullptr; // Indicate that the pool is out of objects

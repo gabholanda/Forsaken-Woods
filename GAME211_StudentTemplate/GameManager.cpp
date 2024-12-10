@@ -742,7 +742,7 @@ EnemyBody* GameManager::CreateEnemy(
 	float enemyHp_
 ) {
 	
-	EnemyBody* e = enemyPool->GetObject();
+	EnemyBody* e = enemyPool->getObject();
 	e->SetParameters(gun_, pos_, vel_, accel_, size_, mass_, orientation_, rotation_, angular_, movementSpeed_, scale_, this, enemyHp_);
 	e->OnCreate();
 	e->setMarkedForDeletion(false);
@@ -1044,7 +1044,7 @@ Bullet* GameManager::CreateBullet(
 	// If we have a way to check if it's an enemy gun:
 	// if (dynamic_cast<EnemyBody*>(owningGun_->GetGunOwnerEnemy()) != nullptr) poolToUse = enemyBulletPool;
 
-	Bullet* b = poolToUse->GetObject();
+	Bullet* b = poolToUse->getObject();
 	b->SetParameters(owningGun_, pos_, vel_, accel_, size_, mass_, orientation_, rotation_, angular_, movementSpeed_, scale_, lifeTime_, this);
 	b->OnCreate();
 	return b;
