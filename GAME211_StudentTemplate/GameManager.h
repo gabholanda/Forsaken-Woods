@@ -29,6 +29,15 @@ class UIText;
 class Gun;
 class Bullet;
 
+struct GameState {
+	Vec3 playerPosition;
+	float playerHealth;
+	int stageNumber;
+};
+
+
+
+
 class GameManager {
 private:
 	class Window* windowPtr;
@@ -115,7 +124,8 @@ public:
 	void RenderBuffBody();
 	void RenderDebug();
 	void RenderDebugGrid();
-
+	void SaveGame(const std::string& filePath);
+	void LoadGame(const std::string& filePath);
 	void Run();
 	void handleEvents();
 	void LoadScene(int i);
