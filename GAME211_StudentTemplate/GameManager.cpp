@@ -10,6 +10,7 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include "gl3w.h"
+#include "PointsSystem.h"
 #include <thread>
 #include <future>
 #include <mutex>
@@ -142,6 +143,7 @@ bool GameManager::OnCreate()
 	}
 
 	const char* fontName = "MainFont.ttf";
+	InitializePointsSystem(fontName, 24);
 	SDL_Color color = { 255,255,255 };
 	healthUI = new UIText(getPlayer()->Text(), 24, fontName, getRenderer(), Vec2(25, 550), color);
 	weaponUI = new UIText(getPlayer()->GetGun()->Text(), 24, fontName, getRenderer(), Vec2(25, 25), color);
@@ -248,9 +250,11 @@ void GameManager::OnDestroy()
 			soundEngine->drop(); // Release the engine
 			soundEngine = nullptr;
 		}
-		backgroundMusic = NULL;
+		delete backgroundMusic;
 		Mix_Quit();
 		IMG_Quit();
+		CleanupPointsSystem();
+
 	}
 }
 
@@ -263,6 +267,7 @@ void GameManager::OnRestart()
 	}
 
 	// Clear lists
+	SetTotalPoints(0);
 	buffBodies.clear();
 	enemies.clear();
 	bullets.clear();
@@ -275,13 +280,11 @@ void GameManager::OnRestart()
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(1, 9);
-
 	CreateEnemies(distrib(gen));
 	std::random_device rd2;
 	std::mt19937 gen2(rd2());
 	std::uniform_int_distribution<> distrib2(1, 4);
 	CreateBuffBody(distrib2(gen2));
-
 	if (player->OnCreate() == false) {
 		OnDestroy();
 		isRunning = false;
@@ -410,6 +413,7 @@ void GameManager::CreatePlayer()
 
 void GameManager::PlayerNextLevel()
 {
+	AddPoints(100);
 	float currentMaxHp = player->getMaxHp();
 	float currentHp = player->getHp();
 	float newHp = currentHp + static_cast<float>(static_cast<int>(currentMaxHp / 2.0f));
@@ -800,6 +804,7 @@ SDL_Renderer* GameManager::getRenderer()
 void GameManager::RenderUI()
 {
 	if (!player->getIsBeginningOfGame()) {
+		SDL_Color color = { 255,255,255 };
 		healthUI->setText(getPlayer()->Text());
 		weaponUI->setText(getPlayer()->GetGun()->Text());
 
@@ -817,6 +822,7 @@ void GameManager::RenderUI()
 		healthUI->Render();
 		weaponUI->Render();
 		stageUI->Render();
+		RenderPoints(getRenderer(), 60, 100, color);
 
 	}
 	else if (player->getIsBeginningOfGame()) {
@@ -1062,6 +1068,7 @@ void GameManager::SaveGame(const std::string& filePath) {
 	gameState.playerPosition = player->getPos();
 	gameState.playerHealth = player->getHp();
 	gameState.stageNumber = stageNumber;
+	gameState.totalPoints = GetTotalPoints();
 
 	std::ofstream outFile(filePath, std::ios::binary);
 	if (!outFile) {
@@ -1077,6 +1084,8 @@ void GameManager::SaveGame(const std::string& filePath) {
 
 	// Serialize stage number
 	outFile.write(reinterpret_cast<char*>(&gameState.stageNumber), sizeof(gameState.stageNumber));
+
+	outFile.write(reinterpret_cast<char*>(&gameState.totalPoints), sizeof(gameState.totalPoints));
 
 	outFile.close();
 	std::cout << "Game saved successfully.\n";
@@ -1100,12 +1109,15 @@ void GameManager::LoadGame(const std::string& filePath) {
 	// Deserialize stage number
 	inFile.read(reinterpret_cast<char*>(&gameState.stageNumber), sizeof(gameState.stageNumber));
 
+	inFile.read(reinterpret_cast<char*>(&gameState.totalPoints), sizeof(gameState.totalPoints));
+
 	inFile.close();
 
 	// Apply the loaded data to the player and game manager
 	player->setPos(gameState.playerPosition);
 	player->setHp(gameState.playerHealth);
 	stageNumber = gameState.stageNumber;
+	SetTotalPoints(gameState.totalPoints);
 
 	std::cout << "Game loaded successfully.\n";
 }

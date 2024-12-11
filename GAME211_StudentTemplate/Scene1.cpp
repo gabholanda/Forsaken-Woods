@@ -8,6 +8,8 @@
 #include "Scene1.h"
 #include "CollisionTile.h"
 #include "DecorationTile.h"
+#include "PointsSystem.h"
+
 
 Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_) {
     window = sdlWindow_;
@@ -134,6 +136,7 @@ void Scene1::Update(const float deltaTime) {
 
                 if (enemy->getHp() <= 0.0f) {
                     enemy->setMarkedForDeletion(true);
+                    AddPoints(10);
                 }
 
                 std::cout << "EnemyHP: " << enemyHp - damage << std::endl;
@@ -191,7 +194,7 @@ void Scene1::Update(const float deltaTime) {
 void Scene1::Render() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
-	game->StartRenderImGui();
+    game->StartRenderImGui();
 	game->RenderDebugGrid();
 	game->RenderTiles();
 	game->RenderPlayer();

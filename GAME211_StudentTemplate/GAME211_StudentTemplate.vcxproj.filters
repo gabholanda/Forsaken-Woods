@@ -112,6 +112,7 @@
     <ClCompile Include="imgui_impl_sdl2.cpp">
       <Filter>Scripts\UI\imGui</Filter>
     </ClCompile>
+    <ClCompile Include="MemoryPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -244,6 +245,7 @@
     <ClInclude Include="khrplatform.h">
       <Filter>Scripts\UI\imGui</Filter>
     </ClInclude>
+    <ClInclude Include="MemoryPool.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">

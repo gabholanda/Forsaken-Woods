@@ -33,6 +33,7 @@ struct GameState {
 	Vec3 playerPosition;
 	float playerHealth;
 	int stageNumber;
+	int totalPoints;
 };
 
 
